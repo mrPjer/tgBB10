@@ -30,3 +30,27 @@ Steps:
 * Keep the code formatted using the built-in formatter.
 * Keep the commits small and atomic.
 * Make sure that commit messages are descriptive of what the commit accomplishes.
+
+## Issue tracking and priorities
+
+All features that need to be implemented should be listed under issues, each under their respective milestones.
+
+There are currently three types of milestones - UI milestones, Service milestones and Other.
+
+UI milestones contain issues which can be solved by only implementing the UI part - no logic is necessary. If you depend on some data, mock it.
+
+Service milestones contain issues which (mostly) rely on communication with the Telegram API. When solving these issues, you shouldn't edit UI parts, as integration should be a different issue.
+
+Other contains mostly unsorted things which would be nice to have and push notifications which are an important feature.
+
+If you notice an error in an issue, feel free to comment on them. If you think an issue should be added, feel free to open one.
+
+### Labels
+
+Several labels are in use.
+
+The *user interface* label is assigned to issues which are related to UI features.
+The *service* label is assigned to issues regarding backend logic.
+The *required* label is assigned to features of higher priority which need to be implemented in the minimum product.
+The *missing info* label is assigned to issues where a part of the info is missing or is not clear. See if you can clarify these.
+Finally, the *nice to have* label is assigned to features which increase the value of the product, but are not essential. Only work on these if you know you'll have the time.
