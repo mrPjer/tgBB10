@@ -10,6 +10,10 @@ Page {
             id: optionControlDefinition
             Option {
             }
+        },
+        ComponentDefinition {
+            id: confirmationCodePageDefinition
+            source: "asset:///login/confirmation_code.qml"
         }
     ]
 
@@ -111,6 +115,10 @@ Page {
             text: 'Next'
             enabled: false
             horizontalAlignment: HorizontalAlignment.Center
+            onClicked: {
+                var newPage = confirmationCodePageDefinition.createObject()
+                navigationPane.push(newPage)
+            }
         }
 
     }

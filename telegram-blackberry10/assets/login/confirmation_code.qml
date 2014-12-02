@@ -10,6 +10,13 @@ Page {
         callTimer.start()
     }
 
+    attachedObjects: [
+        ComponentDefinition {
+            id: registrationPageDefinition
+            source: "asset:///login/registration.qml"
+        }
+    ]
+
     Container {
         leftPadding: 40
         rightPadding: 40
@@ -108,6 +115,10 @@ Page {
             text: "Next"
             enabled: false
             horizontalAlignment: HorizontalAlignment.Center
+            onClicked: {
+                var page = registrationPageDefinition.createObject()
+                navigationPane.push(page)
+            }
         }
 
     }
