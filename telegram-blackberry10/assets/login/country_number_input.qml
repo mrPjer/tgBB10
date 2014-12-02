@@ -42,7 +42,6 @@ Page {
                 text: "Your phone"
                 horizontalAlignment: HorizontalAlignment.Center
                 textStyle {
-                    fontWeight: FontWeight.Bold
                     fontSize: FontSize.XXLarge
                 }
             }

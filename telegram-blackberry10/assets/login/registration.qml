@@ -23,7 +23,6 @@ Page {
                 text: "Your name"
                 horizontalAlignment: HorizontalAlignment.Center
                 textStyle {
-                    fontWeight: FontWeight.Bold
                     fontSize: FontSize.XXLarge
                 }
             }
