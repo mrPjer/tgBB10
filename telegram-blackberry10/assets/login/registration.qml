@@ -7,10 +7,15 @@ Page {
     }
 
     Container {
+        id: root
         leftPadding: 40
         rightPadding: 40
         topPadding: 40
         bottomPadding: 40
+
+        function validateInputs() {
+            next.enabled = firstName.text.length > 0 && lastName.text.length > 0
+        }
 
         Container {
 
@@ -82,10 +87,16 @@ Page {
                 TextField {
                     id: firstName
                     hintText: 'First name'
+                    onTextChanging: {
+                        root.validateInputs()
+                    }
                 }
                 TextField {
                     id: lastName
                     hintText: 'Last name'
+                    onTextChanging: {
+                        root.validateInputs()
+                    }
                 }
             }
 
@@ -99,7 +110,9 @@ Page {
         }
 
         Button {
+            id: next
             text: 'Next'
+            enabled: false
             horizontalAlignment: HorizontalAlignment.Center
         }
 
