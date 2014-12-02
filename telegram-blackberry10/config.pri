@@ -4,10 +4,24 @@ BASEDIR = $$quote($$_PRO_FILE_PWD_)
 device {
     CONFIG(debug, debug|release) {
         profile {
+            INCLUDEPATH += $$quote(${QNX_TARGET}/usr/include/qt4/QtCore)
+
+            DEPENDPATH += $$quote(${QNX_TARGET}/usr/include/qt4/QtCore)
+
+            LIBS += -lbbcascades \
+                -lQtCore
+
             CONFIG += \
                 config_pri_assets \
                 config_pri_source_group1
         } else {
+            INCLUDEPATH += $$quote(/home/psegina/eclipse/bbndk/target_10_2_0_1155/qnx6/usr/include/qt4/QtCore)
+
+            DEPENDPATH += $$quote(/home/psegina/eclipse/bbndk/target_10_2_0_1155/qnx6/usr/include/qt4/QtCore)
+
+            LIBS += -lbbcascades \
+                -lQtCore
+
             CONFIG += \
                 config_pri_assets \
                 config_pri_source_group1
@@ -17,6 +31,13 @@ device {
 
     CONFIG(release, debug|release) {
         !profile {
+            INCLUDEPATH += $$quote(${QNX_TARGET}/usr/include/qt4/QtCore)
+
+            DEPENDPATH += $$quote(${QNX_TARGET}/usr/include/qt4/QtCore)
+
+            LIBS += -lbbcascades \
+                -lQtCore
+
             CONFIG += \
                 config_pri_assets \
                 config_pri_source_group1
@@ -27,6 +48,13 @@ device {
 simulator {
     CONFIG(debug, debug|release) {
         !profile {
+            INCLUDEPATH += $$quote(${QNX_TARGET}/usr/include/qt4/QtCore)
+
+            DEPENDPATH += $$quote(${QNX_TARGET}/usr/include/qt4/QtCore)
+
+            LIBS += -lbbcascades \
+                -lQtCore
+
             CONFIG += \
                 config_pri_assets \
                 config_pri_source_group1
@@ -43,9 +71,12 @@ config_pri_assets {
 config_pri_source_group1 {
     SOURCES += \
         $$quote($$BASEDIR/src/applicationui.cpp) \
-        $$quote($$BASEDIR/src/main.cpp)
+        $$quote($$BASEDIR/src/main.cpp) \
+        $$quote($$BASEDIR/src/util/timer.cpp)
 
-    HEADERS += $$quote($$BASEDIR/src/applicationui.hpp)
+    HEADERS += \
+        $$quote($$BASEDIR/src/applicationui.hpp) \
+        $$quote($$BASEDIR/src/util/timer.hpp)
 }
 
 CONFIG += precompile_header
@@ -59,6 +90,11 @@ lupdate_inclusion {
         $$quote($$BASEDIR/../src/*.cc) \
         $$quote($$BASEDIR/../src/*.cpp) \
         $$quote($$BASEDIR/../src/*.cxx) \
+        $$quote($$BASEDIR/../src/util/*.c) \
+        $$quote($$BASEDIR/../src/util/*.c++) \
+        $$quote($$BASEDIR/../src/util/*.cc) \
+        $$quote($$BASEDIR/../src/util/*.cpp) \
+        $$quote($$BASEDIR/../src/util/*.cxx) \
         $$quote($$BASEDIR/../assets/*.qml) \
         $$quote($$BASEDIR/../assets/*.js) \
         $$quote($$BASEDIR/../assets/*.qs) \

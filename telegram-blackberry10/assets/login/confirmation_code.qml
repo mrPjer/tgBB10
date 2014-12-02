@@ -1,8 +1,13 @@
 import bb.cascades 1.2
+import Timer 1.0
 
 Page {
     titleBar: TitleBar {
         title: "Enter confirmation code"
+    }
+
+    onCreationCompleted: {
+        callTimer.start()
     }
 
     Container {
@@ -10,6 +15,27 @@ Page {
         rightPadding: 40
         topPadding: 40
         bottomPadding: 40
+
+        Timer {
+            id: callTimer
+            interval: 1000
+            visible: false
+
+            property int currentCount: 30
+            function timerText(secondsLeft) {
+                var secondsLeft = secondsLeft < 10 ? '0' + secondsLeft : secondsLeft
+                return '00:' + secondsLeft
+            }
+
+            onTimeout: {
+                currentCount -= 1
+                timerLabel.text = timerText(currentCount)
+
+                if (currentCount == 0) {
+                    callTimer.stop()
+                }
+            }
+        }
 
         Container {
 
@@ -54,8 +80,16 @@ Page {
                 }
             }
             Label {
-                text: "We will call you in #TODO"
+                text: "We will call you in"
                 horizontalAlignment: HorizontalAlignment.Center
+            }
+            Label {
+                id: timerLabel
+                horizontalAlignment: HorizontalAlignment.Center
+                text: '00:30'
+                textStyle {
+                    fontWeight: FontWeight.Bold
+                }
             }
             layoutProperties: StackLayoutProperties {
                 spaceQuota: 1
