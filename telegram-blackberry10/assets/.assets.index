@@ -1,6 +1,8 @@
 1
-4
+6
 main.qml
 login/confirmation_code.qml
 login/registration.qml
+login/country_number_input.qml
+login/countries.txt
 images/registration/image_placeholder.png

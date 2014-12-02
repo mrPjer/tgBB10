@@ -22,6 +22,7 @@
 #include <bb/cascades/LocaleHandler>
 
 #include "util/timer.hpp"
+#include "util/countries.hpp"
 
 using namespace bb::cascades;
 
@@ -51,6 +52,10 @@ ApplicationUI::ApplicationUI() :
 
     // Create root object for the UI
     AbstractPane *root = qml->createRootObject<AbstractPane>();
+
+    // Register the countries so they are available in QML
+    QDeclarativePropertyMap *countries = CountryReader::getCountries();
+    qml->setContextProperty("countries", countries);
 
     // Set created root object as the application scene
     Application::instance()->setScene(root);
