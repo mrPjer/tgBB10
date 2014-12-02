@@ -29,7 +29,7 @@ using namespace bb::cascades;
 ApplicationUI::ApplicationUI() :
         QObject()
 {
-    // Register out Timer class in QML
+    // Register our Timer class in QML
     qmlRegisterType<Timer>("Timer", 1, 0, "Timer");
 
     // prepare the localization
