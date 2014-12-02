@@ -66,6 +66,7 @@ config_pri_assets {
     OTHER_FILES += \
         $$quote($$BASEDIR/assets/images/registration/image_placeholder.png) \
         $$quote($$BASEDIR/assets/login/confirmation_code.qml) \
+        $$quote($$BASEDIR/assets/login/countries.txt) \
         $$quote($$BASEDIR/assets/login/country_number_input.qml) \
         $$quote($$BASEDIR/assets/login/registration.qml) \
         $$quote($$BASEDIR/assets/main.qml)
