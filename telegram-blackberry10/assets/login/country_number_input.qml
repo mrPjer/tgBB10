@@ -61,7 +61,7 @@ Page {
                 var selectedValue = selectedOption.text
                 var cc
                 if (selectedValue) {
-                    cc = countries[selectedValue]
+                    cc = '+' + countries[selectedValue]
                 } else {
                     cc = ''
                 }
