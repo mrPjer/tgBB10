@@ -64,7 +64,9 @@ simulator {
 
 config_pri_assets {
     OTHER_FILES += \
+        $$quote($$BASEDIR/assets/images/registration/image_placeholder.png) \
         $$quote($$BASEDIR/assets/login/confirmation_code.qml) \
+        $$quote($$BASEDIR/assets/login/registration.qml) \
         $$quote($$BASEDIR/assets/main.qml)
 }
 
@@ -98,6 +100,12 @@ lupdate_inclusion {
         $$quote($$BASEDIR/../assets/*.qml) \
         $$quote($$BASEDIR/../assets/*.js) \
         $$quote($$BASEDIR/../assets/*.qs) \
+        $$quote($$BASEDIR/../assets/images/*.qml) \
+        $$quote($$BASEDIR/../assets/images/*.js) \
+        $$quote($$BASEDIR/../assets/images/*.qs) \
+        $$quote($$BASEDIR/../assets/images/registration/*.qml) \
+        $$quote($$BASEDIR/../assets/images/registration/*.js) \
+        $$quote($$BASEDIR/../assets/images/registration/*.qs) \
         $$quote($$BASEDIR/../assets/login/*.qml) \
         $$quote($$BASEDIR/../assets/login/*.js) \
         $$quote($$BASEDIR/../assets/login/*.qs)
