@@ -1,4 +1,5 @@
 import bb.cascades 1.2
+import bb.cascades.pickers 1.0
 
 Page {
     titleBar: TitleBar {
@@ -51,13 +52,30 @@ Page {
             leftPadding: 32
             rightPadding: 32
 
-            ImageView {
-                accessibility.name: "User avatar"
+            Container {
+                layout: AbsoluteLayout {
+                }
                 preferredHeight: 180
                 preferredWidth: 180
                 rightMargin: 32
-                scalingMethod: ScalingMethod.AspectFill
-                imageSource: 'asset:///images/registration/image_placeholder.png'
+
+                ImageView {
+                    id: avatar
+                    preferredHeight: 180
+                    preferredWidth: 180
+                    scalingMethod: ScalingMethod.AspectFill
+                    imageSource: 'asset:///images/registration/image_placeholder.png'
+                    accessibility.name: "User avatar"
+                }
+
+                ImageButton {
+                    preferredHeight: 180
+                    preferredWidth: 180
+                    accessibility.name: "User avatar button"
+                    onClicked: {
+                        filePicker.open()
+                    }
+                }
             }
 
             Container {
@@ -86,4 +104,16 @@ Page {
         }
 
     }
+
+    attachedObjects: [
+        FilePicker {
+            id: filePicker
+            type: FileType.Picture
+            title: 'Select your profile picture'
+            onFileSelected: {
+                avatar.imageSource = 'file://' + selectedFiles[0]
+            }
+        }
+    ]
+
 }
