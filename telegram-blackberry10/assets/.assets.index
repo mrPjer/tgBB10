@@ -1,4 +1,6 @@
 1
-2
+4
 main.qml
 login/confirmation_code.qml
+login/registration.qml
+images/registration/image_placeholder.png
