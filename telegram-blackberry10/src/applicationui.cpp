@@ -21,11 +21,16 @@
 #include <bb/cascades/AbstractPane>
 #include <bb/cascades/LocaleHandler>
 
+#include "util/timer.hpp"
+
 using namespace bb::cascades;
 
 ApplicationUI::ApplicationUI() :
         QObject()
 {
+    // Register out Timer class in QML
+    qmlRegisterType<Timer>("Timer", 1, 0, "Timer");
+
     // prepare the localization
     m_pTranslator = new QTranslator(this);
     m_pLocaleHandler = new LocaleHandler(this);
