@@ -35,7 +35,17 @@ simulator {
 }
 
 config_pri_assets {
-    OTHER_FILES += $$quote($$BASEDIR/assets/main.qml)
+    OTHER_FILES += \
+        $$quote($$BASEDIR/assets/images/Intro/intro1.png) \
+        $$quote($$BASEDIR/assets/images/Intro/intro2.png) \
+        $$quote($$BASEDIR/assets/images/Intro/intro3.png) \
+        $$quote($$BASEDIR/assets/images/Intro/intro4.png) \
+        $$quote($$BASEDIR/assets/images/Intro/intro5.png) \
+        $$quote($$BASEDIR/assets/images/Intro/intro6.png) \
+        $$quote($$BASEDIR/assets/images/Intro/intro7.png) \
+        $$quote($$BASEDIR/assets/intro.qml) \
+        $$quote($$BASEDIR/assets/main.qml) \
+        $$quote($$BASEDIR/assets/models/Intro/introModel.xml)
 }
 
 config_pri_source_group1 {
@@ -59,7 +69,19 @@ lupdate_inclusion {
         $$quote($$BASEDIR/../src/*.cxx) \
         $$quote($$BASEDIR/../assets/*.qml) \
         $$quote($$BASEDIR/../assets/*.js) \
-        $$quote($$BASEDIR/../assets/*.qs)
+        $$quote($$BASEDIR/../assets/*.qs) \
+        $$quote($$BASEDIR/../assets/images/*.qml) \
+        $$quote($$BASEDIR/../assets/images/*.js) \
+        $$quote($$BASEDIR/../assets/images/*.qs) \
+        $$quote($$BASEDIR/../assets/images/Intro/*.qml) \
+        $$quote($$BASEDIR/../assets/images/Intro/*.js) \
+        $$quote($$BASEDIR/../assets/images/Intro/*.qs) \
+        $$quote($$BASEDIR/../assets/models/*.qml) \
+        $$quote($$BASEDIR/../assets/models/*.js) \
+        $$quote($$BASEDIR/../assets/models/*.qs) \
+        $$quote($$BASEDIR/../assets/models/Intro/*.qml) \
+        $$quote($$BASEDIR/../assets/models/Intro/*.js) \
+        $$quote($$BASEDIR/../assets/models/Intro/*.qs)
 
     HEADERS += \
         $$quote($$BASEDIR/../src/*.h) \
