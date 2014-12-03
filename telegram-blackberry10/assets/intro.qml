@@ -12,6 +12,7 @@ Page {
         //track on which page we are currently
         property int pagenumber: 0 
         
+        //properties for swiping
         property int touchEnteredX: 0
         property int touchEndX: 0
 
@@ -34,10 +35,28 @@ Page {
             "<html><b>Telegram</b> lets you access your\n messages from multiple devices.</html>",
             "<html><b>Telegram</b> messages are heavily\nencrypted and can self-destruct.</html>"]
         
+        property variant pageIndicatorActiveColor: [
+            "#ff00a6df",
+            "#ffef4d3e",
+            "#fff1bf5b",
+            "#ff62c657",
+            "#ff956fbc",
+            "#ff00bfd3",
+            "#ffff8c4d"]
+
+        property string pageIndicatorUnactiveColor: "#ffe0ded9"
+        
+        property variant pageIndicatorCurrentColor: [
+            "#ff00a6df",
+            "#ffe0ded9",
+            "#ffe0ded9",
+            "#ffe0ded9",
+            "#ffe0ded9",
+            "#ffe0ded9",
+            "#ffe0ded9"]
+        
         property string image: "asset:///images/Intro/intro1.png"
         
-        property string unactivePageIndicatorColor: "#ffe0ded9"
-
         
         // Container from which you can swipe and change through different messages
         Container {
@@ -93,8 +112,7 @@ Page {
         }
 
         //swipe logic
-        
-        property int sWIPE_DISTANCE_TRESHOLD: 250
+        property int sWIPE_TRESHOLD: 200
         onTouch: {
             if (event.isDown()) {
                 introID.touchEnteredX = event.windowX
@@ -103,14 +121,14 @@ Page {
             if (event.isUp()) {
                 introID.touchEndX = event.windowX
 
-                if ((introID.touchEndX - introID.touchEnteredX) > 250) {
+                if ((introID.touchEndX - introID.touchEnteredX) > sWIPE_TRESHOLD) {
                     if (pagenumber > 0) {
                         pagenumber = pagenumber - 1
                         
                     }
                 }
                   
-                if ((introID.touchEndX - introID.touchEnteredX) < -250) {
+                if ((introID.touchEndX - introID.touchEnteredX) < -sWIPE_TRESHOLD) {
                     if (pagenumber < 6) {
                         pagenumber = pagenumber + 1
                     }
@@ -120,10 +138,33 @@ Page {
                 introID.touchEndX = 0
             }
         }
+        
+        
+        onPagenumberChanged: {
+            console.log("SUP bitches pagenumber changed yo")
+            console.log(introID.pageIndicatorCurrentColor[introID.pagenumber])
+            console.log(introID.pageIndicatorActiveColor[introID.pagenumber])
+            var temp = introID.pageIndicatorCurrentColor
+            temp[introID.pagenumber] =
+                introID.pageIndicatorActiveColor[introID.pagenumber]
+            console.log(introID.pageIndicatorCurrentColor[introID.pagenumber])
+                
+            if(pagenumber > 0) {
+                temp[introID.pagenumber - 1] =
+                    introID.pageIndicatorUnactiveColor
+            }
+            
+            if(pagenumber < 6) {
+                temp[introID.pagenumber + 1] =
+                    introID.pageIndicatorUnactiveColor
+            }
+            
+            introID.pageIndicatorCurrentColor = temp
+        }
 
         //Page indicators
         Container {
-            id: staticPartID
+            id: pageIndicatorID
             background: Color.White
             preferredWidth: maxWidth
             preferredHeight: 50
@@ -133,10 +174,11 @@ Page {
             layout: StackLayout {
                 orientation: LayoutOrientation.LeftToRight
             }
+            
 
             Container {
                 id: pageIndicatorPage1
-                background: Color.create("#ff00a6df")
+                background: Color.create(introID.pageIndicatorCurrentColor[0])
                 minWidth: 15
                 maxWidth: 15
                 minHeight: 15
@@ -147,7 +189,7 @@ Page {
 
             Container {
                 id: pageIndicatorPage2
-                background: Color.create(introID.unactivePageIndicatorColor)
+                background: Color.create(introID.pageIndicatorCurrentColor[1])
                 minWidth: 15
                 maxWidth: 15
                 minHeight: 15
@@ -158,7 +200,7 @@ Page {
 
             Container {
                 id: pageIndicatorPage3
-                background: Color.create(introID.unactivePageIndicatorColor)
+                background: Color.create(introID.pageIndicatorCurrentColor[2])
                 minWidth: 15
                 maxWidth: 15
                 minHeight: 15
@@ -168,7 +210,7 @@ Page {
 
             Container {
                 id: pageIndicatorPage4
-                background: Color.create(introID.unactivePageIndicatorColor)
+                background: Color.create(introID.pageIndicatorCurrentColor[3])
                 minWidth: 15
                 maxWidth: 15
                 minHeight: 15
@@ -179,7 +221,7 @@ Page {
 
             Container {
                 id: pageIndicatorPage5
-                background: Color.create(introID.unactivePageIndicatorColor)
+                background: Color.create(introID.pageIndicatorCurrentColor[4])
                 minWidth: 15
                 maxWidth: 15
                 minHeight: 15
@@ -190,7 +232,7 @@ Page {
 
             Container {
                 id: pageIndicatorPage6
-                background: Color.create(introID.unactivePageIndicatorColor)
+                background: Color.create(introID.pageIndicatorCurrentColor[5])
                 minWidth: 15
                 maxWidth: 15
                 minHeight: 15
@@ -201,7 +243,7 @@ Page {
 
             Container {
                 id: pageIndicatorPage7
-                background: Color.create(introID.unactivePageIndicatorColor)
+                background: Color.create(introID.pageIndicatorCurrentColor[6])
                 minWidth: 15
                 maxWidth: 15
                 minHeight: 15
