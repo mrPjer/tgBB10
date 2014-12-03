@@ -3,11 +3,41 @@ import bb.cascades 1.4
 Page {
     // main container of Intro page
     Container {
-        id: introMainID
+        id: introID
         background: Color.White
         layout: StackLayout {
             
         }
+        
+        //track on which page we are currently
+        property int pagenumber: 0 
+        
+        property int touchEnteredX: 0
+        property int touchEndX: 0
+
+        
+        property variant title: [
+            "Telegram",
+            "Fast",
+            "Free",
+            "Secure",
+            "Powerful",
+            "Cloud-Based",
+            "Private"]
+        
+        property variant text: [
+            "<html>The world's <b>fastest</b> messaging app.\nIt is <b>free</b> and <b>secure</b>.</html>",
+            "<html><b>Telegram</b> delivers messages\nfaster than any other application.</html>",
+            "<html><b>Telegram</b> is free forever. No ads.\nNo subscription fees.</html>",
+            "<html><b>Telegram</b> keeps your messages\nsafe from hacker attacks.</html>",
+            "<html><b>Telegram</b> has no limit on\nthe size of your chats and media.</html>",
+            "<html><b>Telegram</b> lets you access your\n messages from multiple devices.</html>",
+            "<html><b>Telegram</b> messages are heavily\nencrypted and can self-destruct.</html>"]
+        
+        property string image: "asset:///images/Intro/intro1.png"
+        
+        property string unactivePageIndicatorColor: "#ffe0ded9"
+
         
         // Container from which you can swipe and change through different messages
         Container {
@@ -17,27 +47,23 @@ Page {
             preferredHeight: maxHeight
             topPadding: 400
             layout: StackLayout {
-                
             }
             
-            property string image: "asset:///images/Intro/intro1.png"
-            property string titleText: "Telegram"
-            property string text: "<html>The world's <b>fastest</b> messaging app.\nIt is <b>free</b> and <b>secure</b>.</html>"
-            property string unactivePageIndicatorColor: "#ffe0ded9"
             
-            // Logo image 
+            // Logo 
             ImageView {
                 id: logoID
-                imageSource: swipablePartID.image
+                imageSource: introID.image.replace(/[0-9]/, (introID.pagenumber + 1).toString())
                 horizontalAlignment: HorizontalAlignment.Center
                 bottomMargin: 50
-                
+                accessibility.name: "logoImage"
             }
+            
             
             // title text
             Label {
                 id: titleLabelID
-                text: swipablePartID.titleText
+                text: introID.title[introID.pagenumber]
                 horizontalAlignment: HorizontalAlignment.Center
                 verticalAlignment: VerticalAlignment.Center
                 textStyle.fontWeight: FontWeight.Normal
@@ -45,15 +71,16 @@ Page {
                 textFit.minFontSizeValue: 16.0
 
                 textStyle.color: Color.Black
-                textFit.maxFontSizeValue: 15.0
+                textFit.maxFontSizeValue: 16.0
                 textStyle.fontFamily: "Trebuchet MS"
+                autoSize.maxLineCount: -1
 
             }
-            
+
             // message text
             Label {
                 id: textLabelID
-                text: swipablePartID.text
+                text: introID.text[introID.pagenumber]
                 textStyle.color: Color.Black
                 textStyle.textAlign: TextAlign.Center
                 multiline: true
@@ -65,7 +92,36 @@ Page {
 
         }
 
-        //Container with page indicators
+        //swipe logic
+        
+        property int sWIPE_DISTANCE_TRESHOLD: 250
+        onTouch: {
+            if (event.isDown()) {
+                introID.touchEnteredX = event.windowX
+            }
+
+            if (event.isUp()) {
+                introID.touchEndX = event.windowX
+
+                if ((introID.touchEndX - introID.touchEnteredX) > 250) {
+                    if (pagenumber > 0) {
+                        pagenumber = pagenumber - 1
+                        
+                    }
+                }
+                  
+                if ((introID.touchEndX - introID.touchEnteredX) < -250) {
+                    if (pagenumber < 6) {
+                        pagenumber = pagenumber + 1
+                    }
+                }
+                
+                introID.touchEnteredX = 0
+                introID.touchEndX = 0
+            }
+        }
+
+        //Page indicators
         Container {
             id: staticPartID
             background: Color.White
@@ -74,10 +130,10 @@ Page {
             topPadding: 50
             leftPadding: 150
             horizontalAlignment: HorizontalAlignment.Center
-            layout: StackLayout { 
+            layout: StackLayout {
                 orientation: LayoutOrientation.LeftToRight
             }
-            
+
             Container {
                 id: pageIndicatorPage1
                 background: Color.create("#ff00a6df")
@@ -86,12 +142,12 @@ Page {
                 minHeight: 15
                 maxHeight: 15
                 rightMargin: 50
-                
+
             }
-            
+
             Container {
                 id: pageIndicatorPage2
-                background: Color.create(swipablePartID.unactivePageIndicatorColor)
+                background: Color.create(introID.unactivePageIndicatorColor)
                 minWidth: 15
                 maxWidth: 15
                 minHeight: 15
@@ -102,7 +158,7 @@ Page {
 
             Container {
                 id: pageIndicatorPage3
-                background: Color.create(swipablePartID.unactivePageIndicatorColor)
+                background: Color.create(introID.unactivePageIndicatorColor)
                 minWidth: 15
                 maxWidth: 15
                 minHeight: 15
@@ -112,7 +168,7 @@ Page {
 
             Container {
                 id: pageIndicatorPage4
-                background: Color.create(swipablePartID.unactivePageIndicatorColor)
+                background: Color.create(introID.unactivePageIndicatorColor)
                 minWidth: 15
                 maxWidth: 15
                 minHeight: 15
@@ -123,7 +179,7 @@ Page {
 
             Container {
                 id: pageIndicatorPage5
-                background: Color.create(swipablePartID.unactivePageIndicatorColor)
+                background: Color.create(introID.unactivePageIndicatorColor)
                 minWidth: 15
                 maxWidth: 15
                 minHeight: 15
@@ -134,7 +190,7 @@ Page {
 
             Container {
                 id: pageIndicatorPage6
-                background: Color.create(swipablePartID.unactivePageIndicatorColor)
+                background: Color.create(introID.unactivePageIndicatorColor)
                 minWidth: 15
                 maxWidth: 15
                 minHeight: 15
@@ -145,7 +201,7 @@ Page {
 
             Container {
                 id: pageIndicatorPage7
-                background: Color.create(swipablePartID.unactivePageIndicatorColor)
+                background: Color.create(introID.unactivePageIndicatorColor)
                 minWidth: 15
                 maxWidth: 15
                 minHeight: 15
