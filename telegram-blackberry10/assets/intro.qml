@@ -58,14 +58,29 @@ Page {
         property string image: "asset:///images/Intro/intro1.png"
         
         
+        
+        Container {
+            id: emptySpaceTop
+            background: Color.White
+            layoutProperties: StackLayoutProperties {
+                spaceQuota: 1
+            }
+            
+        }
+        
+        
         // Container from which you can swipe and change through different messages
         Container {
             id: swipablePartID
             background: Color.White
             preferredWidth: maxWidth
-            preferredHeight: maxHeight
-            topPadding: 400
+            verticalAlignment: VerticalAlignment.Center
+            //topPadding: ui.sdu(10)
             layout: StackLayout {
+                
+            }
+            layoutProperties: StackLayoutProperties {
+                spaceQuota: 5
             }
             
             
@@ -74,8 +89,10 @@ Page {
                 id: logoID
                 imageSource: introID.image.replace(/[0-9]/, (introID.pagenumber + 1).toString())
                 horizontalAlignment: HorizontalAlignment.Center
-                bottomMargin: 50
+                verticalAlignment: VerticalAlignment.Center
+                bottomMargin: ui.sdu(5)
                 accessibility.name: "logoImage"
+                
             }
             
             
@@ -87,12 +104,11 @@ Page {
                 verticalAlignment: VerticalAlignment.Center
                 textStyle.fontWeight: FontWeight.Normal
                 textStyle.textAlign: TextAlign.Center
-                textFit.minFontSizeValue: 16.0
-
                 textStyle.color: Color.Black
-                textFit.maxFontSizeValue: 16.0
                 textStyle.fontFamily: "Trebuchet MS"
                 autoSize.maxLineCount: -1
+                textStyle.fontSize: FontSize.XLarge
+                textFit.mode: LabelTextFitMode.FitToBounds
 
             }
 
@@ -103,16 +119,18 @@ Page {
                 textStyle.color: Color.Black
                 textStyle.textAlign: TextAlign.Center
                 multiline: true
-                textStyle.fontFamily: "Verdana"
+                textStyle.fontFamily: "Trebuchet MS"
                 horizontalAlignment: HorizontalAlignment.Center
                 textFormat: TextFormat.Html
+                textStyle.fontSize: FontSize.Medium
+                textFit.mode: LabelTextFitMode.FitToBounds
 
             }
 
         }
 
         //swipe logic
-        property int sWIPE_TRESHOLD: 200
+        property int sWIPE_TRESHOLD: ui.sdu(20)
         onTouch: {
             if (event.isDown()) {
                 introID.touchEnteredX = event.windowX
@@ -140,14 +158,13 @@ Page {
         }
         
         
+        //page indicator logic
         onPagenumberChanged: {
-            console.log("SUP bitches pagenumber changed yo")
-            console.log(introID.pageIndicatorCurrentColor[introID.pagenumber])
-            console.log(introID.pageIndicatorActiveColor[introID.pagenumber])
+            
             var temp = introID.pageIndicatorCurrentColor
             temp[introID.pagenumber] =
                 introID.pageIndicatorActiveColor[introID.pagenumber]
-            console.log(introID.pageIndicatorCurrentColor[introID.pagenumber])
+
                 
             if(pagenumber > 0) {
                 temp[introID.pagenumber - 1] =
@@ -167,89 +184,178 @@ Page {
             id: pageIndicatorID
             background: Color.White
             preferredWidth: maxWidth
-            preferredHeight: 50
-            topPadding: 50
-            leftPadding: 150
+            topPadding: ui.sdu(7)
             horizontalAlignment: HorizontalAlignment.Center
             layout: StackLayout {
                 orientation: LayoutOrientation.LeftToRight
             }
+            layoutProperties: StackLayoutProperties {
+                spaceQuota: 1
+            }
             
-
+            property int pageIndicatorSize: ui.sdu(2)
+            property int spaceBetweenIndicators: ui.sdu(6)
+            
             Container {
-                id: pageIndicatorPage1
-                background: Color.create(introID.pageIndicatorCurrentColor[0])
-                minWidth: 15
-                maxWidth: 15
-                minHeight: 15
-                maxHeight: 15
-                rightMargin: 50
+                id: emptySpaceStart
+                background: Color.White
+                layoutProperties: StackLayoutProperties {
+                    spaceQuota: 2
+                }
+            }
+            
+            Container {
+                id: pageIndicatorSpace1
+                background: Color.White
+                layoutProperties: StackLayoutProperties {
+                    spaceQuota: 1
+                }
+                Container {
+                    id: pageIndicatorPage1
+                    background: Color.create(introID.pageIndicatorCurrentColor[0])
+                    minWidth: pageIndicatorID.pageIndicatorSize
+                    maxWidth: pageIndicatorID.pageIndicatorSize
+                    minHeight: pageIndicatorID.pageIndicatorSize
+                    maxHeight: pageIndicatorID.pageIndicatorSize
+                    horizontalAlignment: HorizontalAlignment.Center
+    
+                }
+            }
+            
+            Container {
+                id: pageIndicatorSpace2
+                background: Color.White
+                layoutProperties: StackLayoutProperties {
+                    spaceQuota: 1
+                }
 
+                Container {
+                    id: pageIndicatorPage2
+                    background: Color.create(introID.pageIndicatorCurrentColor[1])
+                    minWidth: pageIndicatorID.pageIndicatorSize
+                    maxWidth: pageIndicatorID.pageIndicatorSize
+                    minHeight: pageIndicatorID.pageIndicatorSize
+                    maxHeight: pageIndicatorID.pageIndicatorSize
+                    horizontalAlignment: HorizontalAlignment.Center
+                    layoutProperties: StackLayoutProperties {
+                        spaceQuota: 1
+                    }
+    
+                }
             }
 
             Container {
-                id: pageIndicatorPage2
-                background: Color.create(introID.pageIndicatorCurrentColor[1])
-                minWidth: 15
-                maxWidth: 15
-                minHeight: 15
-                maxHeight: 15
-                rightMargin: 50
-
+                id: pageIndicatorSpace3
+                background: Color.White
+                layoutProperties: StackLayoutProperties {
+                    spaceQuota: 1
+                }
+                Container {
+                    id: pageIndicatorPage3
+                    background: Color.create(introID.pageIndicatorCurrentColor[2])
+                    minWidth: pageIndicatorID.pageIndicatorSize
+                    maxWidth: pageIndicatorID.pageIndicatorSize
+                    minHeight: pageIndicatorID.pageIndicatorSize
+                    maxHeight: pageIndicatorID.pageIndicatorSize
+                    horizontalAlignment: HorizontalAlignment.Center
+                    layoutProperties: StackLayoutProperties {
+                        spaceQuota: 1
+                    }
+                }
             }
 
             Container {
-                id: pageIndicatorPage3
-                background: Color.create(introID.pageIndicatorCurrentColor[2])
-                minWidth: 15
-                maxWidth: 15
-                minHeight: 15
-                maxHeight: 15
-                rightMargin: 50
+                id: pageIndicatorSpace4
+                background: Color.White
+                layoutProperties: StackLayoutProperties {
+                    spaceQuota: 1
+                }
+                Container {
+                    id: pageIndicatorPage4
+                    background: Color.create(introID.pageIndicatorCurrentColor[3])
+                    minWidth: pageIndicatorID.pageIndicatorSize
+                    maxWidth: pageIndicatorID.pageIndicatorSize
+                    minHeight: pageIndicatorID.pageIndicatorSize
+                    maxHeight: pageIndicatorID.pageIndicatorSize
+                    horizontalAlignment: HorizontalAlignment.Center
+                    layoutProperties: StackLayoutProperties {
+                        spaceQuota: 1
+                    }
+    
+                }
             }
 
             Container {
-                id: pageIndicatorPage4
-                background: Color.create(introID.pageIndicatorCurrentColor[3])
-                minWidth: 15
-                maxWidth: 15
-                minHeight: 15
-                maxHeight: 15
-                rightMargin: 50
-
+                id: pageIndicatorSpace5
+                background: Color.White
+                layoutProperties: StackLayoutProperties {
+                    spaceQuota: 1
+                }
+                Container {
+                    id: pageIndicatorPage5
+                    background: Color.create(introID.pageIndicatorCurrentColor[4])
+                    minWidth: pageIndicatorID.pageIndicatorSize
+                    maxWidth: pageIndicatorID.pageIndicatorSize
+                    minHeight: pageIndicatorID.pageIndicatorSize
+                    maxHeight: pageIndicatorID.pageIndicatorSize
+                    horizontalAlignment: HorizontalAlignment.Center
+                    layoutProperties: StackLayoutProperties {
+                        spaceQuota: 1
+                    }
+    
+                }
             }
 
             Container {
-                id: pageIndicatorPage5
-                background: Color.create(introID.pageIndicatorCurrentColor[4])
-                minWidth: 15
-                maxWidth: 15
-                minHeight: 15
-                maxHeight: 15
-                rightMargin: 50
-
+                id: pageIndicatorSpace6
+                background: Color.White
+                layoutProperties: StackLayoutProperties {
+                    spaceQuota: 1
+                }
+                Container {
+                    id: pageIndicatorPage6
+                    background: Color.create(introID.pageIndicatorCurrentColor[5])
+                    minWidth: pageIndicatorID.pageIndicatorSize
+                    maxWidth: pageIndicatorID.pageIndicatorSize
+                    minHeight: pageIndicatorID.pageIndicatorSize
+                    maxHeight: pageIndicatorID.pageIndicatorSize
+                    horizontalAlignment: HorizontalAlignment.Center
+                    layoutProperties: StackLayoutProperties {
+                        spaceQuota: 1
+                    }
+    
+                }
             }
 
             Container {
-                id: pageIndicatorPage6
-                background: Color.create(introID.pageIndicatorCurrentColor[5])
-                minWidth: 15
-                maxWidth: 15
-                minHeight: 15
-                maxHeight: 15
-                rightMargin: 50
-
+                id: pageIndicatorSpace7
+                background: Color.White
+                layoutProperties: StackLayoutProperties {
+                    spaceQuota: 1
+                }
+                Container {
+                    id: pageIndicatorPage7
+                    background: Color.create(introID.pageIndicatorCurrentColor[6])
+                    minWidth: pageIndicatorID.pageIndicatorSize
+                    maxWidth: pageIndicatorID.pageIndicatorSize
+                    minHeight: pageIndicatorID.pageIndicatorSize
+                    maxHeight: pageIndicatorID.pageIndicatorSize
+                    rightMargin: pageIndicatorID.spaceBetweenIndicators
+                    horizontalAlignment: HorizontalAlignment.Center
+                    layoutProperties: StackLayoutProperties {
+                        spaceQuota: 1
+                    }
+    
+                }
+                
             }
-
+            
             Container {
-                id: pageIndicatorPage7
-                background: Color.create(introID.pageIndicatorCurrentColor[6])
-                minWidth: 15
-                maxWidth: 15
-                minHeight: 15
-                maxHeight: 15
-                rightMargin: 50
-
+                id: emptySpaceEnd
+                background: Color.White
+                layoutProperties: StackLayoutProperties {
+                    spaceQuota: 2
+                }
             }
         }
 
@@ -258,13 +364,15 @@ Page {
             id: buttonContainerID
             background: Color.White
             preferredWidth: maxWidth
-            preferredHeight: 750
-            topPadding: 100 
+            topPadding: ui.sdu(1) 
+            layoutProperties: StackLayoutProperties {
+                spaceQuota: 1
+            }
             
             Button {
                 horizontalAlignment: HorizontalAlignment.Center
                 color: Color.create("#ff00a6df")
-                preferredWidth: 500
+                preferredWidth: ui.sdu(63)
                 text: "Start messaging"
             }
             
