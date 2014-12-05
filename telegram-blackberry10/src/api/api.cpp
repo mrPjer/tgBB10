@@ -15,6 +15,10 @@ API::API(){
     qsrand(time.msec());
 }
 
+void API::run(){
+    delay();
+}
+
 void API::setSleepFrom(unsigned long msec){
     sleepFrom = msec;
 }
