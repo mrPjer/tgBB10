@@ -6,6 +6,12 @@ Page {
     titleBar: TitleBar {
         title: 'Settings'
     }
+    attachedObjects: [
+        ComponentDefinition {
+            id: editPage
+            source: "asset:///settings/edit_screen.qml"
+        }
+    ]
     ScrollView {
 
         Container {
@@ -61,8 +67,12 @@ Page {
                 }
 
                 ImageButton {
-                    defaultImageSource: "asset:///images/shared/menu_bar_edit.png"
+                    defaultImageSource: "asset:///images/shared/profile_edit.png"
                     verticalAlignment: VerticalAlignment.Center
+                    onClicked: {
+                        var newPage = editPage.createObject()
+                        navigationPane.push(newPage)
+                    }
 
                 }
             }
@@ -90,17 +100,18 @@ Page {
 
             }
             Container {
-
-            }
-            Container {
                 layout: StackLayout {
 
                 }
                 layoutProperties: StackLayoutProperties {
-                    spaceQuota: 1
+
                 }
                 ClickableRow {
                     text: "Notifications and Sounds"
+                    onTouch: {
+                        var newPage = editPage.createObject()
+                        navigationPane.push(newPage)
+                    }
                 }
                 Divider {
 
@@ -113,6 +124,9 @@ Page {
                 }
                 ClickableRow {
                     text: "Chat Settings"
+                    onTouch: {
+
+                    }
                 }
                 Divider {
 
@@ -126,19 +140,43 @@ Page {
 
             }
             Container {
+
                 Button {
                     text: "Log Out"
                     preferredWidth: maxWidth
                 }
+                Label {
+                    text: "Telegram for Blackberry v0.1"
+                    textStyle.fontSize: FontSize.XXSmall
+                    textStyle.color: Color.LightGray
+                    horizontalAlignment: HorizontalAlignment.Center
+                }
             }
 
-            Label {
-                text: "Telegram for Blackberry v0.1"
-                textStyle.fontSize: FontSize.XXSmall
-                textStyle.color: Color.LightGray
-                horizontalAlignment: HorizontalAlignment.Center
-            }
         }
-
     }
+    actions: [
+        ActionItem {
+            title: "Edit"
+            imageSource: "asset:///images/shared/menu_bar_edit.png"
+            onTriggered: {
+                var newPage = editPage.createObject()
+                navigationPane.push(newPage)
+            }
+
+        },
+        ActionItem {
+            title: "Ask a Question"
+            imageSource: "asset:///images/shared/menu_FAQ.png"
+        },
+        ActionItem {
+            title: "Telegram FAQ"
+            imageSource: "asset:///images/shared/menu_FAQ.png"
+        },
+        ActionItem {
+            title: "Log Out"
+            imageSource: "asset:///images/shared/menu_logout.png"
+        }
+    ]
+
 }
