@@ -19,7 +19,7 @@ class API: public QThread{
 private:
     static unsigned long sleepFrom;
     static unsigned long sleepTo;
-    virtual void run() = 0;
+    virtual void run();
 
 protected:
     void delay(){
