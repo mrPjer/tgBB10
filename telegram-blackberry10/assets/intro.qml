@@ -371,7 +371,6 @@ Page {
             
             Button {
                 horizontalAlignment: HorizontalAlignment.Center
-                color: Color.create("#ff00a6df")
                 preferredWidth: ui.sdu(63)
                 text: "Start messaging"
             }
