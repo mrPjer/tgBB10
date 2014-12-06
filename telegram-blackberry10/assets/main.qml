@@ -1,5 +1,6 @@
 import bb.cascades 1.2
 import "main"
+import "intro"
 
 NavigationPane {
     id: navigationPane
@@ -17,12 +18,13 @@ NavigationPane {
                     Button {
                         text: "Intro screen"
                         onClicked: {
-                            var page = introPageDefinition.createObject()
-                            navigationPane.push(page)
+                            introPageSheet.open()
                         }
-                        attachedObjects: ComponentDefinition {
-                            id: introPageDefinition
-                            source: 'intro/intro.qml'
+                        attachedObjects: Sheet {
+                            id: introPageSheet
+                            peekEnabled: false
+                            IntroWithPane {
+                            }
                         }
                     }
 
