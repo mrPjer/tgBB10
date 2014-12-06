@@ -10,8 +10,6 @@
 
 #include <QThread>
 #include <QTime>
-#include <QGlobal.h>
-#include <unistd.h>
 using namespace std;
 
 class APIDelay: public QThread{
