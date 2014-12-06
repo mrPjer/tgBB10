@@ -1,4 +1,5 @@
 import bb.cascades 1.2
+import "main"
 
 NavigationPane {
     id: navigationPane
@@ -34,6 +35,23 @@ NavigationPane {
                         attachedObjects: ComponentDefinition {
                             id: pageDefinition
                             source: 'login/country_number_input.qml'
+                        }
+                    }
+
+                    Button {
+                        text: "Main page"
+                        onClicked: {
+                            mainPageSheet.open()
+                        }
+                        attachedObjects: Sheet {
+                            id: mainPageSheet
+                            peekEnabled: false
+                            MainPage {
+                                showBackButton: true
+                                onDismiss: {
+                                    mainPageSheet.close()
+                                }
+                            }
                         }
                     }
 
