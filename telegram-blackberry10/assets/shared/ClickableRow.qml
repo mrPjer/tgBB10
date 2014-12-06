@@ -1,28 +1,56 @@
 import bb.cascades 1.2
 
 Container {
-    id: clickableRowRoot
-    layout: StackLayout {
-        orientation: LayoutOrientation.LeftToRight
-    }
-    property alias text: label.text
-    leftPadding: 40
-    rightPadding: 40
-    topPadding: 5
-    bottomPadding: 5
 
-    Label {
-        id: label
-        text: "Settings label"
-        textStyle.fontSize: FontSize.XLarge
+    id: clickableRowRoot
+
+    property alias text: label.text
+    property alias rightText: rightLabel.text
+    signal rowClicked()
+
+    verticalAlignment: VerticalAlignment.Center
+    layout: DockLayout {
+    }
+
+    Container {
         verticalAlignment: VerticalAlignment.Center
-        layoutProperties: StackLayoutProperties {
-            spaceQuota: 1
+
+        layout: StackLayout {
+            orientation: LayoutOrientation.LeftToRight
+        }
+        leftPadding: 20
+        rightPadding: 20
+        topPadding: 5
+        bottomPadding: 5
+
+        Label {
+            id: label
+            layoutProperties: StackLayoutProperties {
+                spaceQuota: 1
+            }
+
+            text: "Settings label"
+        }
+        Label {
+            id: rightLabel
+            text: ""
+
+        }
+        ImageView {
+
+            imageSource: "asset:///images/shared/setting_arrow.png"
+            verticalAlignment: VerticalAlignment.Center
+            accessibility.name: "Arrow indicator"
         }
     }
-    ImageView {
-        imageSource: "asset:///images/shared/setting_arrow.png"
+
+    Button {
+        id: button
         verticalAlignment: VerticalAlignment.Center
-        accessibility.name: "Arrow indicator"
+        preferredWidth: maxWidth
+        opacity: 0.0001
+        onClicked: {
+            rowClicked()
+        }
     }
 }
