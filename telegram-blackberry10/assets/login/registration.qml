@@ -121,6 +121,7 @@ Page {
 
             attachedObjects: Sheet {
                 id: mainPage
+                peekEnabled: false
                 MainPage {
                 }
             }
