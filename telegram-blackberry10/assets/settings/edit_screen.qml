@@ -29,10 +29,10 @@ Page {
         }
     }
     Container {
-        leftPadding: 40
-        rightPadding: 40
-        topPadding: 40
-        bottomPadding: 40
+        leftPadding: 8
+        rightPadding: 8
+        topPadding: 8
+        bottomPadding: 8
 
         layout: StackLayout {
         }
