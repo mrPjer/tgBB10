@@ -27,13 +27,13 @@ Page {
             "Private"]
         
         property variant text: [
-            "<html>The world's <b>fastest</b> messaging app.\nIt is <b>free</b> and <b>secure</b>.</html>",
-            "<html><b>Telegram</b> delivers messages\nfaster than any other application.</html>",
-            "<html><b>Telegram</b> is free forever. No ads.\nNo subscription fees.</html>",
-            "<html><b>Telegram</b> keeps your messages\nsafe from hacker attacks.</html>",
-            "<html><b>Telegram</b> has no limit on\nthe size of your chats and media.</html>",
-            "<html><b>Telegram</b> lets you access your\n messages from multiple devices.</html>",
-            "<html><b>Telegram</b> messages are heavily\nencrypted and can self-destruct.</html>"]
+            "The world's <b>fastest</b> messaging app.\nIt is <b>free</b> and <b>secure</b>.",
+            "<b>Telegram</b> delivers messages\nfaster than any other application.",
+            "<b>Telegram</b> is free forever. No ads.\nNo subscription fees.",
+            "<b>Telegram</b> keeps your messages\nsafe from hacker attacks.",
+            "<b>Telegram</b> has no limit on\nthe size of your chats and media.",
+            "<b>Telegram</b> lets you access your\n messages from multiple devices.",
+            "<b>Telegram</b> messages are heavily\nencrypted and can self-destruct."]
         
         property variant pageIndicatorActiveColor: [
             "#ff00a6df",
