@@ -31,9 +31,6 @@ TabbedPane {
             titleBar: TitleBar {
                 id: contacts
                 title: "Contacts"
-                dismissAction: ActionItem {
-                    title: "Hi"
-                }
             }
             attachedObjects: [
                 ActionItem {

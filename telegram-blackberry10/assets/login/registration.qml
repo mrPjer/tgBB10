@@ -1,5 +1,6 @@
 import bb.cascades 1.2
 import bb.cascades.pickers 1.0
+import "../main"
 
 Page {
     titleBar: TitleBar {
@@ -113,6 +114,17 @@ Page {
             text: 'Next'
             enabled: false
             horizontalAlignment: HorizontalAlignment.Center
+
+            onClicked: {
+                mainPage.open()
+            }
+
+            attachedObjects: Sheet {
+                id: mainPage
+                peekEnabled: false
+                MainPage {
+                }
+            }
         }
 
     }
