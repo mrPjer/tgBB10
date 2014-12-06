@@ -4,9 +4,7 @@ Page {
     // main container of Intro page
     Container {
         id: introID
-        background: Color.White
         layout: StackLayout {
-            
         }
         
         //track on which page we are currently
@@ -50,7 +48,6 @@ Page {
         
         Container {
             id: emptySpaceTop
-            background: Color.White
             layoutProperties: StackLayoutProperties {
                 spaceQuota: 1
             }
@@ -61,7 +58,6 @@ Page {
         // Container from which you can swipe and change through different messages
         Container {
             id: swipablePartID
-            background: Color.White
             preferredWidth: maxWidth
             verticalAlignment: VerticalAlignment.Center
             //topPadding: ui.sdu(10)
@@ -72,13 +68,11 @@ Page {
                 spaceQuota: 5
             }
             
-            
             // Logo 
             ImageView {
                 id: logoID
                 imageSource: introID.image.replace(/[0-9]/, (introID.pagenumber + 1).toString())
                 horizontalAlignment: HorizontalAlignment.Center
-                verticalAlignment: VerticalAlignment.Center
                 bottomMargin: ui.sdu(5)
                 accessibility.name: "logoImage"
                 
@@ -90,14 +84,11 @@ Page {
                 id: titleLabelID
                 text: introID.title[introID.pagenumber]
                 horizontalAlignment: HorizontalAlignment.Center
-                verticalAlignment: VerticalAlignment.Center
-                textStyle.fontWeight: FontWeight.Normal
-                textStyle.textAlign: TextAlign.Center
-                textStyle.color: Color.Black
-                textStyle.fontFamily: "Trebuchet MS"
-                autoSize.maxLineCount: -1
-                textStyle.fontSize: FontSize.XLarge
-                textFit.mode: LabelTextFitMode.FitToBounds
+                
+                textStyle {
+                    fontSize: FontSize.XLarge
+                    textAlign: TextAlign.Center
+                }
 
             }
 
@@ -105,15 +96,14 @@ Page {
             Label {
                 id: textLabelID
                 text: introID.text[introID.pagenumber]
-                textStyle.color: Color.Black
-                textStyle.textAlign: TextAlign.Center
                 multiline: true
-                textStyle.fontFamily: "Trebuchet MS"
                 horizontalAlignment: HorizontalAlignment.Center
                 textFormat: TextFormat.Html
-                textStyle.fontSize: FontSize.Medium
-                textFit.mode: LabelTextFitMode.FitToBounds
 
+                textStyle {
+                    fontSize: FontSize.Medium
+                    textAlign: TextAlign.Center
+                }
             }
 
         }
