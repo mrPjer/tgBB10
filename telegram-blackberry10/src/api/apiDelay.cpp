@@ -6,6 +6,7 @@
  */
 
 #include "apiDelay.hpp"
+#include <unistd.h>
 
 unsigned long APIDelay::sleepFrom = 300;
 unsigned long APIDelay::sleepTo = 700;
