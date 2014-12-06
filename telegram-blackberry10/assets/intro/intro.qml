@@ -3,8 +3,6 @@ import bb.cascades 1.2
 Page {
     Container {
         id: root
-        layout: StackLayout {
-        }
 
         //track on which page we are currently
         property int pagenumber: 0
@@ -38,10 +36,7 @@ Page {
         Container {
             preferredWidth: maxWidth
             verticalAlignment: VerticalAlignment.Center
-            //topPadding: 10
-            layout: StackLayout {
 
-            }
             layoutProperties: StackLayoutProperties {
                 spaceQuota: 5
             }
