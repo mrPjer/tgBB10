@@ -158,26 +158,17 @@ Page {
              bottomMargin: 48
          }
 
-        //Container with a button
         Container {
-            id: buttonContainerID
-            background: Color.White
-            preferredWidth: maxWidth
-            topPadding: ui.sdu(1) 
+            horizontalAlignment: HorizontalAlignment.Center
             layoutProperties: StackLayoutProperties {
                 spaceQuota: 1
             }
-            
+
             Button {
-                horizontalAlignment: HorizontalAlignment.Center
                 preferredWidth: ui.sdu(63)
                 text: "Start messaging"
             }
-            
-            Container {
-                id: buttonID
-                background: Color.create("#ff00a6df")
-            }
+
         }
 
     }
