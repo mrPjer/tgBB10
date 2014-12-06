@@ -14,6 +14,18 @@ NavigationPane {
                 Container {
 
                     Button {
+                        text: "Intro screen"
+                        onClicked: {
+                            var page = introPageDefinition.createObject()
+                            navigationPane.push(page)
+                        }
+                        attachedObjects: ComponentDefinition {
+                            id: introPageDefinition
+                            source: 'intro/intro.qml'
+                        }
+                    }
+
+                    Button {
                         text: "Login and registration"
                         onClicked: {
                             var page = pageDefinition.createObject()

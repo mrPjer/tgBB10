@@ -29,4 +29,5 @@
 #We really want the config.pri to be here a while
 #config.pri
 
-
+# Simulators
+/sim_10_*
