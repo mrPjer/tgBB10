@@ -2,7 +2,7 @@ import bb.cascades 1.2
 
 Page {
     Container {
-        id: introID
+        id: root
         layout: StackLayout {
         }
 
@@ -36,7 +36,6 @@ Page {
 
         // Container from which you can swipe and change through different messages
         Container {
-            id: swipablePartID
             preferredWidth: maxWidth
             verticalAlignment: VerticalAlignment.Center
             //topPadding: 10
@@ -49,8 +48,7 @@ Page {
 
             // Logo
             ImageView {
-                id: logoID
-                imageSource: introID.image.replace(/[0-9]/, (introID.pagenumber + 1).toString())
+                imageSource: root.image.replace(/[0-9]/, (root.pagenumber + 1).toString())
                 horizontalAlignment: HorizontalAlignment.Center
                 bottomMargin: 5
                 accessibility.name: "logoImage"
@@ -58,8 +56,7 @@ Page {
 
             // title text
             Label {
-                id: titleLabelID
-                text: introID.title[introID.pagenumber]
+                text: root.title[root.pagenumber]
                 horizontalAlignment: HorizontalAlignment.Center
 
                 textStyle {
@@ -70,8 +67,7 @@ Page {
 
             // message text
             Label {
-                id: textLabelID
-                text: introID.text[introID.pagenumber]
+                text: root.text[root.pagenumber]
                 multiline: true
                 horizontalAlignment: HorizontalAlignment.Center
                 textFormat: TextFormat.Html
@@ -87,27 +83,27 @@ Page {
         property int sWIPE_TRESHOLD: 20
         onTouch: {
             if (event.isDown()) {
-                introID.touchEnteredX = event.windowX
+                root.touchEnteredX = event.windowX
             }
 
             if (event.isUp()) {
-                introID.touchEndX = event.windowX
+                root.touchEndX = event.windowX
 
-                if ((introID.touchEndX - introID.touchEnteredX) > sWIPE_TRESHOLD) {
+                if ((root.touchEndX - root.touchEnteredX) > sWIPE_TRESHOLD) {
                     if (pagenumber > 0) {
                         pagenumber = pagenumber - 1
 
                     }
                 }
 
-                if ((introID.touchEndX - introID.touchEnteredX) < - sWIPE_TRESHOLD) {
+                if ((root.touchEndX - root.touchEnteredX) < - sWIPE_TRESHOLD) {
                     if (pagenumber < 6) {
                         pagenumber = pagenumber + 1
                     }
                 }
 
-                introID.touchEnteredX = 0
-                introID.touchEndX = 0
+                root.touchEnteredX = 0
+                root.touchEndX = 0
             }
         }
 
@@ -118,7 +114,7 @@ Page {
 
         PageIndicatorBar {
             id: pageIndicatorBar
-            indicatorColors: introID.pageIndicatorActiveColor
+            indicatorColors: root.pageIndicatorActiveColor
             bottomMargin: 48
         }
 
