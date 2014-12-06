@@ -75,7 +75,7 @@ Page {
         }
 
         //swipe logic
-        property int sWIPE_TRESHOLD: 20
+        property int swipe_threshold: 20
         onTouch: {
             if (event.isDown()) {
                 root.touchEnteredX = event.windowX
@@ -84,14 +84,14 @@ Page {
             if (event.isUp()) {
                 root.touchEndX = event.windowX
 
-                if ((root.touchEndX - root.touchEnteredX) > sWIPE_TRESHOLD) {
+                if ((root.touchEndX - root.touchEnteredX) > swipe_threshold) {
                     if (pagenumber > 0) {
                         pagenumber = pagenumber - 1
 
                     }
                 }
 
-                if ((root.touchEndX - root.touchEnteredX) < - sWIPE_TRESHOLD) {
+                if ((root.touchEndX - root.touchEnteredX) < - swipe_threshold) {
                     if (pagenumber < 6) {
                         pagenumber = pagenumber + 1
                     }
