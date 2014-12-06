@@ -125,7 +125,6 @@ Page {
             }
 
             Button {
-                preferredWidth: 63
                 text: "Start messaging"
             }
         }
