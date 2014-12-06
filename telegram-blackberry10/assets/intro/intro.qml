@@ -39,7 +39,7 @@ Page {
             id: swipablePartID
             preferredWidth: maxWidth
             verticalAlignment: VerticalAlignment.Center
-            //topPadding: ui.sdu(10)
+            //topPadding: 10
             layout: StackLayout {
 
             }
@@ -52,7 +52,7 @@ Page {
                 id: logoID
                 imageSource: introID.image.replace(/[0-9]/, (introID.pagenumber + 1).toString())
                 horizontalAlignment: HorizontalAlignment.Center
-                bottomMargin: ui.sdu(5)
+                bottomMargin: 5
                 accessibility.name: "logoImage"
             }
 
@@ -84,7 +84,7 @@ Page {
         }
 
         //swipe logic
-        property int sWIPE_TRESHOLD: ui.sdu(20)
+        property int sWIPE_TRESHOLD: 20
         onTouch: {
             if (event.isDown()) {
                 introID.touchEnteredX = event.windowX
@@ -129,7 +129,7 @@ Page {
             }
 
             Button {
-                preferredWidth: ui.sdu(63)
+                preferredWidth: 63
                 text: "Start messaging"
             }
         }
