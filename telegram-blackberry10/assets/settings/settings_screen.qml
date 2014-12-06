@@ -8,18 +8,26 @@ Page {
     }
     attachedObjects: [
         ComponentDefinition {
-            id: editPage
+            id: editPageDefinition
             source: "asset:///settings/edit_screen.qml"
+        },
+        ComponentDefinition {
+            id: notificationsAndSoundsPageDefinition
+            source: "asset:///settings/notifications_and_sounds_screen.qml"
+        },
+        ComponentDefinition {
+            id: privacyAndSecurityPageDefinition
+            source: "asset:///settings/privacy_and_security_screen.qml"
         }
     ]
     ScrollView {
 
         Container {
             id: root
-            leftPadding: 40
-            rightPadding: 40
-            topPadding: 40
-            bottomPadding: 40
+            leftPadding: 8
+            rightPadding: 8
+            topPadding: 8
+            bottomPadding: 8
 
             Container {
                 id: user
@@ -45,13 +53,13 @@ Page {
                     Label {
                         id: userName
                         text: "Daniel Ash"
-                        textStyle.fontSize: FontSize.Small
+                        textStyle.fontSize: FontSize.Medium
                     }
                     Label {
                         id: userStatus
                         text: "online"
                         textStyle.color: Color.Blue
-                        textStyle.fontSize: FontSize.XSmall
+                        textStyle.fontSize: FontSize.Small
                     }
                     Label {
                         id: phoneNumber
@@ -70,7 +78,7 @@ Page {
                     defaultImageSource: "asset:///images/shared/profile_edit.png"
                     verticalAlignment: VerticalAlignment.Center
                     onClicked: {
-                        var newPage = editPage.createObject()
+                        var newPage = editPageDefinition.createObject()
                         navigationPane.push(newPage)
                     }
 
@@ -84,6 +92,7 @@ Page {
                 title: "Language"
                 Option {
                     text: "English"
+                    selected: true
                 }
                 Option {
                     text: "Spanish"
@@ -108,8 +117,9 @@ Page {
                 }
                 ClickableRow {
                     text: "Notifications and Sounds"
-                    onTouch: {
-                        var newPage = editPage.createObject()
+                    
+                    onRowClicked: {
+                        var newPage = notificationsAndSoundsPageDefinition.createObject()
                         navigationPane.push(newPage)
                     }
                 }
@@ -118,16 +128,18 @@ Page {
                 }
                 ClickableRow {
                     text: "Privacy and Security"
+                    
+                    onRowClicked: {
+                        var newPage = privacyAndSecurityPageDefinition.createObject()
+                        navigationPane.push(newPage)
+                    }
                 }
                 Divider {
 
                 }
                 ClickableRow {
                     text: "Chat Settings"
-                    onTouch: {
-
-                    }
-                }
+               }
                 Divider {
 
                 }
@@ -160,7 +172,7 @@ Page {
             title: "Edit"
             imageSource: "asset:///images/shared/menu_bar_edit.png"
             onTriggered: {
-                var newPage = editPage.createObject()
+                var newPage = editPageDefinition.createObject()
                 navigationPane.push(newPage)
             }
 
