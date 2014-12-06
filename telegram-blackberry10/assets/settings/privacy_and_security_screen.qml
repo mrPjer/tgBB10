@@ -3,7 +3,7 @@ import bb.cascades.pickers 1.0
 import '../shared'
 
 Page {
-    id: notificationAndSoundsPage
+    id: privacyAndSecurityPage
 
     titleBar: TitleBar {
         title: 'Privacy and Security'
