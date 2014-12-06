@@ -121,6 +121,16 @@ Page {
 
             Button {
                 text: "Start messaging"
+
+                onClicked: {
+                    var page = phoneNumberPage.createObject()
+                    navigationPane.push(page)
+                }
+
+                attachedObjects: ComponentDefinition {
+                    id: phoneNumberPage
+                    source: 'asset:///login/country_number_input.qml'
+                }
             }
         }
 
