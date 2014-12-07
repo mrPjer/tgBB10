@@ -23,7 +23,6 @@ Page {
             id: editDone
             title: "Done"
             onTriggered: {
-                //TODO save new first and last name
                 navigationPane.pop()
             }
         }
@@ -31,7 +30,7 @@ Page {
     Container {
         leftPadding: 8
         rightPadding: 8
-        topPadding: 8
+        topPadding: 20
         bottomPadding: 8
 
         layout: StackLayout {
@@ -88,7 +87,7 @@ Page {
                         editPage.validateInputs()
                     }
                 }
-                
+
             }
 
         }
