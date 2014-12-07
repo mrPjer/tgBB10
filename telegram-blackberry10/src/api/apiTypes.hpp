@@ -24,14 +24,28 @@ public:
 
 struct CodeSent: public QObject{
     Q_OBJECT
+    Q_PROPERTY(bool phone_registered READ isPhoneRegistered)
+    Q_PROPERTY(QString phone_code_hash READ getPhoneCodeHash)
 public:
+    bool isPhoneRegistered(){return phone_registered;}
+    QString getPhoneCodeHash(){return phone_code_hash;}
+
     bool phone_registered;
     QString phone_code_hash;
 };
 
 struct FileLocation: public QObject{
     Q_OBJECT
+    Q_PROPERTY(int dc_id READ getDCID)
+    Q_PROPERTY(int volume_id READ getVolumeID)
+    Q_PROPERTY(int local_id READ getLocalID)
+    Q_PROPERTY(int secret READ getSecret)
 public:
+    int getDCID(){return dc_id;}
+    int getVolumeID(){return volume_id;}
+    int getLocalID(){return local_id;}
+    int getSecret(){return secret;}
+
     int dc_id;
     long volume_id;
     int local_id;
@@ -40,41 +54,78 @@ public:
 
 struct UserProfilePhoto: public QObject{
     Q_OBJECT
+    Q_PROPERTY(long photo_id READ getPhotoID)
+    Q_PROPERTY(FileLocation* photo_small READ getPhotoSmall)
+    Q_PROPERTY(FileLocation* photo_big READ getPhotoBig)
 public:
+    long getPhotoID(){return photo_id;}
+    FileLocation* getPhotoSmall(){return photo_small;}
+    FileLocation* getPhotoBig(){return photo_big;}
+
     long photo_id;
-    FileLocation photo_small;
-    FileLocation photo_big;
+    FileLocation* photo_small;
+    FileLocation* photo_big;
 };
 
 struct UserStatus: public QObject{
     Q_OBJECT
+    Q_PROPERTY(int expires READ getExpires)
+    Q_PROPERTY(int was_online READ getWasOnline)
 public:
+    int getExpires(){return expires;}
+    int getWasOnline(){return was_online;}
+
     int expires;
     int was_online;
 };
 
 struct User: public QObject{
     Q_OBJECT
+    Q_PROPERTY(int id READ getID)
+    Q_PROPERTY(QString first_name READ getFirstName)
+    Q_PROPERTY(QString last_name READ getLastName)
+    Q_PROPERTY(QString phone READ getPhone)
+    Q_PROPERTY(UserProfilePhoto* photo READ getPhoto)
+    Q_PROPERTY(UserStatus* status READ getStatus)
+    Q_PROPERTY(bool inactive READ isInactive)
 public:
+    int getID(){return id;}
+    QString getFirstName(){return first_name;}
+    QString getLastName(){return last_name;}
+    QString getPhone(){return phone;}
+    UserProfilePhoto* getPhoto(){return photo;}
+    UserStatus* getStatus(){return status;}
+    bool isInactive(){return inactive;}
+
     int id;
     QString first_name;
     QString last_name;
     QString phone;
-    UserProfilePhoto photo;
-    UserStatus status;
+    UserProfilePhoto* photo;
+    UserStatus* status;
     bool inactive;
 };
 
 struct Authorization: public QObject{
     Q_OBJECT
+    Q_PROPERTY(int expires READ getExpires)
+    Q_PROPERTY(User* user READ getUser)
 public:
+    int getExpires(){return expires;}
+    User* getUser(){return user;}
+
     int expires;
-    User user;
+    User* user;
 };
 
 struct ExportedAuthorization: public QObject{
     Q_OBJECT
+    Q_PROPERTY(int id READ getID)
+    Q_PROPERTY(QString bytes READ getBytes)
 public:
+    int getID(){return id;}
+    QString getBytes(){return bytes;}
+
     int id;
     QString bytes;
 };

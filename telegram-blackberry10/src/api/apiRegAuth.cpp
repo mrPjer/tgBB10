@@ -8,6 +8,15 @@
 #include <ctime>
 #include "apiRegAuth.hpp"
 
+APIRegAuth::APIRegAuth(){
+    auth.user = new User();
+    auth.user->photo = new UserProfilePhoto();
+    auth.user->status = new UserStatus();
+    auth.user->photo->photo_small = new FileLocation();
+    auth.user->photo->photo_big = new FileLocation();
+    auth.user->status = new UserStatus();
+}
+
 void APIRegAuth::checkPhone(QString phone_number){
     connect(&delay, SIGNAL(finished()), this, SLOT(phoneCheckedEmitter()));
     delay.start();
@@ -79,21 +88,21 @@ void APIRegAuth::callSentEmitter(){
 void APIRegAuth::signedUpEmitter(){
     disconnect(&delay, SIGNAL(finished()), this, SLOT(signedUpEmitter()));
     auth.expires = time(NULL) + 600;
-    auth.user.id = 1337;
-    auth.user.first_name = "Radomir";
-    auth.user.last_name = "Cetnik";
-    auth.user.phone = "12345678";
-    auth.user.inactive = false;
+    auth.user->id = 1337;
+    auth.user->first_name = "Radomir";
+    auth.user->last_name = "Cetnik";
+    auth.user->phone = "12345678";
+    auth.user->inactive = false;
     emit signedUp(&auth);
 }
 void APIRegAuth::signedInEmitter(){
     disconnect(&delay, SIGNAL(finished()), this, SLOT(signedInEmitter()));
     auth.expires = time(NULL) + 600;
-    auth.user.id = 1337;
-    auth.user.first_name = "Radomir";
-    auth.user.last_name = "Cetnik";
-    auth.user.phone = "12345678";
-    auth.user.inactive = false;
+    auth.user->id = 1337;
+    auth.user->first_name = "Radomir";
+    auth.user->last_name = "Cetnik";
+    auth.user->phone = "12345678";
+    auth.user->inactive = false;
     emit signedIn(&auth);
 }
 void APIRegAuth::loggedOutEmitter(){
@@ -117,11 +126,11 @@ void APIRegAuth::authorizationExportedEmitter(){
 void APIRegAuth::authorizationImportedEmitter(){
     disconnect(&delay, SIGNAL(finished()), this, SLOT(authorizationImportedEmitter()));
     auth.expires = time(NULL) + 600;
-    auth.user.id = 1337;
-    auth.user.first_name = "Radomir";
-    auth.user.last_name = "Cetnik";
-    auth.user.phone = "12345678";
-    auth.user.inactive = false;
+    auth.user->id = 1337;
+    auth.user->first_name = "Radomir";
+    auth.user->last_name = "Cetnik";
+    auth.user->phone = "12345678";
+    auth.user->inactive = false;
     emit authorizationImported(&auth);
 }
 // void APIRegAuth::tempAuthKeyBoundEmitter(){ disconnect(&delay, SIGNAL(finished()), this, SLOT(tempAuthKeyBoundEmitter())); emit tempAuthKeyBound();}

@@ -23,6 +23,9 @@ class APIRegAuth: public QObject{
     Authorization auth;
     ExportedAuthorization ea;
 
+public:
+    APIRegAuth();
+
 signals:
     void phoneChecked(PhoneChecked* pc);
     void codeSent(CodeSent* cs);
