@@ -35,7 +35,7 @@ signals:
 
 public slots:
     void checkPhone(string phone_number);
-    void sendCode(string num, int sms_type, int api_id, string api_hash, string lang_code);
+    void sendCode(string phone_number, int sms_type, int api_id, string api_hash, string lang_code);
     void sendSms(string phone_number, string phone_code_hash);
     void sendCall(string phone_number, string phone_code_hash);
     void signUp(string phone_number, string phone_code_hash, string phone_code, string first_name, string last_name);
