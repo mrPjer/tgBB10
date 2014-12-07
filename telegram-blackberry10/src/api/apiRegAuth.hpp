@@ -10,7 +10,7 @@
 
 #include "apiDelay.hpp"
 #include "apiTypes.hpp"
-#include <string>
+#include <QString>
 #include <vector>
 using namespace std;
 
@@ -34,17 +34,17 @@ signals:
 
 
 public slots:
-    void checkPhone(string phone_number);
-    void sendCode(string phone_number, int sms_type, int api_id, string api_hash, string lang_code);
-    void sendSms(string phone_number, string phone_code_hash);
-    void sendCall(string phone_number, string phone_code_hash);
-    void signUp(string phone_number, string phone_code_hash, string phone_code, string first_name, string last_name);
-    void signIn(string phone_number, string phone_code_hash, string phone_code);
+    void checkPhone(QString phone_number);
+    void sendCode(QString phone_number, int sms_type, int api_id, QString api_hash, QString lang_code);
+    void sendSms(QString phone_number, QString phone_code_hash);
+    void sendCall(QString phone_number, QString phone_code_hash);
+    void signUp(QString phone_number, QString phone_code_hash, QString phone_code, QString first_name, QString last_name);
+    void signIn(QString phone_number, QString phone_code_hash, QString phone_code);
     void logOut();
-    void sendInvites(vector<string>& numbers, string message);
+    void sendInvites(vector<QString>& numbers, QString message);
     void resetAuthorizations();
     void exportAuthorization(int dc_id);
-    void importAuthorization(int id, string bytes);
+    void importAuthorization(int id, QString bytes);
 //    void bindTempAuthKey();
 
     void phoneCheckedEmitter();
