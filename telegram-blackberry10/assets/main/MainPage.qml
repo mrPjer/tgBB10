@@ -1,4 +1,5 @@
 import bb.cascades 1.2
+import "../settings"
 
 TabbedPane {
     id: root
@@ -20,7 +21,7 @@ TabbedPane {
         if (showBackButton) {
             contacts.dismissAction = closeItemContacts
             chat.dismissAction = closeItemChats
-            settings.dismissAction = closeItemSettings
+            settingsScreen.titleBar.dismissAction = closeItemSettings
         }
     }
 
@@ -67,11 +68,8 @@ TabbedPane {
     Tab {
         title: "Settings"
         imageSource: "asset:///images/main/bar_menu_settings.png"
-        MockSettingsPage {
-            titleBar: TitleBar {
-                id: settings
-                title: "Settings"
-            }
+        SettingsWithPane {
+            id: settingsScreen
             attachedObjects: [
                 ActionItem {
                     id: closeItemSettings
