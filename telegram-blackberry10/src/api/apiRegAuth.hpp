@@ -19,17 +19,17 @@ class APIRegAuth: public QObject{
     Q_OBJECT
 
 signals:
-    void phoneChecked(PhoneChecked pc);
-    void codeSent(CodeSent cs);
+    void phoneChecked(PhoneChecked& pc);
+    void codeSent(CodeSent& cs);
     void smsSent(bool);
     void callSent(bool);
-    void signedUp(Authorization auth);
-    void signedIn(Authorization auth);
+    void signedUp(Authorization& auth);
+    void signedIn(Authorization& auth);
     void loggedOut(bool);
     void invitesSent(bool);
     void authorizationsReset(bool);
-    void authorizationExported(ExportedAuthorization ea);
-    void authorizationImported(Authorization auth);
+    void authorizationExported(ExportedAuthorization& ea);
+    void authorizationImported(Authorization& auth);
 //    void tempAuthKeyBound();
 
 

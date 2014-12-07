@@ -8,52 +8,75 @@
 #ifndef APITYPES_HPP_
 #define APITYPES_HPP_
 
-struct PhoneChecked{
+#include <QString>
+
+struct PhoneChecked: public QObject{
+    Q_OBJECT
+    Q_PROPERTY(bool phone_registered READ isPhoneRegistered)
+    Q_PROPERTY(bool phone_invited READ isPhoneInvited)
+public:
+    bool isPhoneRegistered(){return phone_registered;}
+    bool isPhoneInvited(){return phone_invited;}
+
     bool phone_registered;
     bool phone_invited;
 };
 
-struct CodeSent{
+struct CodeSent: public QObject{
+    Q_OBJECT
+public:
     bool phone_registered;
-    string phone_code_hash;
+    QString phone_code_hash;
 };
 
-struct FileLocation{
+struct FileLocation: public QObject{
+    Q_OBJECT
+public:
     int dc_id;
     long volume_id;
     int local_id;
     long secret;
 };
 
-struct UserProfilePhoto{
+struct UserProfilePhoto: public QObject{
+    Q_OBJECT
+public:
     long photo_id;
     FileLocation photo_small;
     FileLocation photo_big;
 };
 
-struct UserStatus{
+struct UserStatus: public QObject{
+    Q_OBJECT
+public:
     int expires;
     int was_online;
 };
 
-struct User{
+struct User: public QObject{
+    Q_OBJECT
+public:
     int id;
-    string first_name;
-    string last_name;
-    string phone;
+    QString first_name;
+    QString last_name;
+    QString phone;
     UserProfilePhoto photo;
     UserStatus status;
     bool inactive;
 };
 
-struct Authorization{
+struct Authorization: public QObject{
+    Q_OBJECT
+public:
     int expires;
     User user;
 };
 
-struct ExportedAuthorization{
+struct ExportedAuthorization: public QObject{
+    Q_OBJECT
+public:
     int id;
-    string bytes;
+    QString bytes;
 };
 
 
