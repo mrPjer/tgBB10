@@ -28,6 +28,7 @@ Page {
         }
     ]
     ScrollView {
+        accessibility.name: "Content"
 
         Container {
             id: root
@@ -43,6 +44,7 @@ Page {
 
                 ImageView {
                     id: avatar
+                    accessibility.name: "Avatar"
                     preferredHeight: 180
                     preferredWidth: 180
                     scalingMethod: ScalingMethod.AspectFill
@@ -90,6 +92,7 @@ Page {
                     leftMargin: 20
                     verticalAlignment: VerticalAlignment.Center
                     ImageButton {
+                        accessibility.name: "Edit profile"
                         defaultImageSource: "asset:///images/shared/profile_edit.png"
 
                         onClicked: {
