@@ -10,6 +10,7 @@ Page {
     }
 
     ScrollView {
+        accessibility.name: "Content"
 
         Container {
             id: root
