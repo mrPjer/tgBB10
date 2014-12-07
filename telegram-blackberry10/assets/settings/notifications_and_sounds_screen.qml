@@ -4,7 +4,7 @@ import '../shared'
 
 Page {
     id: notificationAndSoundsPage
-    
+
     titleBar: TitleBar {
         title: 'Notifications and Sounds'
     }
@@ -13,8 +13,7 @@ Page {
 
         Container {
             id: root
-            leftPadding: 8
-            rightPadding: 8
+
             topPadding: 8
             bottomPadding: 8
 
@@ -37,10 +36,15 @@ Page {
             Divider {
 
             }
-            DropDown {
-                title: "Sound"
-                Option {
-                    text: "Default"
+            Container {
+                leftPadding: 20
+                rightPadding: 20
+
+                DropDown {
+                    title: "Sound"
+                    Option {
+                        text: "Default"
+                    }
                 }
             }
             Divider {
