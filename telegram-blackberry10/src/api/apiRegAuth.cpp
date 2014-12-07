@@ -8,27 +8,27 @@
 #include <ctime>
 #include "apiRegAuth.hpp"
 
-void APIRegAuth::checkPhone(string phone_number){
+void APIRegAuth::checkPhone(QString phone_number){
     connect(&delay, SIGNAL(finished()), this, SLOT(phoneCheckedEmitter()));
     delay.start();
 }
-void APIRegAuth::sendCode(string phone_number, int sms_type, int api_id, string api_hash, string lang_code){
+void APIRegAuth::sendCode(QString phone_number, int sms_type, int api_id, QString api_hash, QString lang_code){
     connect(&delay, SIGNAL(finished()), this, SLOT(codeSentEmitter()));
     delay.start();
 }
-void APIRegAuth::sendSms(string phone_number, string phone_code_hash){
+void APIRegAuth::sendSms(QString phone_number, QString phone_code_hash){
     connect(&delay, SIGNAL(finished()), this, SLOT(smsSentEmitter()));
     delay.start();
 }
-void APIRegAuth::sendCall(string phone_number, string phone_code_hash){
+void APIRegAuth::sendCall(QString phone_number, QString phone_code_hash){
     connect(&delay, SIGNAL(finished()), this, SLOT(callSentEmitter()));
     delay.start();
 }
-void APIRegAuth::signUp(string phone_number, string phone_code_hash, string phone_code, string first_name, string last_name){
+void APIRegAuth::signUp(QString phone_number, QString phone_code_hash, QString phone_code, QString first_name, QString last_name){
     connect(&delay, SIGNAL(finished()), this, SLOT(signedUpEmitter()));
     delay.start();
 }
-void APIRegAuth::signIn(string phone_number, string phone_code_hash, string phone_code){
+void APIRegAuth::signIn(QString phone_number, QString phone_code_hash, QString phone_code){
     connect(&delay, SIGNAL(finished()), this, SLOT(signedInEmitter()));
     delay.start();
 }
@@ -36,7 +36,7 @@ void APIRegAuth::logOut(){
     connect(&delay, SIGNAL(finished()), this, SLOT(loggedOutEmitter()));
     delay.start();
 }
-void APIRegAuth::sendInvites(vector<string>& numbers, string message){
+void APIRegAuth::sendInvites(vector<QString>& numbers, QString message){
     connect(&delay, SIGNAL(finished()), this, SLOT(invitesSentEmitter()));
     delay.start();
 }
@@ -48,7 +48,7 @@ void APIRegAuth::exportAuthorization(int dc_id){
     connect(&delay, SIGNAL(finished()), this, SLOT(authorizationExportedEmitter()));
     delay.start();
 }
-void APIRegAuth::importAuthorization(int id, string bytes){
+void APIRegAuth::importAuthorization(int id, QString bytes){
     connect(&delay, SIGNAL(finished()), this, SLOT(authorizationImportedEmitter()));
     delay.start();
 }
