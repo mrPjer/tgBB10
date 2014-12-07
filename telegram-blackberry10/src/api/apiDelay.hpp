@@ -9,7 +9,6 @@
 #define APIDELAY_HPP_
 
 #include <QThread>
-#include <QTime>
 using namespace std;
 
 class APIDelay: public QThread{
