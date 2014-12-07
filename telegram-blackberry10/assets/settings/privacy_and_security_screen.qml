@@ -13,8 +13,7 @@ Page {
 
         Container {
             id: root
-            leftPadding: 8
-            rightPadding: 8
+
             topPadding: 8
             bottomPadding: 8
 
@@ -32,7 +31,7 @@ Page {
             }
             ClickableRow {
                 text: "Last Seen"
-                rightText: "Everybody(-3)"
+                rightText: "Everybody (-3)"
             }
             Container {
                 leftPadding: 20
@@ -62,7 +61,7 @@ Page {
                 }
             }
             Divider {
-                
+
             }
             Header {
                 title: "Delete My Account"
