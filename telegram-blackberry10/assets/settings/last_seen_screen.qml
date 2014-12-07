@@ -5,7 +5,7 @@ Page {
     titleBar: TitleBar {
         title: "Last Seen"
     }
-    
+
     attachedObjects: [
         ComponentDefinition {
             id: neverSharePageDefinition
@@ -37,21 +37,21 @@ Page {
                     Option {
                         text: "Nobody"
                     }
-                        }
-            Label {
-                multiline: true
-                textStyle.fontSize: FontSize.XSmall
-                textStyle.color: Color.Gray
-                text: "Important: you won't be able to see Last Seen times for people with whom you don't share your Last Seen times. Approximate last seen will be shown instead (recently, within a week, within a month)."
+                }
+                Label {
+                    multiline: true
+                    textStyle.fontSize: FontSize.XSmall
+                    textStyle.color: Color.Gray
+                    text: "Important: you won't be able to see Last Seen times for people with whom you don't share your Last Seen times. Approximate last seen will be shown instead (recently, within a week, within a month)."
+                }
             }
-        }
             Divider {
 
             }
             ClickableRow {
                 text: "Never Share With"
                 rightText: "3 users"
-                
+
                 onRowClicked: {
                     var newPage = neverSharePageDefinition.createObject()
                     navigationPane.push(newPage)
