@@ -42,15 +42,11 @@ Container {
             verticalAlignment: VerticalAlignment.Center
             accessibility.name: "Arrow indicator"
         }
-    }
 
-    Button {
-        id: button
-        verticalAlignment: VerticalAlignment.Center
-        preferredWidth: maxWidth
-        opacity: 0.0001
-        onClicked: {
-            rowClicked()
+        onTouch: {
+            if (event.isDown()) {
+                rowClicked()
+            }
         }
     }
 }
