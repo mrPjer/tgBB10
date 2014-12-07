@@ -8,14 +8,21 @@ Page {
     titleBar: TitleBar {
         title: 'Privacy and Security'
     }
+    attachedObjects: [
+        ComponentDefinition {
+            id: blockedUsersPageDefinition
+            source: "asset:///settings/blocked_users_screen.qml"
+        },
+        ComponentDefinition {
+            id: lastSeenPageDefinition
+            source: "asset:///settings/last_seen_screen.qml"
+        }
+    ]
 
     ScrollView {
 
         Container {
             id: root
-
-            topPadding: 8
-            bottomPadding: 8
 
             Header {
                 title: "Privacy"
@@ -25,6 +32,10 @@ Page {
                 preferredHeight: 100
                 text: "Blocked Users"
                 rightText: "3"
+                onRowClicked: {
+                    var newPage = blockedUsersPageDefinition.createObject()
+                    navigationPane.push(newPage)
+                }
             }
             Divider {
 
@@ -32,6 +43,10 @@ Page {
             ClickableRow {
                 text: "Last Seen"
                 rightText: "Everybody (-3)"
+                onRowClicked: {
+                    var newPage = lastSeenPageDefinition.createObject()
+                    navigationPane.push(newPage)
+                }
             }
             Container {
                 leftPadding: 20
