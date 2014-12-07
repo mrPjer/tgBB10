@@ -58,9 +58,9 @@ void APIRegAuth::importAuthorization(int id, QString bytes){
 
 void APIRegAuth::phoneCheckedEmitter(){
     disconnect(&delay, SIGNAL(finished()), this, SLOT(phoneCheckedEmitter()));
-    PhoneChecked pc;
-    pc.phone_invited = true;
-    pc.phone_registered = true;
+    PhoneChecked* pc = new PhoneChecked;
+    pc->phone_invited = true;
+    pc->phone_registered = true;
     emit phoneChecked(pc);
 }
 void APIRegAuth::codeSentEmitter(){
