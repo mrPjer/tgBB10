@@ -1,5 +1,4 @@
 import bb.cascades 1.2
-import bb.cascades.pickers 1.0
 import '../shared'
 
 Page {
@@ -18,14 +17,21 @@ Page {
         ComponentDefinition {
             id: privacyAndSecurityPageDefinition
             source: "asset:///settings/privacy_and_security_screen.qml"
+        },
+        ComponentDefinition {
+            id: chatSettingsPageDefinition
+            source: "asset:///settings/chat_settings_screen.qml"
+        },
+        ComponentDefinition {
+            id: chatBackgroundPageDefinition
+            source: "asset:///settings/chat_background_screen.qml"
         }
     ]
     ScrollView {
 
         Container {
             id: root
-            leftPadding: 8
-            rightPadding: 8
+
             topPadding: 8
             bottomPadding: 8
 
@@ -73,13 +79,17 @@ Page {
                     background: Color.Gray
                     verticalAlignment: VerticalAlignment.Center
                 }
-
-                ImageButton {
-                    defaultImageSource: "asset:///images/shared/profile_edit.png"
+                Container {
+                    rightPadding: 20
+                    leftMargin: 20
                     verticalAlignment: VerticalAlignment.Center
-                    onClicked: {
-                        var newPage = editPageDefinition.createObject()
-                        navigationPane.push(newPage)
+                    ImageButton {
+                        defaultImageSource: "asset:///images/shared/profile_edit.png"
+
+                        onClicked: {
+                            var newPage = editPageDefinition.createObject()
+                            navigationPane.push(newPage)
+                        }
                     }
 
                 }
@@ -88,22 +98,26 @@ Page {
                 title: "Settings"
 
             }
-            DropDown {
-                title: "Language"
-                Option {
-                    text: "English"
-                    selected: true
+            Container {
+                leftPadding: 20
+                rightPadding: 20
+                topPadding: 15
+                DropDown {
+                    title: "Language"
+                    Option {
+                        text: "English"
+                        selected: true
+                    }
+                    Option {
+                        text: "Spanish"
+                    }
+                    Option {
+                        text: "German"
+                    }
+                    Option {
+                        text: "Italian"
+                    }
                 }
-                Option {
-                    text: "Spanish"
-                }
-                Option {
-                    text: "German"
-                }
-                Option {
-                    text: "Italian"
-                }
-
             }
             Divider {
 
@@ -117,7 +131,7 @@ Page {
                 }
                 ClickableRow {
                     text: "Notifications and Sounds"
-                    
+
                     onRowClicked: {
                         var newPage = notificationsAndSoundsPageDefinition.createObject()
                         navigationPane.push(newPage)
@@ -128,7 +142,7 @@ Page {
                 }
                 ClickableRow {
                     text: "Privacy and Security"
-                    
+
                     onRowClicked: {
                         var newPage = privacyAndSecurityPageDefinition.createObject()
                         navigationPane.push(newPage)
@@ -139,12 +153,22 @@ Page {
                 }
                 ClickableRow {
                     text: "Chat Settings"
-               }
+
+                    onRowClicked: {
+                        var newPage = chatSettingsPageDefinition.createObject()
+                        navigationPane.push(newPage)
+                    }
+                }
                 Divider {
 
                 }
                 ClickableRow {
                     text: "Chat Background"
+
+                    onRowClicked: {
+                        var newPage = chatBackgroundPageDefinition.createObject()
+                        navigationPane.push(newPage)
+                    }
                 }
                 Divider {
 
@@ -152,10 +176,14 @@ Page {
 
             }
             Container {
-
-                Button {
-                    text: "Log Out"
-                    preferredWidth: maxWidth
+                Container {
+                    leftPadding: 20
+                    rightPadding: 20
+                    topPadding: 15
+                    Button {
+                        text: "Log Out"
+                        preferredWidth: maxWidth
+                    }
                 }
                 Label {
                     text: "Telegram for Blackberry v0.1"
