@@ -56,21 +56,27 @@ Page {
                         spaceQuota: 1
                     }
 
+                    topPadding: 10
+
                     Label {
                         id: userName
                         text: "Daniel Ash"
                         textStyle.fontSize: FontSize.Medium
+                        bottomMargin: 8
                     }
                     Label {
                         id: userStatus
                         text: "online"
                         textStyle.color: Color.Blue
                         textStyle.fontSize: FontSize.Small
+                        topMargin: 0
+                        bottomMargin: 8
                     }
                     Label {
                         id: phoneNumber
                         text: "+44 7400 890000"
                         textStyle.fontSize: FontSize.Small
+                        topMargin: 0
                     }
                 }
                 Container {
