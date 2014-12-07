@@ -4,7 +4,10 @@ NavigationPane {
 
     id: navigationPane
 
+    property alias titleBar: settingsScreen.titleBar
+
     SettingsScreen {
+        id: settingsScreen
     }
 
 }
