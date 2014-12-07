@@ -8,7 +8,11 @@
 #ifndef API_HPP_
 #define API_HPP_
 
-class API{
+#include "apiRegauth.hpp"
+#include <bb/cascades/CustomControl>
+
+class API: public APIRegAuth, public bb::cascades::CustomControl{
+    Q_OBJECT
 
 };
 

@@ -14,7 +14,8 @@
 #include <vector>
 using namespace std;
 
-class APIRegAuth: public APIDelay{
+class APIRegAuth: public QObject{
+    APIDelay delay;
     Q_OBJECT
 
 signals:
