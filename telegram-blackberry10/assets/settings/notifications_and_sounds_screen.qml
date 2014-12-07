@@ -42,6 +42,7 @@ Page {
                     title: "Sound"
                     Option {
                         text: "Default"
+                        selected: true
                     }
                 }
             }
