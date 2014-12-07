@@ -14,9 +14,6 @@ Page {
         Container {
             id: root
 
-            topPadding: 8
-            bottomPadding: 8
-
             Header {
                 title: "Message Notifications"
                 bottomMargin: 15
