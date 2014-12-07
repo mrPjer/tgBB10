@@ -7,13 +7,13 @@
 
 #include "apiDelay.hpp"
 #include <unistd.h>
+#include <QDebug>
+#include <QDateTime>
 
-unsigned long APIDelay::sleepFrom = 300;
-unsigned long APIDelay::sleepTo = 1500;
+unsigned long APIDelay::sleepFrom = 200;
+unsigned long APIDelay::sleepTo = 1300;
 
 APIDelay::APIDelay(){
-    QTime time = QTime::currentTime();
-    qsrand(time.msec());
 }
 
 void APIDelay::run(){
@@ -30,5 +30,6 @@ void APIDelay::setSleepTo(unsigned long msec){
 
 
 void APIDelay::delay(){
+    qsrand(QDateTime::currentDateTime().toTime_t());
     ::delay(qrand() % (sleepTo - sleepFrom + 1) + sleepFrom);
 }
