@@ -9,7 +9,7 @@
 #include <unistd.h>
 
 unsigned long APIDelay::sleepFrom = 300;
-unsigned long APIDelay::sleepTo = 700;
+unsigned long APIDelay::sleepTo = 1500;
 
 APIDelay::APIDelay(){
     QTime time = QTime::currentTime();
