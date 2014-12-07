@@ -19,7 +19,7 @@ class APIRegAuth: public QObject{
     Q_OBJECT
 
 signals:
-    void phoneChecked(PhoneChecked& pc);
+    void phoneChecked(PhoneChecked* pc);
     void codeSent(CodeSent& cs);
     void smsSent(bool);
     void callSent(bool);
