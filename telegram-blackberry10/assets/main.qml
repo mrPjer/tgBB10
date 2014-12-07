@@ -41,6 +41,18 @@ NavigationPane {
                     }
 
                     Button {
+                        text: "Settings"
+                        onClicked: {
+                            var page = settingsPageDefinition.createObject()
+                            navigationPane.push(page)
+                        }
+                        attachedObjects: ComponentDefinition {
+                            id: settingsPageDefinition
+                            source: 'settings/SettingsScreen.qml'
+                        }
+                    }
+
+                    Button {
                         text: "Main page"
                         onClicked: {
                             mainPageSheet.open()
