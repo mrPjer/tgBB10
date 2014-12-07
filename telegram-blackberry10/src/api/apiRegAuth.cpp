@@ -9,77 +9,77 @@
 #include "apiRegAuth.hpp"
 
 void APIRegAuth::checkPhone(string phone_number){
-    QObject::connect(this, SIGNAL(finished()), this, SLOT(phoneCheckedEmitter()));
-    start();
+    connect(&delay, SIGNAL(finished()), this, SLOT(phoneCheckedEmitter()));
+    delay.start();
 }
 void APIRegAuth::sendCode(string phone_number, int sms_type, int api_id, string api_hash, string lang_code){
-    QObject::connect(this, SIGNAL(finished()), this, SLOT(codeSentEmitter()));
-    start();
+    connect(&delay, SIGNAL(finished()), this, SLOT(codeSentEmitter()));
+    delay.start();
 }
 void APIRegAuth::sendSms(string phone_number, string phone_code_hash){
-    QObject::connect(this, SIGNAL(finished()), this, SLOT(smsSentEmitter()));
-    start();
+    connect(&delay, SIGNAL(finished()), this, SLOT(smsSentEmitter()));
+    delay.start();
 }
 void APIRegAuth::sendCall(string phone_number, string phone_code_hash){
-    QObject::connect(this, SIGNAL(finished()), this, SLOT(callSentEmitter()));
-    start();
+    connect(&delay, SIGNAL(finished()), this, SLOT(callSentEmitter()));
+    delay.start();
 }
 void APIRegAuth::signUp(string phone_number, string phone_code_hash, string phone_code, string first_name, string last_name){
-    QObject::connect(this, SIGNAL(finished()), this, SLOT(signedUpEmitter()));
-    start();
+    connect(&delay, SIGNAL(finished()), this, SLOT(signedUpEmitter()));
+    delay.start();
 }
 void APIRegAuth::signIn(string phone_number, string phone_code_hash, string phone_code){
-    QObject::connect(this, SIGNAL(finished()), this, SLOT(signedInEmitter()));
-    start();
+    connect(&delay, SIGNAL(finished()), this, SLOT(signedInEmitter()));
+    delay.start();
 }
 void APIRegAuth::logOut(){
-    QObject::connect(this, SIGNAL(finished()), this, SLOT(loggedOutEmitter()));
-    start();
+    connect(&delay, SIGNAL(finished()), this, SLOT(loggedOutEmitter()));
+    delay.start();
 }
 void APIRegAuth::sendInvites(vector<string>& numbers, string message){
-    QObject::connect(this, SIGNAL(finished()), this, SLOT(invitesSentEmitter()));
-    start();
+    connect(&delay, SIGNAL(finished()), this, SLOT(invitesSentEmitter()));
+    delay.start();
 }
 void APIRegAuth::resetAuthorizations(){
-    QObject::connect(this, SIGNAL(finished()), this, SLOT(authorizationsResetEmitter()));
-    start();
+    connect(&delay, SIGNAL(finished()), this, SLOT(authorizationsResetEmitter()));
+    delay.start();
 }
 void APIRegAuth::exportAuthorization(int dc_id){
-    QObject::connect(this, SIGNAL(finished()), this, SLOT(authorizationExportedEmitter()));
-    start();
+    connect(&delay, SIGNAL(finished()), this, SLOT(authorizationExportedEmitter()));
+    delay.start();
 }
 void APIRegAuth::importAuthorization(int id, string bytes){
-    QObject::connect(this, SIGNAL(finished()), this, SLOT(authorizationImportedEmitter()));
-    start();
+    connect(&delay, SIGNAL(finished()), this, SLOT(authorizationImportedEmitter()));
+    delay.start();
 }
-// void APIRegAuth::bindTempAuthKey(){ QObject::connect(this, SIGNAL(finished()), this, SLOT(tempAuthKeyBoundEmitter())); }
+// void APIRegAuth::bindTempAuthKey(){ connect(&delay, SIGNAL(finished()), this, SLOT(tempAuthKeyBoundEmitter())); }
 
 
 
 void APIRegAuth::phoneCheckedEmitter(){
-    QObject::disconnect(this, SIGNAL(finished()), this, SLOT(phoneCheckedEmitter()));
+    disconnect(&delay, SIGNAL(finished()), this, SLOT(phoneCheckedEmitter()));
     PhoneChecked pc;
     pc.phone_invited = true;
     pc.phone_registered = true;
     emit phoneChecked(pc);
 }
 void APIRegAuth::codeSentEmitter(){
-    QObject::disconnect(this, SIGNAL(finished()), this, SLOT(codeSentEmitter()));
+    disconnect(&delay, SIGNAL(finished()), this, SLOT(codeSentEmitter()));
     CodeSent cs;
     cs.phone_registered = true;
     cs.phone_code_hash = "2dc02d2cda9e615c84";
     emit codeSent(cs);
 }
 void APIRegAuth::smsSentEmitter(){
-    QObject::disconnect(this, SIGNAL(finished()), this, SLOT(smsSentEmitter()));
+    disconnect(&delay, SIGNAL(finished()), this, SLOT(smsSentEmitter()));
     emit smsSent(true);
 }
 void APIRegAuth::callSentEmitter(){
-    QObject::disconnect(this, SIGNAL(finished()), this, SLOT(callSentEmitter()));
+    disconnect(&delay, SIGNAL(finished()), this, SLOT(callSentEmitter()));
     emit callSent(true);
 }
 void APIRegAuth::signedUpEmitter(){
-    QObject::disconnect(this, SIGNAL(finished()), this, SLOT(signedUpEmitter()));
+    disconnect(&delay, SIGNAL(finished()), this, SLOT(signedUpEmitter()));
     Authorization auth;
     auth.expires = time(NULL) + 600;
     auth.user.id = 1337;
@@ -90,7 +90,7 @@ void APIRegAuth::signedUpEmitter(){
     emit signedUp(auth);
 }
 void APIRegAuth::signedInEmitter(){
-    QObject::disconnect(this, SIGNAL(finished()), this, SLOT(signedInEmitter()));
+    disconnect(&delay, SIGNAL(finished()), this, SLOT(signedInEmitter()));
     Authorization auth;
     auth.expires = time(NULL) + 600;
     auth.user.id = 1337;
@@ -101,26 +101,26 @@ void APIRegAuth::signedInEmitter(){
     emit signedIn(auth);
 }
 void APIRegAuth::loggedOutEmitter(){
-    QObject::disconnect(this, SIGNAL(finished()), this, SLOT(loggedOutEmitter()));
+    disconnect(&delay, SIGNAL(finished()), this, SLOT(loggedOutEmitter()));
     emit loggedOut(true);
 }
 void APIRegAuth::invitesSentEmitter(){
-    QObject::disconnect(this, SIGNAL(finished()), this, SLOT(invitesSentEmitter()));
+    disconnect(&delay, SIGNAL(finished()), this, SLOT(invitesSentEmitter()));
     emit invitesSent(true);
 }
 void APIRegAuth::authorizationsResetEmitter(){
-    QObject::disconnect(this, SIGNAL(finished()), this, SLOT(authorizationsResetEmitter()));
+    disconnect(&delay, SIGNAL(finished()), this, SLOT(authorizationsResetEmitter()));
     emit authorizationsReset(true);
 }
 void APIRegAuth::authorizationExportedEmitter(){
-    QObject::disconnect(this, SIGNAL(finished()), this, SLOT(authorizationExportedEmitter()));
+    disconnect(&delay, SIGNAL(finished()), this, SLOT(authorizationExportedEmitter()));
     ExportedAuthorization ea;
     ea.id = 1337;
     ea.bytes = "some bytes here";
     emit authorizationExported(ea);
 }
 void APIRegAuth::authorizationImportedEmitter(){
-    QObject::disconnect(this, SIGNAL(finished()), this, SLOT(authorizationImportedEmitter()));
+    disconnect(&delay, SIGNAL(finished()), this, SLOT(authorizationImportedEmitter()));
     Authorization auth;
     auth.expires = time(NULL) + 600;
     auth.user.id = 1337;
@@ -130,4 +130,4 @@ void APIRegAuth::authorizationImportedEmitter(){
     auth.user.inactive = false;
     emit authorizationImported(auth);
 }
-// void APIRegAuth::tempAuthKeyBoundEmitter(){ QObject::disconnect(this, SIGNAL(finished()), this, SLOT(tempAuthKeyBoundEmitter())); emit tempAuthKeyBound();}
+// void APIRegAuth::tempAuthKeyBoundEmitter(){ disconnect(&delay, SIGNAL(finished()), this, SLOT(tempAuthKeyBoundEmitter())); emit tempAuthKeyBound();}
