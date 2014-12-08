@@ -151,7 +151,7 @@ public:
 
 struct InputGeoChat: public QObject{
     Q_OBJECT
-    Q_PROPERTY(int chat_id READ getCharID)
+    Q_PROPERTY(int chat_id READ getChatID)
     Q_PROPERTY(long access_hash READ getAccessHash)
 public:
     int getChatID(){return chat_id;}
@@ -210,7 +210,7 @@ public:
     InputPeerNotifyEvents* events;
 };
 
-struct PhotoSize{
+struct PhotoSize: public QObject{
     Q_OBJECT
     Q_PROPERTY(QString type READ getType)
     Q_PROPERTY(FileLocation* location READ getLocation)
@@ -234,11 +234,11 @@ public:
     QString bytes;
 };
 
-struct WallPaper{
+struct WallPaper: public QObject{
     Q_OBJECT
     Q_PROPERTY(int id READ getID)
     Q_PROPERTY(QString title READ getTitle)
-    Q_PROPERTY(vector<PhotoSize>* READ getSizes)
+    Q_PROPERTY(vector<PhotoSize>* sizes READ getSizes)
     Q_PROPERTY(int color READ getColor)
     Q_PROPERTY(int bg_color READ getBgColor)
 public:
