@@ -102,7 +102,7 @@ void APIRegAuth::signedInEmitter(){
     auth.expires = time(NULL) + 600;
     auth.user->id = 1337;
     auth.user->first_name = "Radomir";
-    auth.user->last_name = "Cetnik";
+    auth.user->last_name = "Serbedzija";
     auth.user->phone = "12345678";
     auth.user->inactive = false;
     emit signedIn(&auth);
@@ -130,7 +130,7 @@ void APIRegAuth::authorizationImportedEmitter(){
     auth.expires = time(NULL) + 600;
     auth.user->id = 1337;
     auth.user->first_name = "Radomir";
-    auth.user->last_name = "Cetnik";
+    auth.user->last_name = "Serbedzija";
     auth.user->phone = "12345678";
     auth.user->inactive = false;
     emit authorizationImported(&auth);

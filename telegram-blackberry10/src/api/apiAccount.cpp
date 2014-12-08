@@ -90,7 +90,7 @@ void APIAccount::profileUpdatedEmitter(){
 	disconnect(&delay, SIGNAL(finished()), this, SLOT(profileUpdatedEmitter()));
     user.id = 1337;
     user.first_name = "Radomir";
-    user.last_name = "Cetnik";
+    user.last_name = "Serbedzija";
     user.username = "Ubica";
     user.access_hash = 31337;
     user.phone = "12345678";
@@ -113,7 +113,7 @@ void APIAccount::usernameUpdatedEmitter(){
 	disconnect(&delay, SIGNAL(finished()), this, SLOT(usernameUpdatedEmitter()));
     user.id = 1337;
     user.first_name = "Radomir";
-    user.last_name = "Cetnik";
+    user.last_name = "Serbedzija";
     user.username = "Ubica";
     user.access_hash = 31337;
     user.phone = "12345678";
