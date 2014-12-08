@@ -1,5 +1,4 @@
 import bb.cascades 1.2
-import bb.cascades.pickers 1.0
 import '../shared'
 
 Page {
