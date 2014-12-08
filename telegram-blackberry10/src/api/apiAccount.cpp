@@ -1,10 +1,3 @@
-/*
- * apiAccount.cpp
- *
- *  Created on: 7. 12. 2014.
- *      Author: Alfis
- */
-
 #include "apiAccount.hpp"
 
 APIAccount::APIAccount(){

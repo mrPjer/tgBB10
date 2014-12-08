@@ -1,10 +1,3 @@
-/*
- * apiRegAuth.hpp
- *
- *  Created on: 6. 12. 2014.
- *      Author: Alfis
- */
-
 #ifndef APIREGAUTH_HPP_
 #define APIREGAUTH_HPP_
 
@@ -38,8 +31,6 @@ signals:
     void authorizationsReset(bool);
     void authorizationExported(ExportedAuthorization* ea);
     void authorizationImported(Authorization* auth);
-//    void tempAuthKeyBound();
-
 
 public slots:
     void checkPhone(QString phone_number);
@@ -53,7 +44,6 @@ public slots:
     void resetAuthorizations();
     void exportAuthorization(int dc_id);
     void importAuthorization(int id, QString bytes);
-//    void bindTempAuthKey();
 
     void phoneCheckedEmitter();
     void codeSentEmitter();
@@ -66,9 +56,6 @@ public slots:
     void authorizationsResetEmitter();
     void authorizationExportedEmitter();
     void authorizationImportedEmitter();
-//    void tempAuthKeyBoundEmitter();
 };
 
-
-
-#endif /* APIREGAUTH_HPP_ */
+#endif

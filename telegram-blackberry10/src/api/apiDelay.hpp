@@ -1,10 +1,3 @@
-/*
- * apiDelay.hpp
- *
- *  Created on: 5. 12. 2014.
- *      Author: Alfis
- */
-
 #ifndef APIDELAY_HPP_
 #define APIDELAY_HPP_
 
@@ -31,4 +24,4 @@ public slots:
 };
 
 
-#endif /* APIDELAY_HPP_ */
+#endif
