@@ -1,10 +1,3 @@
-/*
- * apiTypes.hpp
- *
- *  Created on: 6. 12. 2014.
- *      Author: Alfis
- */
-
 #ifndef APITYPES_HPP_
 #define APITYPES_HPP_
 
@@ -255,5 +248,4 @@ public:
     int bg_color;
 };
 
-
-#endif /* APITYPES_HPP_ */
+#endif

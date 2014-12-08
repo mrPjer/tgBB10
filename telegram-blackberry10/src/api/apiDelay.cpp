@@ -1,10 +1,3 @@
-/*
- * apiDelay.cpp
- *
- *  Created on: 5. 12. 2014.
- *      Author: Alfis
- */
-
 #include "apiDelay.hpp"
 #include <unistd.h>
 #include <QDebug>

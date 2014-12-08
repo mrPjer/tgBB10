@@ -1,10 +1,3 @@
-/*
- * apiAccount.hpp
- *
- *  Created on: 7. 12. 2014.
- *      Author: Alfis
- */
-
 #ifndef APIACCOUNT_HPP_
 #define APIACCOUNT_HPP_
 
@@ -59,5 +52,4 @@ public slots:
     void usernameUpdatedEmitter();
 };
 
-
-#endif /* APIACCOUNT_HPP_ */
+#endif

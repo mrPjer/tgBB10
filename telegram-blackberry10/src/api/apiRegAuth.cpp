@@ -1,10 +1,3 @@
-/*
- * apiRegAuth.cpp
- *
- *  Created on: 6. 12. 2014.
- *      Author: Alfis
- */
-
 #include <ctime>
 #include "apiRegAuth.hpp"
 
@@ -61,9 +54,6 @@ void APIRegAuth::importAuthorization(int id, QString bytes){
     connect(&delay, SIGNAL(finished()), this, SLOT(authorizationImportedEmitter()));
     delay.start();
 }
-// void APIRegAuth::bindTempAuthKey(){ connect(&delay, SIGNAL(finished()), this, SLOT(tempAuthKeyBoundEmitter())); }
-
-
 
 void APIRegAuth::phoneCheckedEmitter(){
     disconnect(&delay, SIGNAL(finished()), this, SLOT(phoneCheckedEmitter()));
@@ -135,4 +125,3 @@ void APIRegAuth::authorizationImportedEmitter(){
     auth.user->inactive = false;
     emit authorizationImported(&auth);
 }
-// void APIRegAuth::tempAuthKeyBoundEmitter(){ disconnect(&delay, SIGNAL(finished()), this, SLOT(tempAuthKeyBoundEmitter())); emit tempAuthKeyBound();}
