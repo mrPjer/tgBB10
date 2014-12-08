@@ -1,5 +1,4 @@
 import bb.cascades 1.2
-import RegistrationAPI 1.0
 
 Page {
     titleBar: TitleBar {
@@ -116,24 +115,9 @@ Page {
             enabled: false
             horizontalAlignment: HorizontalAlignment.Center
             onClicked: {
-                console.log("Checking phone " + phoneNumber.text)
-                api.checkPhone(phoneNumber.text);
+                var newPage = confirmationCodePageDefinition.createObject()
+                navigationPane.push(newPage)
             }
-
-            attachedObjects: [
-                RegistrationAPI {
-                    id: api
-                    onPhoneChecked: {
-                        console.log("Phone checked!")
-                        console.log(pc)
-                        console.log("Registered? " + pc.phone_registered)
-                        console.log("Invited? " + pc.phone_invited)
-
-                        var newPage = confirmationCodePageDefinition.createObject()
-                        navigationPane.push(newPage)
-                    }
-                }
-            ]
         }
 
     }
