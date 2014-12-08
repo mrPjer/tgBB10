@@ -1,0 +1,17 @@
+<model>
+	<header title="A">
+    	<contact name="Adam Smith" imagePath="asset:///images/testUsers/pjer.jpg" phone="+33 586 5548" status="online" />
+    	<contact name="Anastasya Shy" imagePath="asset:///images/testUsers/luka.jpg" phone="+33 836 5448" status="last seen 5 days ago" />
+    </header>
+    <header title="O">
+    	<contact name="Omar Pink" imagePath="asset:///images/testUsers/user_placeholder_cyan.png" phone="+33 789 6541" status="last seen within a week" />
+    	<contact name="Oprah Perwoll" imagePath="asset:///images/testUsers/user_placeholder_pink.png" phone="+33 589 6323" status="last seen within a week" />
+    </header>
+    <header title="P">
+    	<contact name="Papa Papich" imagePath="asset:///images/testUsers/user_placeholder_red.png" phone="+33 456 8741" status="last seen within a week" />
+    	<contact name="Plavac Zone" imagePath="asset:///images/testUsers/user_placeholder_cyan.png" phone="+33 258 1236" status="last seen within a week" />
+    </header>
+    <header title="T">
+    	<contact name="Tod Fisher" imagePath="asset:///images/testUsers/friend.jpg" phone="+33 486 2258" status="last seen within a week" />
+    </header>
+</model>
