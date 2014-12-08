@@ -9,7 +9,7 @@ Page {
     attachedObjects: [
         ComponentDefinition {
             id: neverSharePageDefinition
-            source: "asset:///settings/never_share.qml"
+            source: "asset:///settings/never_share_screen.qml"
         }
     ]
     ScrollView {
