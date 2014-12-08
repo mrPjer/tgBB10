@@ -1,0 +1,29 @@
+<model>
+	<header title="A">
+    	<contact name="Adam Smith" imagePath="asset:///images/testUsers/pjer.jpg" phone="+33 586 5548" status="online" />
+    	<contact name="Anastasya Shy" imagePath="asset:///images/testUsers/luka.jpg" phone="+33 836 5448" status="last seen 5 days ago" />
+    </header>
+    <header title="B">
+    	<contact name="Bart Smith" imagePath="asset:///images/testUsers/user_placeholder_blue.png" phone="+33 586 5549" status="online" />
+    	<contact name="Boris Simpsoniac" imagePath="asset:///images/testUsers/user_placeholder_purple.png" phone="+33 333 3333" status="last seen 4 days ago" />
+    </header>
+    <header title="J">
+    	<contact name="Jane Janice" imagePath="asset:///images/testUsers/user_placeholder_red.png" phone="+33 888 8698" status="online" />
+    	<contact name="John Doe" imagePath="asset:///images/testUsers/user_placeholder_yellow.png" phone="+33 387 5698" status="last seen never" />
+    	<contact name="Jz JayZee" imagePath="asset:///images/testUsers/user_placeholder_pink.png" phone="+33 852 25898" status="last seen 2 minutes ago" />
+    </header>
+    <header title="O">
+    	<contact name="Omar Pink" imagePath="asset:///images/testUsers/user_placeholder_cyan.png" phone="+33 789 6541" status="last seen within a week" />
+    	<contact name="Oprah Perwoll" imagePath="asset:///images/testUsers/user_placeholder_pink.png" phone="+33 589 6323" status="online" />
+    </header>
+    <header title="P">
+    	<contact name="Papa Papich" imagePath="asset:///images/testUsers/user_placeholder_red.png" phone="+33 456 8741" status="last seen 1 minute ago" />
+    	<contact name="Pero Perich" imagePath="asset:///images/testUsers/user_placeholder_pink.png" phone="+33 756 6985" status="last seen 5 minutes ago" />
+    	<contact name="Petar Tone" imagePath="asset:///images/testUsers/user_placeholder_blue.png" phone="+33 471 5258" status="last seen 1 hour ago" />
+    	<contact name="Plavac Zone" imagePath="asset:///images/testUsers/user_placeholder_cyan.png" phone="+33 258 1236" status="online" />
+    	<contact name="Psy Psycho" imagePath="asset:///images/testUsers/user_placeholder_orange.png" phone="+33 751 1111" status="online" />
+    </header>
+    <header title="T">
+    	<contact name="Tod Fisher" imagePath="asset:///images/testUsers/friend.jpg" phone="+33 486 2258" status="last seen within a week" />
+    </header>
+</model>
