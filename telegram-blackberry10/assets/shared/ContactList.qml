@@ -1,22 +1,37 @@
 import bb.cascades 1.2
 
 Container {
+    id: usersList
     property alias source: dataModel.source
-    property bool showPhoneNumber: true
-    property bool showStatus: true
+    property alias showPhoneNumber: listView.showPhoneNumber
+    property alias showStatus: listView.showStatus
+    property alias showHeader: listView.showHeader
 
     ListView {
+        id: listView
+        property bool showPhoneNumber: false
+        property bool showStatus: false
+        property bool showHeader: false
+        
         dataModel: XmlDataModel {
             id: dataModel
-            source: "asset:///settings/blockedUsers.xml"
+            source: "asset:///settings/allContacts.xml"
         }
         listItemComponents: [
+            ListItemComponent {
+                type: "header"
+                Header {
+                    visible: ListItem.view.showHeader
+                    title: ListItemData.title
+                }
+            },
             ListItemComponent {
                 type: "contact"
 
                 CustomListItem {
+                    id: itemRoot
                     Container {
-                        id: itemRoot
+                                               
                         layout: StackLayout {
                             orientation: LayoutOrientation.LeftToRight
                         }
@@ -38,16 +53,17 @@ Container {
                             }
                             Label {
                                 id: phone
-                                visible: showPhoneNumber
+                                visible: itemRoot.ListItem.view.showPhoneNumber
                                 topMargin: 0
-                                text: ListItem.phone
+                                text: ListItemData.phone
+                                textStyle.color: Color.Gray
                             }
                             Label {
                                 id: status
-                                visible: showStatus
+                                visible: itemRoot.ListItem.view.showStatus
                                 topMargin: 0
-                                text: "online"
-                                textStyle.fontSize: FontSize.XSmall
+                                text: ListItemData.status
+                                textStyle.fontSize: FontSize.Small
                                 textStyle.color: status.text === "online" ? Color.Blue : Color.LightGray
                             }
                         }
