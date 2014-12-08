@@ -91,6 +91,8 @@ void APIRegAuth::signedUpEmitter(){
     auth.user->id = 1337;
     auth.user->first_name = "Radomir";
     auth.user->last_name = "Cetnik";
+    auth.user->username = "Ubica";
+    auth.user->access_hash = 31337;
     auth.user->phone = "12345678";
     auth.user->inactive = false;
     emit signedUp(&auth);
