@@ -3,6 +3,7 @@
 	<name>telegram-blackberry10</name>
 	<comment></comment>
 	<projects>
+		<project>telegram-qt4</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
