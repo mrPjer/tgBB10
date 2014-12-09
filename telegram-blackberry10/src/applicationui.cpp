@@ -24,13 +24,50 @@
 #include "util/timer.hpp"
 #include "util/countries.hpp"
 
+#include "app_secrets.hpp"
+#include <CAppInformation.hpp>
+#include <CTelegramCore.hpp>
+
+#include <qdebug.h>
+#include <unistd.h>
+#include <QTimer>
+
+#error "Remember to put your phone number in here"
+#define PHONE_NO "DEMO_PHONE_NUMBER_GOES_HERE"
+
 using namespace bb::cascades;
 
 ApplicationUI::ApplicationUI() :
         QObject()
 {
+    timer = new QTimer(this);
+    timer->setInterval(500);
+    timer->start();
+    connect(timer, SIGNAL(timeout()), this, SLOT(onConnectRetryTimeout()));
+
     // Register our Timer class in QML
     qmlRegisterType<Timer>("Timer", 1, 0, "Timer");
+
+    CAppInformation info;
+    info.setAppId(TG_APP_ID);
+    info.setAppHash(QLatin1String(TG_API_HASH));
+    // TODO pull this from the manifest
+    info.setAppVersion(QLatin1String("0.0.1"));
+    // TODO fill this with the actual device model
+    info.setDeviceInfo(QLatin1String("BlackBerry 10"));
+    // TODO this can probably be read from the system
+    info.setLanguageCode(QLatin1String("en"));
+    // TODO this can probably be read as well;
+    info.setOsInfo(QLatin1String("BlackBerry 10"));
+
+    core = new CTelegramCore;
+    core->setAppInformation(&info);
+
+    connect(core, SIGNAL(connected()), this, SLOT(onConnected()));
+    connect(core, SIGNAL(phoneStatusReceived(QString, bool, bool)), SLOT(onPhoneStatusReceived(QString, bool, bool)));
+
+    qDebug() << "Initializing connection";
+    core->initConnection(QLatin1String(TG_IP_TEST), TG_PORT_TEST);
 
     // prepare the localization
     m_pTranslator = new QTranslator(this);
@@ -69,5 +106,27 @@ void ApplicationUI::onSystemLanguageChanged()
     QString file_name = QString("telegram_blackberry10_%1").arg(locale_string);
     if (m_pTranslator->load(file_name, "app/native/qm")) {
         QCoreApplication::instance()->installTranslator(m_pTranslator);
+    }
+}
+
+void ApplicationUI::onConnected() {
+    qDebug() << "Connected to Telegram server";
+    timer->stop();
+    core->requestPhoneStatus(PHONE_NO);
+}
+
+void ApplicationUI::onPhoneStatusReceived(QString phoneNumber, bool registered, bool invited) {
+    qDebug() << "Got phone status for number " << phoneNumber << " with register status" << registered << " and invited status " << invited;
+    core->requestPhoneCode(PHONE_NO);
+}
+
+void ApplicationUI::onConnectRetryTimeout() {
+    qDebug() << "Trying to establish connection";
+    const QByteArray secret = core->connectionSecretInfo();
+    if(secret.isEmpty()) {
+        qDebug() << "Connection secret is empty";
+    } else {
+        qDebug() << "Got connection secret " << secret.toHex();
+        core->restoreConnection(secret);
     }
 }
