@@ -10,13 +10,16 @@ Container {
     property alias currentStatus: text.currentStatus
 
     Divider {
-        id: dividerTop
+        id: divider
+        bottomMargin: -20
     }
     
     Container {
         id: cell
         maxWidth: maxWidth
         maxHeight: maxHeight
+        bottomPadding: 5
+        topPadding: 5
         layout: StackLayout {
             orientation: LayoutOrientation.LeftToRight
             
