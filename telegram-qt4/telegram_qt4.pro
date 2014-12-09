@@ -2,6 +2,8 @@ APP_NAME = telegram_qt4
 
 CONFIG += qt warn_on
 
+DEFINES += TELEGRAM_QT4_STATIC_LINK
+
 include(src/telegram-qt.pro)
 
 # uncomment for building static library
