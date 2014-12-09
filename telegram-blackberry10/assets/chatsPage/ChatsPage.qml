@@ -46,28 +46,44 @@ Page {
             ListItemComponent {
                 type: "groupChat"
                 ChatCell {
-                    avatar: ListItemData.chatAvatar
-                    chatName: ListItemData.chatName
-                    currentStatus: ListItemData.chatDescription
+                        avatar: ListItemData.chatAvatar
+                        chatName: ListItemData.chatName
+                        currentStatus: ListItemData.chatDescription
+
+                    }
+                },
+
+                ListItemComponent {
+                    type: "secretChat"
+                    ChatCell {
+                        avatar: ListItemData.chatAvatar
+                        chatName: ListItemData.chatName
+                        currentStatus: ListItemData.chatDescription
+                    }
                 }
-            },
-            
-            ListItemComponent {
-                type: "secretChat"
-                ChatCell {
-                    avatar: ListItemData.chatAvatar
-                    chatName: ListItemData.chatName
-                    currentStatus: ListItemData.chatDescription
-                }
-            }]
+            ]
 
             //mocked data for testing
             onCreationCompleted: {
                 groupDataModel.insert({
-                        "chatName": "Damien's Shark", "chatType" : "group", "chatDescription" : "So you've come for some shark hunting?", "lastSender" : "Tob", "chatAvatar" : "asset:///images/chatsList/chatAvatars/groupChatAvatars/group_placeholder_cyan.png", "outgoingStatus" : "none", "timeStamp" : "5:06 PM", "unreadCount" : "3"
+                        "chatName": "Damien's Shark",
+                        "chatType": "group",
+                        "chatDescription": "So you've come for some shark hunting?",
+                        "lastSender": "Tob",
+                        "chatAvatar": "asset:///images/chatsList/chatAvatars/groupChatAvatars/group_placeholder_cyan.png",
+                        "outgoingStatus": "none",
+                        "timeStamp": "5:06 PM",
+                        "unreadCount": "3"
                     });
                 groupDataModel.insert({
-                        "chatName": "Adam Smith", "chatType" : "group", "chatDescription" : "Very cool! I'm not so surprised.", "lastSender" : "You", "chatAvatar" : "asset:///images/chatsList/chatAvatars/groupChatAvatars/group_placeholder_orange.png", "outgoingStatus" : "seen", "timeStamp" : "2:27 PM", "unreadCount" : "0"
+                        "chatName": "Adam Smith",
+                        "chatType": "group",
+                        "chatDescription": "Very cool! I'm not so surprised.",
+                        "lastSender": "You",
+                        "chatAvatar": "asset:///images/chatsList/chatAvatars/groupChatAvatars/group_placeholder_orange.png",
+                        "outgoingStatus": "seen",
+                        "timeStamp": "2:27 PM",
+                        "unreadCount": "0"
                     });
                 groupDataModel.insert({
                         "chatName": "Anastasiya Shy", "chatType" : "normal", "chatDescription" : "", "lastSender" : "typing..", "chatAvatar" : "asset:///images/chatsList/chatAvatars/SingleChatAvatars/user_placeholder_pink.png", "outgoingStatus" : "none", "timeStamp" : "2:24 PM", "unreadCount" : "0"
