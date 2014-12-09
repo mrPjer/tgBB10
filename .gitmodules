@@ -1,0 +1,3 @@
+[submodule "support/telegram-qt"]
+	path = support/telegram-qt
+	url = git@github.com:Kaffeine/telegram-qt.git
