@@ -18,12 +18,10 @@ Page {
             Header {
                 title: "Message Notifications"
                 bottomMargin: 15
-
             }
 
             LabeledToggleButton {
                 text: "Alert"
-
             }
             Divider {
 
