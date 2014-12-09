@@ -50,6 +50,7 @@ Container {
                                 bottomMargin: 0
                                 verticalAlignment: VerticalAlignment.Center
                                 text: ListItemData.name
+                                textStyle.fontSize: FontSize.Large
                             }
                             Label {
                                 id: phone
