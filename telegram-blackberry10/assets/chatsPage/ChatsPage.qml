@@ -14,8 +14,9 @@ Page {
             GroupDataModel {
                 id: groupDataModel
                 sortingKeys: [ "timeStamp" ]
-                grouping: ItemGrouping.None
+
                 sortedAscending: false
+                grouping: ItemGrouping.None
 
             }
         ]
@@ -28,27 +29,32 @@ Page {
                     return "normalChat";
 
                 else if (data["chatType"] == "group")
-                    return "groupChat"
-                    
-                else 
+                    return "groupChat";
+
+                else
                     return "secretChat"
             }
 
-            listItemComponents: [ListItemComponent {
-                type: "normalChat"
-                ChatCell {
-                    avatar: ListItemData.chatAvatar
-                    chatName: ListItemData.chatName
-                    currentStatus: ListItemData.chatDescription
-                }
-
-            },
-            ListItemComponent {
-                type: "groupChat"
-                ChatCell {
+            listItemComponents: [
+                ListItemComponent {
+                    type: "normalChat"
+                    ChatCell {
                         avatar: ListItemData.chatAvatar
                         chatName: ListItemData.chatName
                         currentStatus: ListItemData.chatDescription
+                        outgoingStatus: ListItemData.outgoingStatus
+                        time: ListItemData.timeStamp
+                    }
+
+                },
+                ListItemComponent {
+                    type: "groupChat"
+                    ChatCell {
+                        avatar: ListItemData.chatAvatar
+                        chatName: ListItemData.chatName
+                        currentStatus: ListItemData.chatDescription
+                        outgoingStatus: ListItemData.outgoingStatus
+                        time: ListItemData.timeStamp
 
                     }
                 },
@@ -59,6 +65,8 @@ Page {
                         avatar: ListItemData.chatAvatar
                         chatName: ListItemData.chatName
                         currentStatus: ListItemData.chatDescription
+                        outgoingStatus: ListItemData.outgoingStatus
+                        time: ListItemData.timeStamp
                     }
                 }
             ]
@@ -86,10 +94,24 @@ Page {
                         "unreadCount": "0"
                     });
                 groupDataModel.insert({
-                        "chatName": "Anastasiya Shy", "chatType" : "normal", "chatDescription" : "", "lastSender" : "typing..", "chatAvatar" : "asset:///images/chatsList/chatAvatars/SingleChatAvatars/user_placeholder_pink.png", "outgoingStatus" : "none", "timeStamp" : "2:24 PM", "unreadCount" : "0"
+                        "chatName": "Anastasiya Shy",
+                        "chatType": "normal",
+                        "chatDescription": "",
+                        "lastSender": "typing..",
+                        "chatAvatar": "asset:///images/chatsList/chatAvatars/SingleChatAvatars/user_placeholder_pink.png",
+                        "outgoingStatus": "none",
+                        "timeStamp": "2:24 PM",
+                        "unreadCount": "0"
                     });
                 groupDataModel.insert({
-                        "chatName": "Samus Aran", "chatType" : "secret", "chatDescription" : "Well I know everything about that.", "lastSender" : "You", "chatAvatar" : "asset:///images/chatsList/chatAvatars/SingleChatAvatars/user_placeholder_yellow.png", "outgoingStatus" : "none", "timeStamp" : "2:24 PM", "unreadCount" : "0"
+                        "chatName": "Samus Aran",
+                        "chatType": "secret",
+                        "chatDescription": "Well I know everything about that.",
+                        "lastSender": "You",
+                        "chatAvatar": "asset:///images/chatsList/chatAvatars/SingleChatAvatars/user_placeholder_yellow.png",
+                        "outgoingStatus": "none",
+                        "timeStamp": "2:24 PM",
+                        "unreadCount": "0"
                     });
             }
 

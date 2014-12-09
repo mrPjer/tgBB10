@@ -7,7 +7,7 @@ Container {
     ImageView {
         id: chatAvatar
         imageSource: avatar
-        scalingMethod: ScalingMethod.Fill
+        scalingMethod: ScalingMethod.AspectFit
         accessibility.name: "chat avatar"
         
     }
