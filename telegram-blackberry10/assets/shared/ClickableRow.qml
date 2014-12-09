@@ -6,6 +6,7 @@ Container {
 
     property alias text: label.text
     property alias rightText: rightLabel.text
+    property alias accessoryVisible: accessory.visible
     signal rowClicked()
 
     verticalAlignment: VerticalAlignment.Center
@@ -37,7 +38,7 @@ Container {
 
         }
         ImageView {
-
+            id: accessory
             imageSource: "asset:///images/shared/setting_arrow.png"
             verticalAlignment: VerticalAlignment.Center
             accessibility.name: "Arrow indicator"
