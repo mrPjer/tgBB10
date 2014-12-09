@@ -12,7 +12,7 @@ Page {
             }
         }
     }
-    
+
     Container {
         SearchableContactList {
         }
