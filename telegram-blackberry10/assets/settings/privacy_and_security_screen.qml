@@ -64,12 +64,13 @@ Page {
             Header {
                 title: "Security"
             }
+            ClickableRow {
+                topPadding: 15
+                text: "Terminate all other sessions"
+                accessoryVisible: false
+            }
             Container {
                 leftPadding: 20
-                topPadding: 15
-                Label {
-                    text: "Terminate all other sessions"
-                }
                 Label {
                     text: "Logs out all devices except for this one."
                     textStyle.fontSize: FontSize.XSmall
