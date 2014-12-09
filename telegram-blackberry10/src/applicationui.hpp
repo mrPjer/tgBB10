@@ -28,6 +28,8 @@ namespace bb
 }
 
 class QTranslator;
+class CTelegramCore;
+class QTimer;
 
 /*!
  * @brief Application UI object
@@ -41,8 +43,13 @@ public:
     ApplicationUI();
     virtual ~ApplicationUI() {}
 private slots:
+    void onConnectRetryTimeout();
     void onSystemLanguageChanged();
+    void onPhoneStatusReceived(QString phoneNumber, bool phoneRegistered, bool phoneInvited);
+    void onConnected();
 private:
+    QTimer *timer;
+    CTelegramCore *core;
     QTranslator* m_pTranslator;
     bb::cascades::LocaleHandler* m_pLocaleHandler;
 };
