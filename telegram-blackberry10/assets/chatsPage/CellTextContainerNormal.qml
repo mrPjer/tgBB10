@@ -11,12 +11,15 @@ Container {
     Label {
         id: chatName
         text: "test name"
+        textStyle.fontSize: FontSize.Medium
+
     }
-    
+
     Label {
         id: chatCurrentStatus
         text: "test status"
-    }
-        
-}
+        textStyle.fontSize: FontSize.Small
 
+    }
+
+}
