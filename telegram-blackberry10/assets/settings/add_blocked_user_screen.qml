@@ -11,13 +11,6 @@ Page {
                 navigationPane.pop()
             }
         }
-        acceptAction: ActionItem {
-            id: editDone
-            title: "Done"
-            onTriggered: {
-                navigationPane.pop()
-            }
-        }
     }
     
     Container {
