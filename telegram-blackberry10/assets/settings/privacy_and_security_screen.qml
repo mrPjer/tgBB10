@@ -30,7 +30,7 @@ Page {
                 bottomMargin: 15
             }
             ClickableRow {
-                preferredHeight: 100
+                preferredHeight: 80
                 text: "Blocked Users"
                 rightText: "3"
                 onRowClicked: {

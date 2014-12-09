@@ -48,7 +48,7 @@ Page {
                     preferredHeight: 180
                     preferredWidth: 180
                     scalingMethod: ScalingMethod.AspectFill
-                    imageSource: "asset:///images/shared/bar_profile.png"
+                    imageSource: "asset:///images/settings/bar_profile.png"
                 }
                 Container {
                     layout: StackLayout {
@@ -93,7 +93,7 @@ Page {
                     verticalAlignment: VerticalAlignment.Center
                     ImageButton {
                         accessibility.name: "Edit profile"
-                        defaultImageSource: "asset:///images/shared/profile_edit.png"
+                        defaultImageSource: "asset:///images/settings/profile_edit.png"
 
                         onClicked: {
                             var newPage = editPageDefinition.createObject()
@@ -207,7 +207,7 @@ Page {
     actions: [
         ActionItem {
             title: "Edit"
-            imageSource: "asset:///images/shared/menu_bar_edit.png"
+            imageSource: "asset:///images/settings/menu_bar_edit.png"
             onTriggered: {
                 var newPage = editPageDefinition.createObject()
                 navigationPane.push(newPage)
@@ -216,15 +216,15 @@ Page {
         },
         ActionItem {
             title: "Ask a Question"
-            imageSource: "asset:///images/shared/menu_FAQ.png"
+            imageSource: "asset:///images/settings/menu_FAQ.png"
         },
         ActionItem {
             title: "Telegram FAQ"
-            imageSource: "asset:///images/shared/menu_FAQ.png"
+            imageSource: "asset:///images/settings/menu_FAQ.png"
         },
         ActionItem {
             title: "Log Out"
-            imageSource: "asset:///images/shared/menu_logout.png"
+            imageSource: "asset:///images/settings/menu_logout.png"
         }
     ]
 
