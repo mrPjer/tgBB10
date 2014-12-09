@@ -28,12 +28,13 @@
 							<tool id="com.qnx.qcc.tool.compiler.2109330292" name="QCC Compiler" superClass="com.qnx.qcc.tool.compiler">
 								<option id="com.qnx.qcc.option.compiler.optlevel.1689383263" name="Optimization Level" superClass="com.qnx.qcc.option.compiler.optlevel" value="com.qnx.qcc.option.compiler.optlevel.0" valueType="enumerated"/>
 								<option id="com.qnx.qcc.option.compiler.includePath.599286147" name="Include Directories (-I)" superClass="com.qnx.qcc.option.compiler.includePath" valueType="includePath">
+									<listOptionValue builtIn="false" value="${QNX_TARGET}/usr/include/openssl"/>
 									<listOptionValue builtIn="false" value="/home/psegina/eclipse/bbndk/target_10_2_0_1155/qnx6/usr/include/qt4/QtCore"/>
 								</option>
 								<inputType id="com.qnx.qcc.inputType.compiler.1966470591" superClass="com.qnx.qcc.inputType.compiler"/>
 							</tool>
 							<tool id="com.qnx.qcc.tool.assembler.485017261" name="QCC Assembler" superClass="com.qnx.qcc.tool.assembler">
-								<option id="com.qnx.qcc.option.assembler.includePath.1578163273" superClass="com.qnx.qcc.option.assembler.includePath" valueType="includePath">
+								<option id="com.qnx.qcc.option.assembler.includePath.1578163273" name="Include Directories (-I)" superClass="com.qnx.qcc.option.assembler.includePath" valueType="includePath">
 									<listOptionValue builtIn="false" value="/home/psegina/eclipse/bbndk/target_10_2_0_1155/qnx6/usr/include/qt4/QtCore"/>
 								</option>
 								<inputType id="com.qnx.qcc.inputType.assembler.1909912157" superClass="com.qnx.qcc.inputType.assembler"/>
@@ -42,6 +43,7 @@
 								<option id="com.qnx.qcc.option.linker.libraries.1608349114" name="Libraries (-l)" superClass="com.qnx.qcc.option.linker.libraries" valueType="libs">
 									<listOptionValue builtIn="false" value="QtCore"/>
 									<listOptionValue builtIn="false" value="bbcascades"/>
+									<listOptionValue builtIn="false" value="ssl"/>
 								</option>
 							</tool>
 							<tool id="com.qnx.qcc.tool.archiver.856315166" name="QCC Archiver" superClass="com.qnx.qcc.tool.archiver"/>
@@ -77,6 +79,7 @@
 							<tool id="com.qnx.qcc.tool.compiler.1420473667" name="QCC Compiler" superClass="com.qnx.qcc.tool.compiler">
 								<option id="com.qnx.qcc.option.compiler.optlevel.1925430945" name="Optimization Level" superClass="com.qnx.qcc.option.compiler.optlevel" value="com.qnx.qcc.option.compiler.optlevel.0" valueType="enumerated"/>
 								<option id="com.qnx.qcc.option.compiler.includePath.181075074" name="Include Directories (-I)" superClass="com.qnx.qcc.option.compiler.includePath" valueType="includePath">
+									<listOptionValue builtIn="false" value="${QNX_TARGET}/usr/include/openssl"/>
 									<listOptionValue builtIn="false" value="${QNX_TARGET}/usr/include/qt4/QtCore"/>
 								</option>
 								<inputType id="com.qnx.qcc.inputType.compiler.54995918" superClass="com.qnx.qcc.inputType.compiler"/>
@@ -88,6 +91,7 @@
 								<option id="com.qnx.qcc.option.linker.libraries.92330061" name="Libraries (-l)" superClass="com.qnx.qcc.option.linker.libraries" valueType="libs">
 									<listOptionValue builtIn="false" value="QtCore"/>
 									<listOptionValue builtIn="false" value="bbcascades"/>
+									<listOptionValue builtIn="false" value="ssl"/>
 								</option>
 							</tool>
 							<tool id="com.qnx.qcc.tool.archiver.568566199" name="QCC Archiver" superClass="com.qnx.qcc.tool.archiver"/>
@@ -123,6 +127,7 @@
 							<tool id="com.qnx.qcc.tool.compiler.98190867" name="QCC Compiler" superClass="com.qnx.qcc.tool.compiler">
 								<option id="com.qnx.qcc.option.compiler.optlevel.1052719043" name="Optimization Level" superClass="com.qnx.qcc.option.compiler.optlevel" value="com.qnx.qcc.option.compiler.optlevel.0" valueType="enumerated"/>
 								<option id="com.qnx.qcc.option.compiler.includePath.356586847" name="Include Directories (-I)" superClass="com.qnx.qcc.option.compiler.includePath" valueType="includePath">
+									<listOptionValue builtIn="false" value="${QNX_TARGET}/usr/include/openssl"/>
 									<listOptionValue builtIn="false" value="${QNX_TARGET}/usr/include/qt4/QtCore"/>
 								</option>
 								<inputType id="com.qnx.qcc.inputType.compiler.1586980876" superClass="com.qnx.qcc.inputType.compiler"/>
@@ -134,6 +139,7 @@
 								<option id="com.qnx.qcc.option.linker.libraries.1441190240" name="Libraries (-l)" superClass="com.qnx.qcc.option.linker.libraries" valueType="libs">
 									<listOptionValue builtIn="false" value="QtCore"/>
 									<listOptionValue builtIn="false" value="bbcascades"/>
+									<listOptionValue builtIn="false" value="ssl"/>
 								</option>
 							</tool>
 							<tool id="com.qnx.qcc.tool.archiver.1667525962" name="QCC Archiver" superClass="com.qnx.qcc.tool.archiver"/>
@@ -169,6 +175,7 @@
 							<tool id="com.qnx.qcc.tool.compiler.24822903" name="QCC Compiler" superClass="com.qnx.qcc.tool.compiler">
 								<option id="com.qnx.qcc.option.compiler.optlevel.1214544978" name="Optimization Level" superClass="com.qnx.qcc.option.compiler.optlevel" value="com.qnx.qcc.option.compiler.optlevel.0" valueType="enumerated"/>
 								<option id="com.qnx.qcc.option.compiler.includePath.92381916" name="Include Directories (-I)" superClass="com.qnx.qcc.option.compiler.includePath" valueType="includePath">
+									<listOptionValue builtIn="false" value="${QNX_TARGET}/usr/include/openssl"/>
 									<listOptionValue builtIn="false" value="${QNX_TARGET}/usr/include/qt4/QtCore"/>
 								</option>
 								<inputType id="com.qnx.qcc.inputType.compiler.2022283014" superClass="com.qnx.qcc.inputType.compiler"/>
@@ -180,6 +187,7 @@
 								<option id="com.qnx.qcc.option.linker.libraries.573036438" name="Libraries (-l)" superClass="com.qnx.qcc.option.linker.libraries" valueType="libs">
 									<listOptionValue builtIn="false" value="QtCore"/>
 									<listOptionValue builtIn="false" value="bbcascades"/>
+									<listOptionValue builtIn="false" value="ssl"/>
 								</option>
 							</tool>
 							<tool id="com.qnx.qcc.tool.archiver.1090409371" name="QCC Archiver" superClass="com.qnx.qcc.tool.archiver"/>
