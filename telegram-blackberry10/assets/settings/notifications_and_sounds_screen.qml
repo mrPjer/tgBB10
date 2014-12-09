@@ -75,13 +75,11 @@ Page {
             Header {
                 title: "Reset"
             }
-            Container {
-                topPadding: 15
-                leftPadding: 20
-                preferredHeight: 100
-                Label {
-                    text: "Reset All Notifications"
-                }
+            ClickableRow {
+                text: "Reset all Notifications"
+                accessoryVisible: false
+                topPadding: 32
+                bottomPadding: 32
             }
 
         }
