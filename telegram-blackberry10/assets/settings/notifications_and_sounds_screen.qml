@@ -18,12 +18,10 @@ Page {
             Header {
                 title: "Message Notifications"
                 bottomMargin: 15
-
             }
 
             LabeledToggleButton {
                 text: "Alert"
-
             }
             Divider {
 
@@ -75,13 +73,11 @@ Page {
             Header {
                 title: "Reset"
             }
-            Container {
-                topPadding: 15
-                leftPadding: 20
-
-                Label {
-                    text: "Reset All Notifications"
-                }
+            ClickableRow {
+                text: "Reset all Notifications"
+                accessoryVisible: false
+                topPadding: 32
+                bottomPadding: 32
             }
 
         }
