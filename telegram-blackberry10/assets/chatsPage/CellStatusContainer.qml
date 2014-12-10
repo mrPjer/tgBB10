@@ -12,7 +12,7 @@ Container {
 
     Container {
         property variant statusIcon: {
-            "none": "",
+            "none": "asset:///images/chatsList/outgoingStatus/blank.png",
             "sending": "asset:///images/chatsList/outgoingStatus/clocks_green.png",
             "delivered": "asset:///images/chatsList/outgoingStatus/check_green.png",
             "seen": "asset:///images/chatsList/outgoingStatus/check_2_green.png"
@@ -34,8 +34,8 @@ Container {
         Label {
             id: timeStampLabel
             text: "2:22 PM"
-            rightMargin: 0
-            rightPadding: 0
+//            rightMargin: 0
+//            rightPadding: 0
             textStyle.color: Color.create("#ff8b8985")
             textStyle.fontSize: FontSize.XXSmall
             horizontalAlignment: HorizontalAlignment.Right
