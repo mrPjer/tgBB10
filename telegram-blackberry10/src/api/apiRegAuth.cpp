@@ -1,3 +1,10 @@
+/*
+ * apiRegAuth.cpp
+ *
+ *  Created on: 6. 12. 2014.
+ *      Author: Alfis
+ */
+
 #include <ctime>
 #include "apiRegAuth.hpp"
 
@@ -54,6 +61,9 @@ void APIRegAuth::importAuthorization(int id, QString bytes){
     connect(&delay, SIGNAL(finished()), this, SLOT(authorizationImportedEmitter()));
     delay.start();
 }
+// void APIRegAuth::bindTempAuthKey(){ connect(&delay, SIGNAL(finished()), this, SLOT(tempAuthKeyBoundEmitter())); }
+
+
 
 void APIRegAuth::phoneCheckedEmitter(){
     disconnect(&delay, SIGNAL(finished()), this, SLOT(phoneCheckedEmitter()));
@@ -92,7 +102,7 @@ void APIRegAuth::signedInEmitter(){
     auth.expires = time(NULL) + 600;
     auth.user->id = 1337;
     auth.user->first_name = "Radomir";
-    auth.user->last_name = "Cetnik";
+    auth.user->last_name = "Serbedzija";
     auth.user->phone = "12345678";
     auth.user->inactive = false;
     emit signedIn(&auth);
@@ -120,8 +130,9 @@ void APIRegAuth::authorizationImportedEmitter(){
     auth.expires = time(NULL) + 600;
     auth.user->id = 1337;
     auth.user->first_name = "Radomir";
-    auth.user->last_name = "Cetnik";
+    auth.user->last_name = "Serbedzija";
     auth.user->phone = "12345678";
     auth.user->inactive = false;
     emit authorizationImported(&auth);
 }
+// void APIRegAuth::tempAuthKeyBoundEmitter(){ disconnect(&delay, SIGNAL(finished()), this, SLOT(tempAuthKeyBoundEmitter())); emit tempAuthKeyBound();}
