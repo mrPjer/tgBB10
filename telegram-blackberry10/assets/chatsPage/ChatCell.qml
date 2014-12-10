@@ -15,6 +15,8 @@ Container {
 
     property string type
 
+    signal rowClicked()
+
     Divider {
         id: divider
         bottomMargin: 0
@@ -76,6 +78,13 @@ Container {
             }
         }
 
+    }
+
+    onTouch: {
+        if (event.isUp()) {
+            console.log("lololo clikii")
+            rowClicked()
+        }
     }
 
 }
