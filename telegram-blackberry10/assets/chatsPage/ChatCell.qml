@@ -6,10 +6,16 @@ import bb.cascades 1.2
 Container {
     id: cellRoot
     property alias avatar: chatAvatar.avatar
-    property alias chatName: text.name
-    property alias currentStatus: text.currentStatus
+    property string chatName
+    property string currentStatus
+    property string lastUserActive
     property alias outgoingStatus: status.outgoingStatus
     property alias time: status.timeStamp
+    property bool normalVisible
+    property bool groupVisible
+    property bool secretVisible
+    
+    property string type
 
     Divider {
         id: divider
@@ -36,10 +42,34 @@ Container {
         }
         
         CellTextContainerNormal {
-            id: text
+            id: textNormal
+            name: chatName
+            status: currentStatus
             layoutProperties: StackLayoutProperties {
                 spaceQuota: 4
             }
+            visible: normalVisible
+        }
+        
+        CellTextContainerGroup {
+            id: textGroup
+            name: chatName
+            lastUser: lastUserActive
+            status: currentStatus
+            layoutProperties: StackLayoutProperties {
+                spaceQuota: 4
+            }
+            visible: groupVisible
+        }
+        
+        CellTextContainerSecret {
+            id: textSecret
+            name: chatName
+            status: currentStatus
+            layoutProperties: StackLayoutProperties {
+                spaceQuota: 4
+            }
+            visible: secretVisible
         }
         
         CellStatusContainer {
@@ -48,7 +78,6 @@ Container {
                 spaceQuota: 1.2
             }
         }
-        
         
         
     }

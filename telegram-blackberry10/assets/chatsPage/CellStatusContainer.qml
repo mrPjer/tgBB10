@@ -30,6 +30,7 @@ Container {
             text: "2:22 PM"
             textStyle.color: Color.create("#ff8b8985")
             textStyle.fontSize: FontSize.XXSmall
+            
 
         }
     }

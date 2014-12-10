@@ -39,22 +39,31 @@ Page {
                 ListItemComponent {
                     type: "normalChat"
                     ChatCell {
+                        type: "normalChat"
                         avatar: ListItemData.chatAvatar
                         chatName: ListItemData.chatName
                         currentStatus: ListItemData.chatDescription
                         outgoingStatus: ListItemData.outgoingStatus
                         time: ListItemData.timeStamp
+                        normalVisible: true
+                        groupVisible: false
+                        secretVisible: false
                     }
 
                 },
                 ListItemComponent {
                     type: "groupChat"
                     ChatCell {
+                        type: "groupChat"
                         avatar: ListItemData.chatAvatar
                         chatName: ListItemData.chatName
                         currentStatus: ListItemData.chatDescription
+                        lastUserActive: ListItemData.lastSender
                         outgoingStatus: ListItemData.outgoingStatus
                         time: ListItemData.timeStamp
+                        normalVisible: false
+                        groupVisible: true
+                        secretVisible: false
 
                     }
                 },
@@ -62,11 +71,15 @@ Page {
                 ListItemComponent {
                     type: "secretChat"
                     ChatCell {
+                        type: "secretChat"
                         avatar: ListItemData.chatAvatar
                         chatName: ListItemData.chatName
                         currentStatus: ListItemData.chatDescription
                         outgoingStatus: ListItemData.outgoingStatus
                         time: ListItemData.timeStamp
+                        normalVisible: false
+                        groupVisible: false
+                        secretVisible: true
                     }
                 }
             ]
@@ -77,7 +90,7 @@ Page {
                         "chatName": "Damien's Shark",
                         "chatType": "group",
                         "chatDescription": "So you've come for some shark hunting?",
-                        "lastSender": "Tob",
+                        "lastSender": "Tob:",
                         "chatAvatar": "asset:///images/chatsList/chatAvatars/groupChatAvatars/group_placeholder_cyan.png",
                         "outgoingStatus": "none",
                         "timeStamp": "5:06 PM",
@@ -87,7 +100,7 @@ Page {
                         "chatName": "Adam Smith",
                         "chatType": "group",
                         "chatDescription": "Very cool! I'm not so surprised.",
-                        "lastSender": "You",
+                        "lastSender": "You:",
                         "chatAvatar": "asset:///images/chatsList/chatAvatars/groupChatAvatars/group_placeholder_orange.png",
                         "outgoingStatus": "seen",
                         "timeStamp": "2:27 PM",
