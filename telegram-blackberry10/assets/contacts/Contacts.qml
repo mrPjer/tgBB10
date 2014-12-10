@@ -4,6 +4,16 @@ import "../shared/"
 Page {
     Container {
         SearchableContactList {
+            onTriggered: {
+                console.log("Selected contact " + indexPath)
+                var page = contactDetailsPage.createObject()
+                navigationPane.push(page)
+            }
+
+            attachedObjects: ComponentDefinition {
+                id: contactDetailsPage
+                source: "asset:///contacts/ContactInfo.qml"
+            }
         }
     }
 
