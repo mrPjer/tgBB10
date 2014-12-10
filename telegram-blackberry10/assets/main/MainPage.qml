@@ -29,7 +29,7 @@ TabbedPane {
     Tab {
         title: "Contacts"
         imageSource: "asset:///images/main/attach_contact.png"
-        Contacts {
+        ContactsWithPane {
             titleBar: TitleBar {
                 id: contacts
                 title: "Contacts"
