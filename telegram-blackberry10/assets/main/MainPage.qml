@@ -1,5 +1,6 @@
 import bb.cascades 1.2
 import "../settings"
+import "../contacts"
 
 TabbedPane {
     id: root
@@ -28,7 +29,7 @@ TabbedPane {
     Tab {
         title: "Contacts"
         imageSource: "asset:///images/main/attach_contact.png"
-        MockContactsPage {
+        ContactsWithPane {
             titleBar: TitleBar {
                 id: contacts
                 title: "Contacts"

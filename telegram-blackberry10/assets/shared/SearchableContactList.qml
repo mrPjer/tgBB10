@@ -1,7 +1,13 @@
 import bb.cascades 1.2
 
 Container {
-    
+
+    signal triggered(variant indexPath)
+
+    onCreationCompleted: {
+        contactList.triggered.connect(triggered)
+    }
+
     Container {
         leftPadding: 15
         rightPadding: 15
@@ -11,7 +17,7 @@ Container {
             id: searchArea
             hintText: "Search"
             onTextChanging: {
-               //TODO search list
+                //TODO search list
             }
         }
     }

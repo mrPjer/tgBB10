@@ -7,12 +7,18 @@ Container {
     property alias showStatus: listView.showStatus
     property alias showHeader: listView.showHeader
 
+    signal triggered(variant indexPath)
+
+    onCreationCompleted: {
+        listView.triggered.connect(triggered)
+    }
+
     ListView {
         id: listView
         property bool showPhoneNumber: false
         property bool showStatus: false
         property bool showHeader: false
-        
+
         dataModel: XmlDataModel {
             id: dataModel
             source: "asset:///settings/allContacts.xml"
@@ -31,7 +37,7 @@ Container {
                 CustomListItem {
                     id: itemRoot
                     Container {
-                                               
+
                         layout: StackLayout {
                             orientation: LayoutOrientation.LeftToRight
                         }
