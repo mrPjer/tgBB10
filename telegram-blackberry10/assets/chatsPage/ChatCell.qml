@@ -82,7 +82,6 @@ Container {
 
     onTouch: {
         if (event.isUp()) {
-            console.log("lololo clikii")
             rowClicked()
         }
     }
