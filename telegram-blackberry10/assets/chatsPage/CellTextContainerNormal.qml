@@ -4,7 +4,7 @@ import bb.cascades 1.2
 Container {
     
     property alias name: chatName.text
-    property alias currentStatus: chatCurrentStatus.text
+    property alias status: chatCurrentStatus.text
     
     layout: StackLayout {    
     }
