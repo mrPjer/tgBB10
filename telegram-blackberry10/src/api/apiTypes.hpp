@@ -1,3 +1,10 @@
+/*
+ * apiTypes.hpp
+ *
+ *  Created on: 6. 12. 2014.
+ *      Author: Alfis
+ */
+
 #ifndef APITYPES_HPP_
 #define APITYPES_HPP_
 
@@ -248,4 +255,174 @@ public:
     int bg_color;
 };
 
-#endif
+// TODO
+struct InputMedia: public QObject{
+    Q_OBJECT
+public:
+};
+
+// TODO
+struct SendMessageAction: public QObject{
+    Q_OBJECT
+public:
+};
+
+// TODO
+struct MessagesFilter: public QObject{
+    Q_OBJECT
+public:
+};
+
+// TODO
+struct InputUser: public QObject{
+    Q_OBJECT
+public:
+};
+
+// TODO
+struct InputChatPhoto: public QObject{
+    Q_OBJECT
+public:
+};
+
+struct InputEncryptedChat: public QObject{
+    Q_OBJECT
+    Q_PROPERTY(int chat_id READ getChatID)
+    Q_PROPERTY(long access_hash READ getAccessHash)
+public:
+    int getChatID(){return chat_id;}
+    long getAccessHash(){return access_hash;}
+
+    int chat_id;
+    long access_hash;
+};
+
+struct InputEncryptedFile: public QObject{
+    Q_OBJECT
+    Q_PROPERTY(long id READ getID)
+    Q_PROPERTY(int parts READ getParts)
+    Q_PROPERTY(QString md5_checksum READ getMD5Checksum)
+    Q_PROPERTY(long access_hash READ getAccessHash)
+public:
+    int getID(){return id;}
+    int getParts(){return parts;}
+    QString getMD5Checksum(){return md5_checksum;}
+    int getKeyFingerprint(){return key_fingerprint;}
+    long getAccessHash(){return access_hash;}
+
+    long id;
+    int parts;
+    QString md5_checksum;
+    int key_fingerprint;
+    long access_hash;
+};
+
+// TODO
+struct Link: public QObject{
+    Q_OBJECT
+public:
+};
+
+struct SentMessage: public QObject{
+    Q_OBJECT
+    Q_PROPERTY(int id READ getID)
+    Q_PROPERTY(int date READ getDate)
+    Q_PROPERTY(int pts READ getPts)
+    Q_PROPERTY(int seq READ getSeq)
+    Q_PROPERTY(vector<Link>* links READ getLinks)
+public:
+    int getID(){return id;}
+    int getDate(){return date;}
+    int getPts(){return pts;}
+    int getSeq(){return seq;}
+    vector<Link>* getLinks(){return links;}
+
+    int id;
+    int date;
+    int pts;
+    int seq;
+    vector<Link>* links;
+};
+
+// TODO
+struct StatedMessage: public QObject{
+    Q_OBJECT
+public:
+};
+
+// TODO
+struct StatedMessages: public QObject{
+    Q_OBJECT
+public:
+};
+
+// TODO
+struct Messages: public QObject{
+    Q_OBJECT
+public:
+};
+
+// TODO
+struct Dialogs: public QObject{
+    Q_OBJECT
+public:
+};
+
+struct AffectedHistory: public QObject{
+    Q_OBJECT
+    Q_PROPERTY(int pts READ getPts)
+    Q_PROPERTY(int seq READ getSeq)
+    Q_PROPERTY(int offset READ getOffset)
+public:
+    int getPts(){return pts;}
+    int getSeq(){return seq;}
+    int getOffset(){return offset;}
+
+    int pts;
+    int seq;
+    int offset;
+};
+
+// TODO
+struct Chat: public QObject{
+    Q_OBJECT
+public:
+};
+
+// TODO
+struct Chats: public QObject{
+    Q_OBJECT
+public:
+};
+
+// TODO
+struct FullChat: public QObject{
+    Q_OBJECT
+public:
+};
+
+// TODO
+struct DhConfig: public QObject{
+    Q_OBJECT
+public:
+};
+
+// TODO
+struct EncryptedChat: public QObject{
+    Q_OBJECT
+public:
+};
+
+// TODO
+struct SentEncryptedMessage: public QObject{
+    Q_OBJECT
+public:
+};
+
+// TODO
+struct SentEncryptedService: public QObject{
+    Q_OBJECT
+public:
+};
+
+#endif /* APITYPES_HPP_ */
