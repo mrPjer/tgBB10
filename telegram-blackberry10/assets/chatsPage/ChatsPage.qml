@@ -1,14 +1,12 @@
 import bb.cascades 1.2
 
 Page {
-    
-    
-    
+
     Container {
         id: root
         layout: DockLayout {
         }
-        
+
         attachedObjects: [
             // Add a data model that sorts based on the name property
             GroupDataModel {
@@ -109,7 +107,7 @@ Page {
                 groupDataModel.insert({
                         "chatName": "Anastasiya Shy",
                         "chatType": "normal",
-                        "chatDescription": "",
+                        "chatDescription": "It's raining women",
                         "lastSender": "typing..",
                         "chatAvatar": "asset:///images/chatsList/chatAvatars/SingleChatAvatars/user_placeholder_pink.png",
                         "outgoingStatus": "none",
@@ -127,6 +125,7 @@ Page {
                         "unreadCount": "0"
                     });
             }
+            accessibility.name: "list view"
 
         }
     }
