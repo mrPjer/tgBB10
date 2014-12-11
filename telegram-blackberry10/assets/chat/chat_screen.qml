@@ -22,6 +22,7 @@ Page {
         attachedObjects: [
             GroupDataModel {
                 id: groupDataModel
+                // TODO: reverse the sorting
                 sortingKeys: [ "timeStamp" ]
                 sortedAscending: false
                 grouping: ItemGrouping.None
@@ -41,17 +42,29 @@ Page {
                 leftPadding: 10
                 rightPadding: 10
                 topPadding: 10
-                
+
                 dataModel: groupDataModel
-                
+
+                function itemType(data, indexPath) {
+                    return data.messageTypeInbound ? "inbound" : "outbound"
+                }
+
                 listItemComponents: [
                     ListItemComponent {
-                        CustomListItem {
-                            ChatCell {
-                                messageTypeInbound: ListItemData.messageTypeInbound
-                                messageText: ListItemData.messageText
-                                timeStamp: ListItemData.timeStamp
-                            }
+                        type: "inbound"
+                        ChatCell {
+                            messageTypeInbound: true
+                            messageText: ListItemData.messageText
+                            timeStamp: ListItemData.timeStamp
+                        }
+                    },
+                    // TODO load the proper chat cell directly
+                    ListItemComponent {
+                        type: "outbound"
+                        ChatCell {
+                            messageTypeOutbound: true
+                            messageText: ListItemData.messageText
+                            timeStamp: ListItemData.timeStamp
                         }
                     }
                 ]
@@ -92,8 +105,16 @@ Page {
     ]
     onCreationCompleted: {
         groupDataModel.insert({
-                "messageTypeInbound": "true",
-                "messageText": "This is some text. I like trains. And Animu. And games. And Pizza. Yes. Pizza very much. And cats."
-,                "timeStamp": "5:06 PM"
-        })}
+                // TODO: messageType should be just inbound or outbound
+                "messageTypeInbound": true,
+                "messageText": "This is some text. I like trains. And Animu. And games. And Pizza. Yes. Pizza very much. And cats.",
+                // TODO: timestamp is a single word. No need for a capital S.
+                "timeStamp": "5:06 PM"
+            });
+        groupDataModel.insert({
+                "messageTypeInbound": false,
+                "messageText": "Weaboo.",
+                "timeStamp": "5:12 PM"
+            });
+    }
 }
