@@ -59,6 +59,14 @@ Container {
             verticalAlignment: VerticalAlignment.Center
         }
 
+        Label {
+            id: spacer
+            preferredWidth: 8
+            leftMargin: 0
+            rightMargin: 0
+            text: ""
+        }
+
         CellTextContainerNormal {
             id: textNormal
             name: chatName
