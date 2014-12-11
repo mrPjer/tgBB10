@@ -11,13 +11,22 @@ Container {
     property bool normalVisible
     property bool groupVisible
     property bool secretVisible
+    property int fontWeight
 
     property string type
 
     signal rowClicked()
-    
+
     preferredHeight: 80
     leftPadding: 0
+
+    function fontType(unreadCount) {
+        if (unreadCount == "0") {
+            return FontWeight.Normal
+        } else {
+            return FontWeight.Bold
+        }
+    }
 
     Divider {
         id: divider
@@ -47,6 +56,7 @@ Container {
             id: textNormal
             name: chatName
             status: currentStatus
+            fontWeightStyle: cellRoot.fontWeight
             layoutProperties: StackLayoutProperties {
                 spaceQuota: 4
             }
@@ -58,6 +68,7 @@ Container {
             name: chatName
             lastUser: lastUserActive
             status: currentStatus
+            fontWeightStyle: cellRoot.fontWeight
             layoutProperties: StackLayoutProperties {
                 spaceQuota: 4
             }
@@ -68,6 +79,7 @@ Container {
             id: textSecret
             name: chatName
             status: currentStatus
+            fontWeightStyle: cellRoot.fontWeight
             layoutProperties: StackLayoutProperties {
                 spaceQuota: 4
             }

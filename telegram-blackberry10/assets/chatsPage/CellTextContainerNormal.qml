@@ -4,6 +4,7 @@ Container {
 
     property alias name: chatName.text
     property alias status: chatCurrentStatus.text
+    property int fontWeightStyle
 
     layout: StackLayout {
     }
@@ -12,6 +13,7 @@ Container {
         text: "test name"
         textStyle.fontSize: FontSize.Small
         bottomMargin: 0
+        textStyle.fontWeight: fontWeightStyle
 
     }
 
