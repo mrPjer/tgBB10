@@ -7,9 +7,11 @@ Container {
     ImageView {
         id: chatAvatar
         imageSource: avatar
-        scalingMethod: ScalingMethod.AspectFit
+        scalingMethod: ScalingMethod.AspectFill
         accessibility.name: "chat avatar"
-        preferredWidth: 120
-        preferredHeight: 120
+        preferredWidth: 128
+        preferredHeight: 128
+        minHeight: 128
+        minWidth: 128
     }
 }
