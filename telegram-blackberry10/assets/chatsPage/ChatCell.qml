@@ -21,7 +21,7 @@ Container {
     leftPadding: 0
 
     function fontType(unreadCount) {
-        if (unreadCount == "0") {
+        if (!showUnread(unreadCount)) {
             return FontWeight.Normal
         } else {
             return FontWeight.Bold
@@ -29,10 +29,7 @@ Container {
     }
 
     function showUnread(unreadCount) {
-        if (unreadCount == "0") {
-            return false
-        }
-        return true
+        return unreadCount !== "0"
     }
 
     Divider {
