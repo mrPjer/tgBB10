@@ -45,7 +45,9 @@ Page {
                         currentStatus: ListItemData.chatDescription
                         outgoingStatus: ListItemData.outgoingStatus
                         fontWeight: fontType(ListItemData.unreadCount)
+                        unreadVisible: showUnread(ListItemData.unreadCount)
                         time: ListItemData.timeStamp
+                        unreadCount: ListItemData.unreadCount
                         normalVisible: true
                         groupVisible: false
                         secretVisible: false
@@ -62,7 +64,9 @@ Page {
                         lastUserActive: ListItemData.lastSender
                         outgoingStatus: ListItemData.outgoingStatus
                         fontWeight: fontType(ListItemData.unreadCount)
+                        unreadVisible: showUnread(ListItemData.unreadCount)
                         time: ListItemData.timeStamp
+                        unreadCount: ListItemData.unreadCount
                         normalVisible: false
                         groupVisible: true
                         secretVisible: false
@@ -79,7 +83,9 @@ Page {
                         currentStatus: ListItemData.chatDescription
                         outgoingStatus: ListItemData.outgoingStatus
                         fontWeight: fontType(ListItemData.unreadCount)
+                        unreadVisible: showUnread(ListItemData.unreadCount)
                         time: ListItemData.timeStamp
+                        unreadCount: ListItemData.unreadCount
                         normalVisible: false
                         groupVisible: false
                         secretVisible: true

@@ -8,6 +8,7 @@ Container {
     property alias name: chatName.text
     property alias status: chatCurrentStatus.text
     property alias lastUser: lastUserActive.text
+    property int fontWeightStyle
     
 
     Container {
@@ -18,6 +19,8 @@ Container {
             id: chatName
             text: "test name"
             textStyle.fontSize: FontSize.Small
+            textStyle.fontWeight: fontWeightStyle
+        
             bottomMargin: 0
         }
         

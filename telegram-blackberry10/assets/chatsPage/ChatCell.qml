@@ -8,6 +8,8 @@ Container {
     property string lastUserActive
     property alias outgoingStatus: status.outgoingStatus
     property alias time: status.timeStamp
+    property alias unreadCount: status.unreadMessagesCount
+    property alias unreadVisible: status.unreadVisible
     property bool normalVisible
     property bool groupVisible
     property bool secretVisible
@@ -26,6 +28,13 @@ Container {
         } else {
             return FontWeight.Bold
         }
+    }
+
+    function showUnread(unreadCount) {
+        if (unreadCount == "0") {
+            return false
+        }
+        return true
     }
 
     Divider {
