@@ -17,17 +17,25 @@ APIMessages::APIMessages(){
     vec.push_back(3);
 }
 
-void APIMessages::sendMessage(InputPeer* peer, QString message, long random_id){
-	connect(&delay, SIGNAL(finished()), this, SLOT(messageSent()));
-	delay.start();
+void APIMessages::sendMessage(const QString& phone, const QString& message){
+    connect(&delay, SIGNAL(finished()), this, SLOT(messageSent()));
+    delay.start();
+}
+void APIMessages::sendChatMessage(const QString& chatId, const QString& message){
+    connect(&delay, SIGNAL(finished()), this, SLOT(messageSent()));
+    delay.start();
 }
 void APIMessages::sendMedia(InputPeer* peer, InputMedia* media, long random_id){
 	connect(&delay, SIGNAL(finished()), this, SLOT(mediaSent()));
 	delay.start();
 }
-void APIMessages::setTyping(InputPeer* peer, bool typing, SendMessageAction* action){
-	connect(&delay, SIGNAL(finished()), this, SLOT(typingSet()));
-	delay.start();
+void APIMessages::setTyping(const QString& phone, bool typingStatus){
+    connect(&delay, SIGNAL(finished()), this, SLOT(typingSet()));
+    delay.start();
+}
+void APIMessages::setChatTyping(const QString& chatId, bool typingStatus){
+    connect(&delay, SIGNAL(finished()), this, SLOT(typingSet()));
+    delay.start();
 }
 void APIMessages::getMessages(vector<int>* id){
 	connect(&delay, SIGNAL(finished()), this, SLOT(messages()));
