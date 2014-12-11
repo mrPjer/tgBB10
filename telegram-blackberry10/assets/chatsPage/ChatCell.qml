@@ -56,12 +56,14 @@ Container {
 
         CellImageContainer {
             id: chatAvatar
+            verticalAlignment: VerticalAlignment.Center
         }
 
         CellTextContainerNormal {
             id: textNormal
             name: chatName
             status: currentStatus
+            verticalAlignment: VerticalAlignment.Center
             fontWeightStyle: cellRoot.fontWeight
             layoutProperties: StackLayoutProperties {
                 spaceQuota: 1
@@ -74,6 +76,7 @@ Container {
             name: chatName
             lastUser: lastUserActive
             status: currentStatus
+            verticalAlignment: VerticalAlignment.Center
             fontWeightStyle: cellRoot.fontWeight
             layoutProperties: StackLayoutProperties {
                 spaceQuota: 1
@@ -85,6 +88,7 @@ Container {
             id: textSecret
             name: chatName
             status: currentStatus
+            verticalAlignment: VerticalAlignment.Center
             fontWeightStyle: cellRoot.fontWeight
             layoutProperties: StackLayoutProperties {
                 spaceQuota: 1
