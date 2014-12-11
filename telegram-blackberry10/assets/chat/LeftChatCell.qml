@@ -3,7 +3,7 @@ import bb.cascades 1.2
 Container {
     property alias messageText: messageText.text
     property alias timeStamp: timeStamp.text
-    preferredWidth: 600
+    
     background: Color.create("#FFFFFF")
     layout: DockLayout {
 
@@ -12,22 +12,26 @@ Container {
     bottomPadding: 10
     leftPadding: 10
     rightPadding: 10
-    bottomMargin: 10
-    Label {
-        id: messageText
-        text: "Message text"
-        multiline: true
-        textStyle.color: Color.Black
-        textStyle.fontSize: FontSize.Medium
+    Container {
+        bottomPadding: 32
+        Label {
+            id: messageText
+            text: "Message text"
+            multiline: true
+            textStyle.color: Color.Black
+            textStyle.fontSize: FontSize.Medium
+        }
     }
-    Label {
-        id: timeStamp
-        text: "time"
+    Container {
         horizontalAlignment: HorizontalAlignment.Right
         verticalAlignment: VerticalAlignment.Bottom
-        textStyle.color: Color.LightGray
-        textStyle.fontSize: FontSize.XSmall
         topMargin: 5
         leftMargin: 5
+        Label {
+            id: timeStamp
+            text: "time"
+            textStyle.color: Color.LightGray
+            textStyle.fontSize: FontSize.XSmall
+        }
     }
 }
