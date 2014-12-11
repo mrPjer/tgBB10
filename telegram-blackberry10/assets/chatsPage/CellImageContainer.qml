@@ -9,7 +9,9 @@ Container {
         imageSource: avatar
         scalingMethod: ScalingMethod.AspectFit
         accessibility.name: "chat avatar"
-        preferredWidth: 120
-        preferredHeight: 120
+        preferredWidth: 128
+        preferredHeight: 128
+        minHeight: 128
+        minWidth: 128
     }
 }
