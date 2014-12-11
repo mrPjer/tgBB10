@@ -18,7 +18,7 @@ Container {
         Label {
             id: chatName
             text: "test name"
-            textStyle.fontSize: FontSize.Small
+            textStyle.fontSize: FontSize.Large
             textStyle.fontWeight: fontWeightStyle
         
             bottomMargin: 0
@@ -34,7 +34,7 @@ Container {
                 text: "test user"
                 rightMargin: 5
                 textStyle.color: Color.create("#ff0077b9")
-                textStyle.fontSize: FontSize.XSmall
+                textStyle.fontSize: FontSize.Medium
                 layoutProperties: StackLayoutProperties {
                     spaceQuota: -1
                 }
@@ -44,7 +44,7 @@ Container {
                 id: chatCurrentStatus
                 leftMargin: 0
                 text: "test status"
-                textStyle.fontSize: FontSize.XSmall
+                textStyle.fontSize: FontSize.Medium
                 layoutProperties: StackLayoutProperties {
                     spaceQuota: 1
                 }
