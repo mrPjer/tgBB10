@@ -8,7 +8,6 @@ Container {
     property alias readVisible: imageRead.visible
     property alias unsentVisible: imageUnsent.visible
 
-    preferredWidth: 600
     background: Color.create("#E0FFCD")
     layout: DockLayout {
 
@@ -17,8 +16,6 @@ Container {
     bottomPadding: 10
     leftPadding: 10
     rightPadding: 10
-    bottomMargin: 10
-    horizontalAlignment: HorizontalAlignment.Right
     Container {
         Label {
             id: messageText
@@ -26,9 +23,12 @@ Container {
             multiline: true
             textStyle.color: Color.Black
             textStyle.fontSize: FontSize.Medium
+            rightMargin: 10
         }
+        bottomPadding: 32
     }
     Container {
+        id: timestamp
         horizontalAlignment: HorizontalAlignment.Right
         verticalAlignment: VerticalAlignment.Bottom
         layout: StackLayout {
