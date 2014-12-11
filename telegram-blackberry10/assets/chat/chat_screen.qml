@@ -2,6 +2,9 @@ import bb.cascades 1.2
 import '../shared'
 
 Page {
+
+    property alias backgroundImageSource: backgroundImage.imageSource
+
     titleBar: TitleBar {
         kind: TitleBarKind.FreeForm
         kindProperties: FreeFormTitleBarKindProperties {
@@ -15,28 +18,43 @@ Page {
 
     Container {
         layout: DockLayout {
-
         }
+        attachedObjects: [
+            GroupDataModel {
+                id: groupDataModel
+                sortingKeys: [ "timeStamp" ]
+                sortedAscending: false
+                grouping: ItemGrouping.None
+            }
+        ]
+
         ImageView {
+            id: backgroundImage
             imageSource: "asset:///images/testUsers/pjer.jpg"
             scalingMethod: ScalingMethod.AspectFill
             preferredHeight: maxHeight
+            preferredWidth: maxWidth
         }
         Container {
-            topPadding: 10
-            leftPadding: 10
-            rightPadding: 10
-            layoutProperties: StackLayoutProperties {
-                spaceQuota: 1
-            }
-            LeftChatCell {
-                messageText: "This is some text. I like trains. And Animu. And games. And Pizza. Yes. Pizza very much. And cats."
-                timeStamp: "11:53 PM"
-            }
-            RightChatCell {
-                messageText: "This is my response. I like trains too. We should go to the train station together, sometime. And get some pizza. Would you like that?"
-                timeStamp: "00:02 AM"
-                unsentVisible: true
+
+            ListView {
+                leftPadding: 10
+                rightPadding: 10
+                topPadding: 10
+                
+                dataModel: groupDataModel
+                
+                listItemComponents: [
+                    ListItemComponent {
+                        CustomListItem {
+                            ChatCell {
+                                messageTypeInbound: ListItemData.messageTypeInbound
+                                messageText: ListItemData.messageText
+                                timeStamp: ListItemData.timeStamp
+                            }
+                        }
+                    }
+                ]
             }
         }
         NewMessage {
@@ -72,4 +90,10 @@ Page {
             imageSource: "asset:///images/chat/menu_bin.png"
         }
     ]
+    onCreationCompleted: {
+        groupDataModel.insert({
+                "messageTypeInbound": "true",
+                "messageText": "This is some text. I like trains. And Animu. And games. And Pizza. Yes. Pizza very much. And cats."
+,                "timeStamp": "5:06 PM"
+        })}
 }
