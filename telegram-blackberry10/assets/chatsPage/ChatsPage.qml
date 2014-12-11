@@ -35,6 +35,7 @@ Page {
 
             listItemComponents: [
                 ListItemComponent {
+                    
                     type: "normalChat"
                     ChatCell {
                         type: "normalChat"
