@@ -35,14 +35,16 @@ Page {
 
             listItemComponents: [
                 ListItemComponent {
-                    
+
                     type: "normalChat"
                     ChatCell {
+
                         type: "normalChat"
                         avatar: ListItemData.chatAvatar
                         chatName: ListItemData.chatName
                         currentStatus: ListItemData.chatDescription
                         outgoingStatus: ListItemData.outgoingStatus
+                        fontWeight: fontType(ListItemData.unreadCount)
                         time: ListItemData.timeStamp
                         normalVisible: true
                         groupVisible: false
@@ -59,6 +61,7 @@ Page {
                         currentStatus: ListItemData.chatDescription
                         lastUserActive: ListItemData.lastSender
                         outgoingStatus: ListItemData.outgoingStatus
+                        fontWeight: fontType(ListItemData.unreadCount)
                         time: ListItemData.timeStamp
                         normalVisible: false
                         groupVisible: true
@@ -75,10 +78,12 @@ Page {
                         chatName: ListItemData.chatName
                         currentStatus: ListItemData.chatDescription
                         outgoingStatus: ListItemData.outgoingStatus
+                        fontWeight: fontType(ListItemData.unreadCount)
                         time: ListItemData.timeStamp
                         normalVisible: false
                         groupVisible: false
                         secretVisible: true
+
                     }
                 }
             ]
@@ -126,6 +131,7 @@ Page {
                         "unreadCount": "0"
                     });
             }
+
             accessibility.name: "list view"
 
         }
