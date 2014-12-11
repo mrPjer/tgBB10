@@ -1,6 +1,7 @@
 import bb.cascades 1.2
 import "../settings"
 import "../contacts"
+import "../chatsPage"
 
 TabbedPane {
     id: root
@@ -49,7 +50,8 @@ TabbedPane {
     Tab {
         title: "Chats"
         imageSource: "asset:///images/main/bar_chats.png"
-        MockChatsPage {
+
+        ChatsPage {
             titleBar: TitleBar {
                 id: chat
                 title: "Chats"
@@ -64,6 +66,7 @@ TabbedPane {
                 }
             ]
         }
+
     }
 
     Tab {
