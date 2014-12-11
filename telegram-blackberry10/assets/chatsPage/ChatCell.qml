@@ -56,9 +56,6 @@ Container {
 
         CellImageContainer {
             id: chatAvatar
-            layoutProperties: StackLayoutProperties {
-                spaceQuota: 0.7
-            }
         }
 
         CellTextContainerNormal {
@@ -67,7 +64,7 @@ Container {
             status: currentStatus
             fontWeightStyle: cellRoot.fontWeight
             layoutProperties: StackLayoutProperties {
-                spaceQuota: 4
+                spaceQuota: 1
             }
             visible: normalVisible
         }
@@ -79,7 +76,7 @@ Container {
             status: currentStatus
             fontWeightStyle: cellRoot.fontWeight
             layoutProperties: StackLayoutProperties {
-                spaceQuota: 4
+                spaceQuota: 1
             }
             visible: groupVisible
         }
@@ -90,16 +87,13 @@ Container {
             status: currentStatus
             fontWeightStyle: cellRoot.fontWeight
             layoutProperties: StackLayoutProperties {
-                spaceQuota: 4
+                spaceQuota: 1
             }
             visible: secretVisible
         }
 
         CellStatusContainer {
             id: status
-            layoutProperties: StackLayoutProperties {
-                spaceQuota: 1.2
-            }
         }
 
     }
