@@ -63,7 +63,6 @@ Container {
             preferredWidth: 20
             horizontalAlignment: HorizontalAlignment.Right
             background: Color.create("#ff299d44")
-        //#ff5cb061
             Label {
                 id: unreadMessagesLabel
                 text: "10"
