@@ -23,14 +23,13 @@ Page {
             dataModel: groupDataModel
 
             function itemType(data, indexPath) {
-                if (data["chatType"] == "normal")
+                if (data["chatType"] == "normal") {
                     return "normalChat";
-
-                else if (data["chatType"] == "group")
+                } else if (data["chatType"] == "group") {
                     return "groupChat";
-
-                else
+                } else {
                     return "secretChat"
+                }
             }
 
             listItemComponents: [
