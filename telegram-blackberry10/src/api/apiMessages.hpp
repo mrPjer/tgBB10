@@ -70,9 +70,13 @@ signals:
 //    void queueReceived();
 
 public slots:
-    void sendMessage(InputPeer* peer, QString message, long random_id);
+// CTelegramCore
+    void sendMessage(const QString& phone, const QString& message);
+    void sendChatMessage(const QString& chatId, const QString& message);
+    void setTyping(const QString& phone, bool typingStatus);
+    void setChatTyping(const QString& chatId, bool typingStatus);
+// Got this far.
     void sendMedia(InputPeer* peer, InputMedia* media, long random_id);
-    void setTyping(InputPeer* peer, bool typing, SendMessageAction* action);
     void getMessages(vector<int>* id);
     void getDialogs(int offset, int max_id, int limit);
     void getHistory(InputPeer* peer, int offset, int max_id, int limit);
