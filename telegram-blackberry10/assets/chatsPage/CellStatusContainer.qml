@@ -7,6 +7,11 @@ Container {
     property alias unreadMessagesCount: unreadMessagesLabel.text
     property alias unreadVisible: unreadMessagesContainer.visible
 
+    rightPadding: 8
+    leftPadding: 8
+    topPadding: 4
+    bottomPadding: 4
+
     layout: StackLayout {
 
     }
@@ -24,6 +29,8 @@ Container {
             orientation: LayoutOrientation.LeftToRight
         }
 
+        horizontalAlignment: HorizontalAlignment.Right
+
         ImageView {
             id: outgoingStatusImage
             imageSource: outgoingStatusAndTimeStampCointainer.statusIcon[outgoingStatus]
@@ -36,7 +43,7 @@ Container {
             id: timeStampLabel
             text: "2:22 PM"
             textStyle.color: Color.create("#ff8b8985")
-            textStyle.fontSize: FontSize.XXSmall
+            textStyle.fontSize: FontSize.Small
             horizontalAlignment: HorizontalAlignment.Right
             verticalAlignment: VerticalAlignment.Center
 
@@ -45,44 +52,24 @@ Container {
 
     Container {
         id: unreadMessagesContainer
-
-        layout: StackLayout {
-            orientation: orientation.LeftToRight
-        }
-        
+        leftPadding: 16
+        rightPadding: 16
+        topPadding: 4
+        bottomPadding: 8
+        topMargin: 8
+        bottomMargin: 4
         horizontalAlignment: HorizontalAlignment.Right
-        topMargin: 10
-        rightPadding: 20
-
-        Container {
-            
-            layoutProperties: StackLayoutProperties {
-                spaceQuota: 1
-            }
-            preferredHeight: 5
-            preferredWidth: 20
-            horizontalAlignment: HorizontalAlignment.Right
-            background: Color.create("#ff299d44")
-            Label {
-                id: unreadMessagesLabel
-                text: "10"
-                textStyle.fontSize: FontSize.XXSmall
-                textStyle.color: Color.White
-                horizontalAlignment: HorizontalAlignment.Center
-                textStyle.fontWeight: FontWeight.W900
-                textStyle.textAlign: TextAlign.Center
-                textFit.mode: LabelTextFitMode.FitToBounds
-
-            }
-
+        background: Color.create("#ff299d44")
+        Label {
+            id: unreadMessagesLabel
+            text: "10"
+            textStyle.fontSize: FontSize.Small
+            textStyle.color: Color.White
+            horizontalAlignment: HorizontalAlignment.Center
+            textStyle.textAlign: TextAlign.Center
+            textFit.mode: LabelTextFitMode.FitToBounds
         }
 
-        Container {
-            id: bla
-            preferredWidth: 5
-            layoutProperties: StackLayoutProperties {
-                spaceQuota: 1
-            }
-        }
     }
+
 }
