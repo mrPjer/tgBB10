@@ -11,7 +11,7 @@ Container {
     Label {
         id: chatName
         text: "test name"
-        textStyle.fontSize: FontSize.Small
+        textStyle.fontSize: FontSize.Large
         bottomMargin: 0
         textStyle.fontWeight: fontWeightStyle
 
@@ -20,7 +20,7 @@ Container {
     Label {
         id: chatCurrentStatus
         text: "test status"
-        textStyle.fontSize: FontSize.XSmall
+        textStyle.fontSize: FontSize.Medium
         topMargin: 0
 
     }

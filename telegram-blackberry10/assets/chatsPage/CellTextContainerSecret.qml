@@ -29,7 +29,7 @@ Container {
             textStyle.color: Color.create("#ff299d44")
             leftMargin: 0
             verticalAlignment: VerticalAlignment.Center
-            textStyle.fontSize: FontSize.Small
+            textStyle.fontSize: FontSize.Large
             textStyle.fontWeight: fontWeightStyle
         }
     }
@@ -37,7 +37,7 @@ Container {
     Label {
         id: chatCurrentStatus
         text: "test status"
-        textStyle.fontSize: FontSize.XSmall
+        textStyle.fontSize: FontSize.Medium
         topMargin: 0
     }
 
