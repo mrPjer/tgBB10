@@ -5,6 +5,7 @@ Container {
     property alias timeStamp: timeStampLabel.text
     property string outgoingStatus
     property alias unreadMessagesCount: unreadMessagesLabel.text
+    property alias unreadVisible: unreadMessagesContainer.visible
 
     layout: StackLayout {
 
@@ -34,8 +35,6 @@ Container {
         Label {
             id: timeStampLabel
             text: "2:22 PM"
-//            rightMargin: 0
-//            rightPadding: 0
             textStyle.color: Color.create("#ff8b8985")
             textStyle.fontSize: FontSize.XXSmall
             horizontalAlignment: HorizontalAlignment.Right
@@ -47,11 +46,44 @@ Container {
     Container {
         id: unreadMessagesContainer
 
-        background: Color.create("#ff5cb061")
-        Label {
-            id: unreadMessagesLabel
-            text: ""
+        layout: StackLayout {
+            orientation: orientation.LeftToRight
+        }
+        
+        horizontalAlignment: HorizontalAlignment.Right
+        topMargin: 10
+        rightPadding: 20
+
+        Container {
+            
+            layoutProperties: StackLayoutProperties {
+                spaceQuota: 1
+            }
+            preferredHeight: 5
+            preferredWidth: 20
+            horizontalAlignment: HorizontalAlignment.Right
+            background: Color.create("#ff299d44")
+        //#ff5cb061
+            Label {
+                id: unreadMessagesLabel
+                text: "10"
+                textStyle.fontSize: FontSize.XXSmall
+                textStyle.color: Color.White
+                horizontalAlignment: HorizontalAlignment.Center
+                textStyle.fontWeight: FontWeight.W900
+                textStyle.textAlign: TextAlign.Center
+                textFit.mode: LabelTextFitMode.FitToBounds
+
+            }
+
         }
 
+        Container {
+            id: bla
+            preferredWidth: 5
+            layoutProperties: StackLayoutProperties {
+                spaceQuota: 1
+            }
+        }
     }
 }
