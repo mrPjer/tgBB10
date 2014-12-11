@@ -17,8 +17,6 @@ Container {
 
     property string type
 
-    signal rowClicked()
-
     preferredHeight: 80
     leftPadding: 0
 
@@ -108,12 +106,6 @@ Container {
             id: status
         }
 
-    }
-
-    onTouch: {
-        if (event.isUp()) {
-            rowClicked()
-        }
     }
 
 }
