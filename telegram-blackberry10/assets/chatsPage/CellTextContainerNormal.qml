@@ -10,15 +10,15 @@ Container {
     Label {
         id: chatName
         text: "test name"
-        textStyle.fontSize: FontSize.Medium
-        bottomMargin: 10
+        textStyle.fontSize: FontSize.Small
+        bottomMargin: 0
 
     }
 
     Label {
         id: chatCurrentStatus
         text: "test status"
-        textStyle.fontSize: FontSize.Small
+        textStyle.fontSize: FontSize.XSmall
         topMargin: 0
 
     }

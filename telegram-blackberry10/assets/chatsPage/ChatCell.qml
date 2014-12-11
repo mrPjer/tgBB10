@@ -2,7 +2,6 @@ import bb.cascades 1.2
 
 Container {
     id: cellRoot
-
     property alias avatar: chatAvatar.avatar
     property string chatName
     property string currentStatus
@@ -16,6 +15,9 @@ Container {
     property string type
 
     signal rowClicked()
+    
+    preferredHeight: 80
+    leftPadding: 0
 
     Divider {
         id: divider
@@ -27,16 +29,17 @@ Container {
         id: cell
         bottomPadding: 2
         topPadding: 2
+        leftMargin: 0
+        leftPadding: 0
         layout: StackLayout {
             orientation: LayoutOrientation.LeftToRight
 
         }
 
         CellImageContainer {
-            rightMargin: 10
             id: chatAvatar
             layoutProperties: StackLayoutProperties {
-                spaceQuota: 1.3
+                spaceQuota: 0.7
             }
         }
 

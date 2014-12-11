@@ -12,7 +12,7 @@ Container {
         layout: StackLayout {
             orientation: LayoutOrientation.LeftToRight
         }
-        bottomMargin: 10
+        bottomMargin: 0
 
         ImageView {
             id: lockIcon
@@ -28,14 +28,14 @@ Container {
             textStyle.color: Color.create("#ff299d44")
             leftMargin: 0
             verticalAlignment: VerticalAlignment.Center
-            textStyle.fontSize: FontSize.Medium
+            textStyle.fontSize: FontSize.Small
         }
     }
 
     Label {
         id: chatCurrentStatus
         text: "test status"
-        textStyle.fontSize: FontSize.Small
+        textStyle.fontSize: FontSize.XSmall
         topMargin: 0
     }
 
