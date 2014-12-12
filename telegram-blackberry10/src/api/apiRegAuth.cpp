@@ -17,12 +17,13 @@ APIRegAuth::APIRegAuth(){
     auth.user->status = new UserStatus();
 }
 
-void APIRegAuth::requestPhoneStatus(QString* phone_number){
+void APIRegAuth::requestPhoneStatus(const QString &phone_number){
     connect(&delay, SIGNAL(finished()), this, SLOT(phoneStatusReceivedEmitter()));
     delay.start();
 }
-void APIRegAuth::requestPhoneCode(QString* phone_number){
+void APIRegAuth::requestPhoneCode(const QString &phone_number){
     //connect(&delay, SIGNAL(finished()), this, SLOT(codeSentEmitter()));
+    connect(&delay, SIGNAL(finished()), this, SLOT(smsSentEmitter()));
     delay.start();
 }
 void APIRegAuth::sendSms(QString* phone_number, QString* phone_code_hash){

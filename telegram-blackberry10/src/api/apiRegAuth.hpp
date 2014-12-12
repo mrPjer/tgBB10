@@ -19,9 +19,9 @@ public:
     APIRegAuth();
 
 signals:
-    void phoneStatusReceived(const QString&, bool, bool);
+    void phoneStatusReceived(const QString& phoneNumber, bool registered, bool invited);
 //    void codeSent(CodeSent* cs);
-    void smsSent(bool);
+    void smsSent(bool result);
     void callSent(bool);
 //    void signedUp(Authorization* auth);
 //    void signedIn(Authorization* auth);
@@ -33,8 +33,8 @@ signals:
 
 public slots:
 // Implemented in CTelegramCore
-    void requestPhoneStatus(QString* phone_number);
-    void requestPhoneCode(QString* phone_number);
+    void requestPhoneStatus(const QString &phone_number);
+    void requestPhoneCode(const QString  &phone_number);
     void signIn(QString* phone_number, QString* auth_code);
     void signUp(QString* phone_number, QString* auth_code, QString* first_name, QString* last_name);
 // Got this far.
