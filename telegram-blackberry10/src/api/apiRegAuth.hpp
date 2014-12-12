@@ -5,9 +5,10 @@
 #include "apiTypes.hpp"
 #include <QString>
 #include <vector>
+#include <bb/cascades/CustomControl>
 using namespace std;
 
-class APIRegAuth: public QObject{
+class APIRegAuth: public bb::cascades::CustomControl{
     APIDelay delay;
     Q_OBJECT
 
