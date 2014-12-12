@@ -22,9 +22,7 @@ Page {
         attachedObjects: [
             GroupDataModel {
                 id: groupDataModel
-                // TODO: reverse the sorting
-                sortingKeys: [ "timeStamp" ]
-                sortedAscending: false
+                sortingKeys: [ "timestamp" ]
                 grouping: ItemGrouping.None
             }
         ]
@@ -52,19 +50,24 @@ Page {
                 listItemComponents: [
                     ListItemComponent {
                         type: "inbound"
-                        ChatCell {
-                            messageTypeInbound: true
+                        InboundChatCell {
                             messageText: ListItemData.messageText
-                            timeStamp: ListItemData.timeStamp
+                            timestamp: ListItemData.timestamp
                         }
                     },
                     // TODO load the proper chat cell directly
                     ListItemComponent {
                         type: "outbound"
-                        ChatCell {
-                            messageTypeOutbound: true
+                        OutboundChatCell {
                             messageText: ListItemData.messageText
-                            timeStamp: ListItemData.timeStamp
+                            timestamp: ListItemData.timestamp
+                        }
+                    },
+                    ListItemComponent {
+                        type: "outbound"
+                        OutboundChatCell {
+                            messageText: ListItemData.messageText
+                            timestamp: ListItemData.timestamp
                         }
                     }
                 ]
@@ -108,13 +111,17 @@ Page {
                 // TODO: messageType should be just inbound or outbound
                 "messageTypeInbound": true,
                 "messageText": "This is some text. I like trains. And Animu. And games. And Pizza. Yes. Pizza very much. And cats.",
-                // TODO: timestamp is a single word. No need for a capital S.
-                "timeStamp": "5:06 PM"
+                "timestamp": "5:06 PM"
             });
         groupDataModel.insert({
                 "messageTypeInbound": false,
                 "messageText": "Weaboo.",
-                "timeStamp": "5:12 PM"
+                "timestamp": "5:12 PM"
             });
+        groupDataModel.insert({
+                "messageTypeInbound": false,
+                "messageText": "Weabooooooooooooo.",
+                "timestamp": "5:13 PM"
+        });
     }
 }
