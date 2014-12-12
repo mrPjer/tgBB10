@@ -1,8 +1,17 @@
 import bb.cascades 1.2
+import TgApi 1.0
+import bb.system 1.2
 
 Page {
+
+    id: page
+
     titleBar: TitleBar {
         title: "Registration"
+    }
+
+    function phoneNumber() {
+        return countryCode.text + phoneNumber.text
     }
 
     attachedObjects: [
@@ -14,6 +23,40 @@ Page {
         ComponentDefinition {
             id: confirmationCodePageDefinition
             source: "asset:///login/confirmation_code.qml"
+        },
+        RegistrationApi {
+            id: api
+            onPhoneStatusReceived: {
+                console.log("Received phone status for " + phoneNumber)
+                console.log("\t(Registered, invited) = " + registered + ", " + invited)
+                api.requestPhoneCode(phoneNumber)
+            }
+            onSmsSent: {
+                phoneNumberProgress.cancel()
+                if (result) {
+                    console.log("Auth code dispatched")
+                    var newPage = confirmationCodePageDefinition.createObject()
+                    navigationPane.push(newPage)
+                } else {
+                    console.log("Auth code wasn't dispatched")
+                    codeErrorToast.show()
+                }
+
+            }
+        },
+        SystemProgressDialog {
+            id: phoneNumberProgress
+            dismissAutomatically: false
+            title: "Confirming phone number"
+            body: "Trying to dispatch the confirmation code..."
+        },
+        SystemToast {
+            id: codeErrorToast
+            body: "An error occurred while sending the SMS. Please check your number."
+            button {
+                label: "OK"
+                enabled: true
+            }
         }
     ]
 
@@ -115,8 +158,8 @@ Page {
             enabled: false
             horizontalAlignment: HorizontalAlignment.Center
             onClicked: {
-                var newPage = confirmationCodePageDefinition.createObject()
-                navigationPane.push(newPage)
+                phoneNumberProgress.show()
+                api.requestPhoneStatus(page.phoneNumber())
             }
         }
 
