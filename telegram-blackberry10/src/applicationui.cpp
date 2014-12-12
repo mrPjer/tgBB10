@@ -24,6 +24,8 @@
 #include "util/timer.hpp"
 #include "util/countries.hpp"
 
+#include "api/apiRegAuth.hpp"
+
 using namespace bb::cascades;
 
 ApplicationUI::ApplicationUI() :
@@ -31,6 +33,9 @@ ApplicationUI::ApplicationUI() :
 {
     // Register our Timer class in QML
     qmlRegisterType<Timer>("Timer", 1, 0, "Timer");
+
+    // Register out Registration API in QML
+    qmlRegisterType<APIRegAuth>("TgApi", 1, 0, "RegistrationApi");
 
     // prepare the localization
     m_pTranslator = new QTranslator(this);
