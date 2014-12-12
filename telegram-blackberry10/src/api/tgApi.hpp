@@ -12,6 +12,7 @@
 #include "CAppInformation.hpp"
 #include "TelegramNamespace.hpp"
 #include "CTelegramCore.hpp"
+#include <QTimer>
 
 class tgApi: public bb::cascades::CustomControl{
     Q_OBJECT
@@ -20,7 +21,7 @@ public:
 
     tgApi();
 
-    inline const CAppInformation *appInfo() { return core.appInfo(); }
+    inline const CAppInformation *appInfo() { return core->appInfo(); }
     void setAppInformation(const CAppInformation *newAppInfo);
 
     QByteArray connectionSecretInfo() const;
@@ -34,6 +35,7 @@ public:
     Q_INVOKABLE QStringList chatParticipants(quint32 publicChatId) const;
 
 public slots:
+    void onConnectRetryTimeout();
     bool initConnection(const QString &address, quint32 port);
     bool restoreConnection(const QByteArray &secret);
 
@@ -87,7 +89,8 @@ signals:
 
 
 private:
-    static CTelegramCore core;
+    static CTelegramCore* core;
+    static QTimer* timer;
 };
 
 
