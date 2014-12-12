@@ -31,10 +31,11 @@ Page {
                     return "secretChat"
                 }
             }
+            
+            
 
             listItemComponents: [
                 ListItemComponent {
-
                     type: "normalChat"
                     ChatCell {
 
@@ -141,7 +142,7 @@ Page {
 
         }
     }
-    
+
     actions: [
         ActionItem {
             title: "New Chat"
