@@ -1,4 +1,5 @@
 import bb.cascades 1.2
+import bb.system 1.0
 
 Container {
     id: cellRoot
@@ -21,7 +22,7 @@ Container {
     leftPadding: 0
 
     function fontType(unreadCount) {
-        if (!showUnread(unreadCount)) {
+        if (! showUnread(unreadCount)) {
             return FontWeight.Normal
         } else {
             return FontWeight.Bold
@@ -72,6 +73,26 @@ Container {
                 spaceQuota: 1
             }
             visible: normalVisible
+            
+            contextActions: [
+                ActionSet {
+                    title: "Chat Actions"
+                    subtitle: "Delete Chats"
+                    
+                    actions: [
+                        ActionItem {
+                            title: "Delete"
+                            imageSource: "asset:///images/chatsList/actions/menu_bin.png"
+                            
+                            onTriggered: {
+                                deleteChatDialog.show()
+                            }
+                        }
+                    ]
+                }
+            ]
+
+
         }
 
         CellTextContainerGroup {
@@ -85,6 +106,29 @@ Container {
                 spaceQuota: 1
             }
             visible: groupVisible
+            contextActions: [
+                ActionSet {
+                    title: "Chat Actions"
+                    subtitle: "Delete And Exit Chats"
+                    
+                    actions: [
+                        ActionItem {
+                            title: "Clear History"
+                            imageSource: "asset:///images/chatsList/actions/menu_deletehistory.png"
+                            onTriggered: {
+                                clearHistoryDialog.show()
+                            }
+                        },
+                        ActionItem {
+                            title: "Delete And Exit"
+                            imageSource: "asset:///images/chatsList/actions/menu_bin.png"
+                            onTriggered: {
+                                deleteChatAndExitDialog.show()
+                            }
+                        }
+                    ]
+                }
+            ]
         }
 
         CellTextContainerSecret {
@@ -97,12 +141,53 @@ Container {
                 spaceQuota: 1
             }
             visible: secretVisible
+            contextActions: [
+                ActionSet {
+                    title: "Chat Actions"
+                    subtitle: "Delete Chats"
+                    
+                    actions: [
+                        ActionItem {
+                            title: "Delete"
+                            imageSource: "asset:///images/chatsList/actions/menu_bin.png"
+                            
+                            onTriggered: {
+                                deleteChatDialog.show()
+                            }
+                        }
+                    ]
+                }
+            ]
         }
 
         CellStatusContainer {
             id: status
         }
+        
+        
 
     }
+    
+    attachedObjects: [
+        SystemDialog {
+            id: deleteChatDialog
+            title: "Delete"
+            body: "Are you sure you want to delete this chat?"
+            confirmButton.label: "Delete"
+
+        },
+        SystemDialog {
+            id: deleteChatAndExitDialog
+            title: "Delete And Exit"
+            body: "Are you sure you want to leave this group?"
+            confirmButton.label: "Delete and Exit"
+        },
+        SystemDialog {
+            id: clearHistoryDialog
+            title: "Clear Chat History"
+            body: "Are you sure you want to delete chat history?"
+            confirmButton.label: "Delete"
+        }
+    ]
 
 }
