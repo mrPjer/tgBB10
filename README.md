@@ -17,8 +17,24 @@ Prerequisites:
 Steps:
 
 * Clone the repository
+* (Optional) Pull in the git submodules with `git submodule init` and `git submodule update`
 * (Optional) Switch the workspace to the root of the git repository
-* In Momentics, select File -> Import -> Existing Projects into Workspace and point the browser to the root of the repository. You should be presented with the option to import telegram-blackberry10 as a project
+* In Momentics, select File -> Import -> Existing Projects into Workspace and point the browser to the root of the repository. You should be presented with the option to import telegram-blackberry10 as a project, as well as the telegram-qt4 library
+* In order to link the project to the library properly, it is necessary to build the library for all variants. See the following section for more details.
+
+#### Building and linking the telegram-qt4 library project
+
+Unfortunately, Momentics won't automatically build all the proper versions of the library project so we need to do this manually.
+
+Steps:
+
+* Right click on the telegram-qt4 project, select properties
+* Under the C/C++ Build section, select Environment and then Manage configurations
+* Set it to Device-Release
+* Close the dialog and perform a build of the project (CTRL+b or Project -> Build Project)
+* Repeat these steps, but set the configuration to Simulator-Debug
+
+After this, the main project should properly link against the library and build without errors.
 
 ## Contributing guidelines
 
