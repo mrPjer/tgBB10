@@ -141,4 +141,23 @@ Page {
 
         }
     }
+    
+    actions: [
+        ActionItem {
+            title: "New Chat"
+            imageSource: "asset:///images/chatsList/actions/menu_bar_chat.png"
+        },
+        ActionItem {
+            title: "New Group"
+            imageSource: "asset:///images/chatsList/actions/menu_group.png"
+        },
+        ActionItem {
+            title: "New Secret Chat"
+            imageSource: "asset:///images/chatsList/actions/menu_sectretchat.png"
+        },
+        ActionItem {
+            title: "New Broadcast"
+            imageSource: "asset:///images/chatsList/actions/menu_broadcast.png"
+        }
+    ]
 }
