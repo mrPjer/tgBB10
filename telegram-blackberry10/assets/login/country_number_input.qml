@@ -53,6 +53,9 @@ Page {
             dismissAutomatically: false
             title: "Confirming phone number"
             body: "Trying to dispatch the confirmation code..."
+            confirmButton{
+                label: ""
+            }
         },
         SystemToast {
             id: codeErrorToast
