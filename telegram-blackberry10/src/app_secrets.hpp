@@ -1,6 +1,10 @@
 #ifndef APP_SECRETS_HPP_
 #define APP_SECRETS_HPP_
 
+#include "config.hpp"
+
+#ifdef TG_API_TG
+
 /*
  * Define your API secrets here. You can obtain these by visiting
  *
@@ -32,5 +36,7 @@
 
 #define TG_IP_PROD "0.0.0.0"
 #define TG_PORT_PROD 443
+
+#endif
 
 #endif
