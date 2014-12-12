@@ -73,17 +73,17 @@ Container {
                 spaceQuota: 1
             }
             visible: normalVisible
-            
+
             contextActions: [
                 ActionSet {
                     title: "Chat Actions"
                     subtitle: "Delete Chats"
-                    
+
                     actions: [
                         ActionItem {
                             title: "Delete"
                             imageSource: "asset:///images/chatsList/actions/menu_bin.png"
-                            
+
                             onTriggered: {
                                 deleteChatDialog.show()
                             }
@@ -91,7 +91,6 @@ Container {
                     ]
                 }
             ]
-
 
         }
 
@@ -110,7 +109,7 @@ Container {
                 ActionSet {
                     title: "Chat Actions"
                     subtitle: "Delete And Exit Chats"
-                    
+
                     actions: [
                         ActionItem {
                             title: "Clear History"
@@ -145,12 +144,12 @@ Container {
                 ActionSet {
                     title: "Chat Actions"
                     subtitle: "Delete Chats"
-                    
+
                     actions: [
                         ActionItem {
                             title: "Delete"
                             imageSource: "asset:///images/chatsList/actions/menu_bin.png"
-                            
+
                             onTriggered: {
                                 deleteChatDialog.show()
                             }
@@ -163,11 +162,9 @@ Container {
         CellStatusContainer {
             id: status
         }
-        
-        
 
     }
-    
+
     attachedObjects: [
         SystemDialog {
             id: deleteChatDialog
