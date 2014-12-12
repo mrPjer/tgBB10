@@ -4,8 +4,9 @@
 #include "apiDelay.hpp"
 #include "apiTypes.hpp"
 #include <QString>
+#include <bb/cascades/CustomControl>
 
-class APIAccount: public QObject{
+class APIAccount: public bb::cascades::CustomControl{
     APIDelay delay;
     Q_OBJECT
 
