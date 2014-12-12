@@ -24,7 +24,7 @@ signals:
     void smsSent(bool result);
     void callSent(bool);
 //    void signedUp(Authorization* auth);
-//    void signedIn(Authorization* auth);
+    void signedIn(const Authorization &auth);
     void loggedOut(bool);
     void invitesSent(bool);
     void authorizationsReset(bool);
@@ -35,11 +35,11 @@ public slots:
 // Implemented in CTelegramCore
     void requestPhoneStatus(const QString &phone_number);
     void requestPhoneCode(const QString  &phone_number);
-    void signIn(QString* phone_number, QString* auth_code);
+    void signIn(const QString &phone_number, const QString &auth_code);
     void signUp(QString* phone_number, QString* auth_code, QString* first_name, QString* last_name);
 // Got this far.
-    void sendSms(QString* phone_number, QString* phone_code_hash);
-    void sendCall(QString* phone_number, QString* phone_code_hash);
+    void sendSms(const QString &phone_number, const QString &phone_code_hash);
+    void sendCall(const QString &phone_number, const QString &phone_code_hash);
     void logOut();
     void sendInvites(vector<QString*>* numbers, QString* message);
     void resetAuthorizations();
@@ -51,7 +51,7 @@ public slots:
     void smsSentEmitter();
     void callSentEmitter();
 //    void signedUpEmitter();
-//    void signedInEmitter();
+    void signedInEmitter();
     void loggedOutEmitter();
     void invitesSentEmitter();
     void authorizationsResetEmitter();

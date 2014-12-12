@@ -1,5 +1,7 @@
 import bb.cascades 1.2
 import Timer 1.0
+import TgApi 1.0
+import bb.system 1.2
 
 Page {
     property string phoneNumber
@@ -16,6 +18,20 @@ Page {
         ComponentDefinition {
             id: registrationPageDefinition
             source: "asset:///login/registration.qml"
+        }, RegistrationApi {
+            id: api
+            onCallSent: {
+                callSentToast.show()
+            }
+            onSignedIn: {
+                console.log("Signed in")
+                console.log(auth)
+                var page = registrationPageDefinition.createObject()
+                navigationPane.push(page)
+            }
+        }, SystemToast {
+            id: callSentToast
+            body: "The voice call has been dispatched."
         }
     ]
 
@@ -42,6 +58,7 @@ Page {
 
                 if (currentCount == 0) {
                     callTimer.stop()
+                    api.sendCall(phoneNumber, "what hash?")
                 }
             }
         }
@@ -117,8 +134,10 @@ Page {
             enabled: false
             horizontalAlignment: HorizontalAlignment.Center
             onClicked: {
-                var page = registrationPageDefinition.createObject()
-                navigationPane.push(page)
+                callTimer.stop()
+                // TODO if signIn fails with proper code, go to signUp
+                // else go to main page
+                api.signIn(phoneNumber, confirmationCode.text)
             }
         }
 
