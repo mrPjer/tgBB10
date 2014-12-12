@@ -41,7 +41,7 @@ void APIMessages::getMessages(vector<int>* id){
 	connect(&delay, SIGNAL(finished()), this, SLOT(messages()));
 	delay.start();
 }
-void APIMessages::getDialogs(int offset, int max_id, int limit){
+void APIMessages::getDialogs(quint32 offset, quint32 maxId, quint32 limit){
 	connect(&delay, SIGNAL(finished()), this, SLOT(dialogs()));
 	delay.start();
 }

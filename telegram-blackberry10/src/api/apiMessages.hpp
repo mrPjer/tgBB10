@@ -75,10 +75,10 @@ public slots:
     void sendChatMessage(const QString& chatId, const QString& message);
     void setTyping(const QString& phone, bool typingStatus);
     void setChatTyping(const QString& chatId, bool typingStatus);
+    void getDialogs(quint32 offset, quint32 maxId, quint32 limit);
 // Got this far.
     void sendMedia(InputPeer* peer, InputMedia* media, long random_id);
     void getMessages(vector<int>* id);
-    void getDialogs(int offset, int max_id, int limit);
     void getHistory(InputPeer* peer, int offset, int max_id, int limit);
     void search(InputPeer* peer, QString q, MessagesFilter* filter, int min_date, int max_date, int offset, int max_id, int limit);
     void readHistory(InputPeer* peer, int max_id, int offset, bool read_contents);
