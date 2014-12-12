@@ -2,6 +2,8 @@ import bb.cascades 1.2
 import Timer 1.0
 
 Page {
+    property string phoneNumber
+
     titleBar: TitleBar {
         title: "Enter confirmation code"
     }
@@ -59,7 +61,7 @@ Page {
             }
 
             Label {
-                text: "We have sent an SMS with an activation code to your phone +44 7400 890000"
+                text: "We have sent an SMS with an activation code to your phone " + phoneNumber
                 multiline: true
                 textStyle {
                     textAlign: TextAlign.Center

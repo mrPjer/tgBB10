@@ -10,6 +10,8 @@ Page {
         title: "Registration"
     }
 
+    property string confirmationPhoneNumber
+
     function phoneNumber() {
         return countryCode.text + phoneNumber.text
     }
@@ -29,6 +31,7 @@ Page {
             onPhoneStatusReceived: {
                 console.log("Received phone status for " + phoneNumber)
                 console.log("\t(Registered, invited) = " + registered + ", " + invited)
+                confirmationPhoneNumber = phoneNumber
                 api.requestPhoneCode(phoneNumber)
             }
             onSmsSent: {
@@ -36,6 +39,7 @@ Page {
                 if (result) {
                     console.log("Auth code dispatched")
                     var newPage = confirmationCodePageDefinition.createObject()
+                    newPage.phoneNumber = confirmationPhoneNumber
                     navigationPane.push(newPage)
                 } else {
                     console.log("Auth code wasn't dispatched")
