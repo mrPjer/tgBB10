@@ -11,8 +11,9 @@
 #include "apiDelay.hpp"
 #include "apiTypes.hpp"
 #include <vector>
+#include <bb/cascades/CustomControl>
 
-class APIMessages: public QObject{
+class APIMessages: public bb::cascades::CustomControl{
     APIDelay delay;
     Q_OBJECT
 
