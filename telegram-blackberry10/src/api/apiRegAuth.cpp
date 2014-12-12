@@ -7,6 +7,7 @@
 
 #include <ctime>
 #include "apiRegAuth.hpp"
+#include <bb/cascades/CustomControl>
 
 APIRegAuth::APIRegAuth(){
     auth.user = new User();
