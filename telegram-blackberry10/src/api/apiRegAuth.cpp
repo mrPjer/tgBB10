@@ -111,6 +111,7 @@ void APIRegAuth::signedInEmitter(){
     auth.user->last_name = "Serbedzija";
     auth.user->phone = "12345678";
     auth.user->inactive = false;
+    emit authenticated();
     emit signedIn(auth);
 }
 
