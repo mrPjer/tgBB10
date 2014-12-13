@@ -22,7 +22,7 @@ public:
 signals:
     void phoneStatusReceived(const QString& phoneNumber, bool registered, bool invited);
 //    void codeSent(CodeSent* cs);
-    void smsSent(bool result);
+//    void smsSent(bool result);
     void callSent(bool);
 //    void signedUp(Authorization* auth);
     void signedIn(const Authorization &auth);
@@ -49,7 +49,7 @@ public slots:
 
     void phoneStatusReceivedEmitter();
 //    void codeSentEmitter();
-    void smsSentEmitter();
+//    void smsSentEmitter();
     void callSentEmitter();
 //    void signedUpEmitter();
     void signedInEmitter();
