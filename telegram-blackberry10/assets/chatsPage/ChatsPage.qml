@@ -32,6 +32,16 @@ Page {
                 }
             }
 
+            onTriggered: {
+                var page = chatPage.createObject()
+                navigationPane.push(page)
+            }
+
+            attachedObjects: ComponentDefinition {
+                id: chatPage
+                source: "asset:///chat/chat_screen.qml"
+            }
+
             listItemComponents: [
                 ListItemComponent {
                     type: "normalChat"
