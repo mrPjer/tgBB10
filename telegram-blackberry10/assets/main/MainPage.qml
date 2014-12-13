@@ -55,6 +55,7 @@ TabbedPane {
             titleBar: TitleBar {
                 id: chat
                 title: "Chats"
+                scrollBehavior: TitleBarScrollBehavior.Sticky
             }
             attachedObjects: [
                 ActionItem {
