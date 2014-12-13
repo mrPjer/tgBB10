@@ -51,7 +51,7 @@ TabbedPane {
         title: "Chats"
         imageSource: "asset:///images/main/bar_chats.png"
 
-        ChatsPage {
+        ChatsWithPane {
             titleBar: TitleBar {
                 id: chat
                 title: "Chats"
