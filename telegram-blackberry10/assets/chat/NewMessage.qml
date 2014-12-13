@@ -1,12 +1,12 @@
 import bb.cascades 1.2
 
 Container {
-    verticalAlignment: VerticalAlignment.Bottom
     preferredHeight: 130
     background: Color.create("#282929")
     layout: StackLayout {
         orientation: LayoutOrientation.LeftToRight
     }
+    property alias body: newMessage.text
     Container {
         verticalAlignment: VerticalAlignment.Center
         preferredWidth: 100
