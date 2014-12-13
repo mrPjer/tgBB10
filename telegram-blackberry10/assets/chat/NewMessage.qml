@@ -4,10 +4,10 @@ Container {
     signal enableSendButton()
     signal disableSendButton()
     function validateInput() {
-        if (newMessage.text.length > 0){
+        if (newMessage.text.length > 0) {
             enableSendButton()
         }
-        if (newMessage.text.length == 0){
+        if (newMessage.text.length == 0) {
             disableSendButton()
         }
     }
@@ -37,7 +37,7 @@ Container {
         onTextChanging: {
             validateInput()
         }
-            }
+    }
     Container {
         verticalAlignment: VerticalAlignment.Center
         preferredWidth: 100
@@ -48,4 +48,3 @@ Container {
         }
     }
 }
-
