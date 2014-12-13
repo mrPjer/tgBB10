@@ -5,6 +5,8 @@ import bb.system 1.2
 
 Page {
     property string phoneNumber
+    property bool registered
+    property bool invited
 
     titleBar: TitleBar {
         title: "Enter confirmation code"
