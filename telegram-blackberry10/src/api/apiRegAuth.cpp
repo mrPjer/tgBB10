@@ -79,11 +79,11 @@ void APIRegAuth::codeSentEmitter(){
     cs.phone_code_hash = "2dc02d2cda9e615c84";
     emit codeSent(&cs);
 }
-*/
 void APIRegAuth::smsSentEmitter(){
     disconnect(&delay, SIGNAL(finished()), this, SLOT(smsSentEmitter()));
     emit smsSent(true);
 }
+*/
 void APIRegAuth::callSentEmitter(){
     disconnect(&delay, SIGNAL(finished()), this, SLOT(callSentEmitter()));
     emit callSent(true);
