@@ -7,6 +7,7 @@ Page {
 
     titleBar: TitleBar {
         title: 'Privacy and Security'
+        scrollBehavior: TitleBarScrollBehavior.Sticky
     }
     attachedObjects: [
         ComponentDefinition {

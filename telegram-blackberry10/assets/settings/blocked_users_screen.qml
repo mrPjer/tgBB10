@@ -4,6 +4,7 @@ import '../shared'
 Page {
     titleBar: TitleBar {
         title: "Blocked Users"
+        scrollBehavior: TitleBarScrollBehavior.Sticky
     }
     attachedObjects: [
         ComponentDefinition {

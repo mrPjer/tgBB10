@@ -4,6 +4,7 @@ import '../shared'
 Page {
     titleBar: TitleBar {
         title: 'Settings'
+        scrollBehavior: TitleBarScrollBehavior.Sticky
     }
     attachedObjects: [
         ComponentDefinition {

@@ -4,6 +4,7 @@ import '../shared'
 Page {
     titleBar: TitleBar {
         title: "Last Seen"
+        scrollBehavior: TitleBarScrollBehavior.Sticky
     }
 
     attachedObjects: [

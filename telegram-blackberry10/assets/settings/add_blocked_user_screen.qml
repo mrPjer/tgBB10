@@ -4,6 +4,7 @@ import '../shared'
 Page {
     titleBar: TitleBar {
         title: "Add User"
+        scrollBehavior: TitleBarScrollBehavior.Sticky
         dismissAction: ActionItem {
             id: editCancel
             title: "Cancel"
