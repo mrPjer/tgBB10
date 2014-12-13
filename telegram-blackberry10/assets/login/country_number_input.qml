@@ -1,8 +1,20 @@
 import bb.cascades 1.2
+import TgApi 1.0
+import bb.system 1.2
 
 Page {
+
+    id: page
+
     titleBar: TitleBar {
         title: "Registration"
+    }
+
+    property string confirmationPhoneNumber
+    property alias phoneNumberText: phoneNumber.text
+
+    function phoneNumber() {
+        return countryCode.text + phoneNumberText
     }
 
     attachedObjects: [
@@ -14,6 +26,52 @@ Page {
         ComponentDefinition {
             id: confirmationCodePageDefinition
             source: "asset:///login/confirmation_code.qml"
+        },
+        RegistrationApi {
+            id: api
+            onPhoneNumberInvalid: {
+                console.log("Phone number invalid!")
+                phoneNumberProgress.cancel()
+                invalidNumberToast.show()
+            }
+            onPhoneStatusReceived: {
+                console.log("Received phone status for " + phone)
+                console.log("\t(Registered, invited) = " + registered + ", " + invited)
+                confirmationPhoneNumber = phone
+                api.requestPhoneCode(phone)
+
+                phoneNumberProgress.cancel()
+                console.log("Auth code dispatched")
+                var newPage = confirmationCodePageDefinition.createObject()
+                newPage.phoneNumber = confirmationPhoneNumber
+                navigationPane.push(newPage)
+
+            }
+        },
+        SystemProgressDialog {
+            id: phoneNumberProgress
+            dismissAutomatically: false
+            title: "Confirming phone number"
+            body: "Trying to dispatch the confirmation code..."
+            confirmButton {
+                label: ""
+            }
+        },
+        SystemToast {
+            id: codeErrorToast
+            body: "An error occurred while sending the SMS. Please check your number."
+            button {
+                label: "OK"
+                enabled: true
+            }
+        },
+        SystemToast {
+            id: invalidNumberToast
+            body: "The phone number you have entered seems to be invalid!"
+            button {
+                label: "OK"
+                enabled: true
+            }
         }
     ]
 
@@ -115,8 +173,9 @@ Page {
             enabled: false
             horizontalAlignment: HorizontalAlignment.Center
             onClicked: {
-                var newPage = confirmationCodePageDefinition.createObject()
-                navigationPane.push(newPage)
+                console.log("Registering with " + page.phoneNumber())
+                phoneNumberProgress.show()
+                api.requestPhoneStatus(page.phoneNumber())
             }
         }
 

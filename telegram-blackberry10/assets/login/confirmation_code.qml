@@ -1,7 +1,13 @@
 import bb.cascades 1.2
 import Timer 1.0
+import TgApi 1.0
+import bb.system 1.2
 
 Page {
+    property string phoneNumber
+    property bool registered
+    property bool invited
+
     titleBar: TitleBar {
         title: "Enter confirmation code"
     }
@@ -14,6 +20,16 @@ Page {
         ComponentDefinition {
             id: registrationPageDefinition
             source: "asset:///login/registration.qml"
+        }, RegistrationApi {
+            id: api
+            onAuthenticated: {
+                console.log("Signed in")
+                var page = registrationPageDefinition.createObject()
+                navigationPane.push(page)
+            }
+        }, SystemToast {
+            id: callSentToast
+            body: "The voice call has been dispatched."
         }
     ]
 
@@ -40,6 +56,11 @@ Page {
 
                 if (currentCount == 0) {
                     callTimer.stop()
+                    // TODO send actual call
+                    /*
+                    api.sendCall(phoneNumber, "what hash?")
+                    callSentToast.show()
+                    */
                 }
             }
         }
@@ -59,7 +80,7 @@ Page {
             }
 
             Label {
-                text: "We have sent an SMS with an activation code to your phone +44 7400 890000"
+                text: "We have sent an SMS with an activation code to your phone " + phoneNumber
                 multiline: true
                 textStyle {
                     textAlign: TextAlign.Center
@@ -115,8 +136,11 @@ Page {
             enabled: false
             horizontalAlignment: HorizontalAlignment.Center
             onClicked: {
-                var page = registrationPageDefinition.createObject()
-                navigationPane.push(page)
+                callTimer.stop()
+                // TODO if signIn fails with proper code, go to signUp
+                // else go to main page
+                console.log("Signing in " + phoneNumber + " => " + confirmationCode.text)
+                api.signIn(phoneNumber, confirmationCode.text)
             }
         }
 

@@ -1232,6 +1232,7 @@ CTelegramConnection *CTelegramDispatcher::createConnection(const TLDcOption &dc)
     connect(connection, SIGNAL(wantedActiveDcChanged(int)), SLOT(whenWantedActiveDcChanged(int)));
 
     connect(connection, SIGNAL(phoneStatusReceived(QString,bool,bool)), SIGNAL(phoneStatusReceived(QString,bool,bool)));
+    connect(connection, SIGNAL(phoneNumberInvalid()), SIGNAL(phoneNumberInvalid()));
     connect(connection, SIGNAL(phoneCodeRequired()), SIGNAL(phoneCodeRequired()));
     connect(connection, SIGNAL(phoneCodeIsInvalid()), SIGNAL(phoneCodeIsInvalid()));
 

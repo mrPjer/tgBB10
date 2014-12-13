@@ -1,37 +1,31 @@
 /*
-    Copyright (C) 2014 Alexandr Akulich <akulichalexander@gmail.com>
+ * tgApi.hpp
+ *
+ *  Created on: 12. 12. 2014.
+ *      Author: Alfis
+ */
 
-    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-    EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-    MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-    NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
-    LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
-    OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-    WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+#ifndef TGAPI_HPP_
+#define TGAPI_HPP_
 
-*/
+#include "config.hpp"
 
-#ifndef CTELEGRAMCORE_HPP
-#define CTELEGRAMCORE_HPP
+#ifdef TG_API_TG
 
-#include "telegramqt_export.h"
+#include <bb/cascades/CustomControl>
+#include "CAppInformation.hpp"
 #include "TelegramNamespace.hpp"
+#include "CTelegramCore.hpp"
+#include <QTimer>
 
-#include <QObject>
-#include <QVector>
-#include <QStringList>
-
-class CAppInformation;
-class CTelegramDispatcher;
-
-class TELEGRAMQT_EXPORT CTelegramCore : public QObject
-{
+class tgApi: public bb::cascades::CustomControl{
     Q_OBJECT
-public:
-    explicit CTelegramCore(QObject *parent = 0);
-    ~CTelegramCore();
 
-    inline const CAppInformation *appInfo() { return m_appInfo; }
+public:
+
+    tgApi();
+
+    inline const CAppInformation *appInfo() { return core->appInfo(); }
     void setAppInformation(const CAppInformation *newAppInfo);
 
     QByteArray connectionSecretInfo() const;
@@ -44,7 +38,8 @@ public:
     Q_INVOKABLE QString contactLastName(const QString &phone) const;
     Q_INVOKABLE QStringList chatParticipants(quint32 publicChatId) const;
 
-public Q_SLOTS:
+public slots:
+    void onConnectRetryTimeout();
     bool initConnection(const QString &address, quint32 port);
     bool restoreConnection(const QByteArray &secret);
 
@@ -74,7 +69,7 @@ public Q_SLOTS:
 
     quint32 createChat(const QStringList &phones, const QString chatName);
 
-Q_SIGNALS:
+signals:
     void connected();
     void phoneCodeRequired();
     void phoneCodeIsInvalid();
@@ -97,21 +92,14 @@ Q_SIGNALS:
 
     void initializated();
 
+private slots:
+    void connectionEstablished();
+
 private:
-    CTelegramDispatcher *m_dispatcher;
-
-    const CAppInformation *m_appInfo;
-
+    static CTelegramCore* core;
+    static QTimer* timer;
 };
 
-inline void CTelegramCore::addContact(const QString &phoneNumber)
-{
-    addContacts(QStringList() << phoneNumber);
-}
+#endif
 
-inline void CTelegramCore::deleteContact(const QString &phoneNumber)
-{
-    deleteContacts(QStringList() << phoneNumber);
-}
-
-#endif // CTELECORE_HPP
+#endif /* TGAPI_HPP_ */

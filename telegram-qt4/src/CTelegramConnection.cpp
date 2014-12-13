@@ -1277,6 +1277,10 @@ bool CTelegramConnection::processRpcError(CTelegramStream &stream, quint64 id, T
             emit phoneCodeIsInvalid();
             return true;
         }
+        if(errorMessage == "PHONE_NUMBER_INVALID") {
+            emit phoneNumberInvalid();
+            return true;
+        }
     default:
         qDebug() << "RPC Error can not be handled.";
         break;
