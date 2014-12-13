@@ -7,9 +7,10 @@ Page {
 
     titleBar: TitleBar {
         kind: TitleBarKind.FreeForm
+        scrollBehavior: TitleBarScrollBehavior.Sticky
         kindProperties: FreeFormTitleBarKindProperties {
             ChatTitleBar {
-                chatName: "Ana Kovach"
+                chatName: "Ante Kovach"
                 chatStatus: "typing..."
                 imagePath: "asset:///images/testUsers/luka.jpg"
             }
@@ -17,6 +18,7 @@ Page {
     }
 
     Container {
+        id: root
         layout: DockLayout {
         }
         attachedObjects: [
@@ -34,47 +36,75 @@ Page {
             preferredHeight: maxHeight
             preferredWidth: maxWidth
         }
+        //TODO set visible only when no messages
         Container {
-
-            ListView {
-                leftPadding: 10
-                rightPadding: 10
-                topPadding: 10
-
-                dataModel: groupDataModel
-
-                function itemType(data, indexPath) {
-                    return data.messageTypeInbound ? "inbound" : "outbound"
-                }
-
-                listItemComponents: [
-                    ListItemComponent {
-                        type: "inbound"
-                        InboundChatCell {
-                            messageText: ListItemData.messageText
-                            timestamp: ListItemData.timestamp
-                        }
-                    },
-                    // TODO load the proper chat cell directly
-                    ListItemComponent {
-                        type: "outbound"
-                        OutboundChatCell {
-                            messageText: ListItemData.messageText
-                            timestamp: ListItemData.timestamp
-                        }
-                    },
-                    ListItemComponent {
-                        type: "outbound"
-                        OutboundChatCell {
-                            messageText: ListItemData.messageText
-                            timestamp: ListItemData.timestamp
-                        }
-                    }
-                ]
+            id: noMessages
+            visible: false
+            verticalAlignment: VerticalAlignment.Center
+            horizontalAlignment: HorizontalAlignment.Center
+            background: Color.create("#89afb4")
+            leftPadding: 20
+            rightPadding: 20
+            topPadding: 20
+            bottomPadding: 20
+            opacity: 0.8
+            ImageView {
+                horizontalAlignment: HorizontalAlignment.Center
+                imageSource: "asset:///images/chat/logo.png"
+            }
+            Label {
+                text: "No messages yet..."
+                horizontalAlignment: HorizontalAlignment.Center
+                textStyle.color: Color.White
             }
         }
-        NewMessage {
-            id: newMessage
+        Container {
+            layout: StackLayout {
+
+            }
+
+            Container {
+
+                ListView {
+                    id: listView
+                    leftPadding: 10
+                    rightPadding: 10
+                    topPadding: 10
+
+                    dataModel: groupDataModel
+
+                    function itemType(data, indexPath) {
+                        return data.messageTypeInbound ? "inbound" : "outbound"
+                    }
+
+                    listItemComponents: [
+                        ListItemComponent {
+                            type: "inbound"
+                            InboundChatCell {
+                                messageText: ListItemData.messageText
+                                timestamp: ListItemData.timestamp
+                            }
+                        },
+                        ListItemComponent {
+                            type: "outbound"
+                            OutboundChatCell {
+                                messageText: ListItemData.messageText
+                                timestamp: ListItemData.timestamp
+                                readVisible: ListItemData.readVisible
+                                sentVisible: ListItemData.sentVisible
+                                unsentVisible: ListItemData.unsentVisible
+                                sendingVisible: ListItemData.sendingVisible
+                            }
+                        }
+                    ]
+                }
+            }
+            Container {
+                verticalAlignment: VerticalAlignment.Bottom
+                NewMessage {
+                    id: newMessage
+                }
+            }
         }
     }
 
@@ -84,10 +114,22 @@ Page {
             imageSource: "asset:///images/chat/bar_attach.png"
             ActionBar.placement: ActionBarPlacement.OnBar
         },
+        //TODO validate text to make send button available
         ActionItem {
             title: "Send"
             imageSource: "asset:///images/chat/bar_send.png"
             ActionBar.placement: ActionBarPlacement.OnBar
+            onTriggered: {
+                console.log("insertam")
+                groupDataModel.insert({
+                        "messageText": newMessage.body,
+                        "timestamp": "19:19 PM",
+                        "sendingVisible": true,
+                        "unsentVisible": false,
+                        "sentVisible": false,
+                        "readVisible": false
+                    })
+            }
         },
         ActionItem {
             title: "Call"
@@ -116,12 +158,20 @@ Page {
         groupDataModel.insert({
                 "messageTypeInbound": false,
                 "messageText": "Weaboo.",
-                "timestamp": "5:12 PM"
+                "timestamp": "5:12 PM",
+                "readVisible": true
             });
         groupDataModel.insert({
                 "messageTypeInbound": false,
-                "messageText": "Weabooooooooooooo.",
-                "timestamp": "5:13 PM"
-        });
+                "messageText": "Such a weaboo.",
+                "timestamp": "5:13 PM",
+                "unsentVisible": true
+            });
+        groupDataModel.insert({
+                "messageTypeInbound": false,
+                "messageText": "I'm so funny.",
+                "timestamp": "5:14 PM",
+                "sentVisible": true
+            });
     }
 }

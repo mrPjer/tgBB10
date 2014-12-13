@@ -64,6 +64,26 @@ Container {
                 imageSource: "asset:///images/chat/check_2_green.png"
                 visible: false
             }
+
+            Label {
+                id: timestamp
+                visible: ! unsentVisible
+                verticalAlignment: VerticalAlignment.Center
+                leftMargin: 0
+                text: "time"
+                textStyle.color: Color.create("#75B166")
+                textStyle.fontSize: FontSize.XSmall
+            }
+
+        }
+        Container {
+            id: unsentMessage
+            horizontalAlignment: HorizontalAlignment.Right
+            verticalAlignment: VerticalAlignment.Bottom
+            layout: StackLayout {
+                orientation: LayoutOrientation.LeftToRight
+            }
+            visible: unsentVisible
             ImageView {
                 id: imageUnsent
                 verticalAlignment: VerticalAlignment.Center
@@ -71,28 +91,29 @@ Container {
                 visible: false
             }
             Label {
-                id: timestamp
+                id: unsentTimestamp
+                visible: unsentVisible
                 verticalAlignment: VerticalAlignment.Center
                 leftMargin: 0
-                text: "time"
-                textStyle.color: unsentVisible ? Color.Red : Color.create("#75B166")
+                text: timestamp.text
+                textStyle.color: Color.Red
                 textStyle.fontSize: FontSize.XSmall
             }
-        }
-    }
-    
-    contextActions: [
-        ActionSet {            
-            actions: [
-                ActionItem {
-                    title: "Resend Message"
-                    imageSource: "asset:///images/chat/menu_reload.png"
-                },
-                ActionItem {
-                    title: "Delete Message"
-                    imageSource: "asset:///images/chat/menu_bin.png"
+            contextActions: [
+                ActionSet {
+                    actions: [
+                        ActionItem {
+                            title: "Resend Message"
+                            imageSource: "asset:///images/chat/menu_reload.png"
+                        },
+                        ActionItem {
+                            title: "Delete Message"
+                            imageSource: "asset:///images/chat/menu_bin.png"
+                        }
+                    ]
                 }
             ]
         }
-    ]
+    }
+
 }
