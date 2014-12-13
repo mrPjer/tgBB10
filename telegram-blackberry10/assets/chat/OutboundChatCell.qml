@@ -80,4 +80,19 @@ Container {
             }
         }
     }
+    
+    contextActions: [
+        ActionSet {            
+            actions: [
+                ActionItem {
+                    title: "Resend Message"
+                    imageSource: "asset:///images/chat/menu_reload.png"
+                },
+                ActionItem {
+                    title: "Delete Message"
+                    imageSource: "asset:///images/chat/menu_bin.png"
+                }
+            ]
+        }
+    ]
 }
