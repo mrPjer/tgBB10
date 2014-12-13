@@ -85,7 +85,7 @@ Page {
                 function itemType(data, indexPath) {
                     return data.messageType === "inbound" ? "inbound" : "outbound"
                 }
-                
+
                 listItemComponents: [
                     ListItemComponent {
                         type: "inbound"
@@ -144,8 +144,7 @@ Page {
                         "sentVisible": false,
                         "readVisible": false
                     })
-                    navigatinpane.pop()
-                    //TODO refresh list
+                //TODO refresh list
             }
         },
         ActionItem {
