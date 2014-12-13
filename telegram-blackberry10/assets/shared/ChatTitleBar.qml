@@ -30,7 +30,7 @@ Container {
             id: status
             text: "chat status"
             topMargin: 0
-            textStyle.color: Color.create("#90bab7")
+            textStyle.color: Color.create("#D8EDF9")
             textStyle.fontSize: FontSize.Small
         }
     }
