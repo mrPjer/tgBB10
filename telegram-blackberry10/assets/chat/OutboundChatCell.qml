@@ -3,6 +3,7 @@ import bb.cascades 1.2
 Container {
     property alias messageText: messageText.text
     property alias timestamp: timestamp.text
+    //TODO use only one proprety to determine wich image to show
     property alias sentVisible: imageSent.visible
     property alias sendingVisible: imageSending.visible
     property alias readVisible: imageRead.visible
@@ -99,6 +100,10 @@ Container {
                 textStyle.color: Color.Red
                 textStyle.fontSize: FontSize.XSmall
             }
+        }
+        Container {
+            //TODO show context menu only whem message is unsent
+            visible: unsentVisible
             contextActions: [
                 ActionSet {
                     actions: [
