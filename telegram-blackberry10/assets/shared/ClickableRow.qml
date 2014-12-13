@@ -45,7 +45,7 @@ Container {
         }
 
         onTouch: {
-            if (event.isDown()) {
+            if (event.isUp()) {
                 rowClicked()
             }
         }
