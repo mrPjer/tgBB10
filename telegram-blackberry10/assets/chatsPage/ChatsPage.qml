@@ -31,8 +31,6 @@ Page {
                     return "secretChat"
                 }
             }
-            
-            
 
             listItemComponents: [
                 ListItemComponent {
