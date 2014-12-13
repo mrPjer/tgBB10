@@ -20,7 +20,9 @@ public:
     APIRegAuth();
 
 signals:
-    void phoneStatusReceived(const QString& phoneNumber, bool registered, bool invited);
+    void phoneStatusReceived(const QString& phone, bool registered, bool invited);
+    void phoneNumberInvalid();
+    void authenticated();
 //    void codeSent(CodeSent* cs);
 //    void smsSent(bool result);
     void callSent(bool);

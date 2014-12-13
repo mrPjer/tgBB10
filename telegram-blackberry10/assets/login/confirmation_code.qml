@@ -24,7 +24,6 @@ Page {
             id: api
             onAuthenticated: {
                 console.log("Signed in")
-                console.log(auth)
                 var page = registrationPageDefinition.createObject()
                 navigationPane.push(page)
             }
