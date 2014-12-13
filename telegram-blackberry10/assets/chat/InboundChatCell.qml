@@ -7,7 +7,7 @@ Container {
     layout: StackLayout {
         orientation: LayoutOrientation.LeftToRight
     }
-    
+
     bottomMargin: 10
     Container {
         topPadding: 10
