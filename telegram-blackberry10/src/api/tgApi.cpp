@@ -8,22 +8,28 @@
 #include "tgApi.hpp"
 #include "app_secrets.hpp"
 
+#include <qdebug.h>
+
 CTelegramCore* tgApi::core = NULL;
 QTimer* tgApi::timer = NULL;
 
 tgApi::tgApi(){
 
+    bool shouldInit = false;
+
     if(core == NULL){
         core = new CTelegramCore();
+        shouldInit = true;
     }
 
     connect( core,  SIGNAL( connected() ), SIGNAL( connected() )  );
-    connect( core,  SIGNAL( connected() ), timer, SIGNAL( stop() )  );
+    connect( core,  SIGNAL( connected() ), SLOT(connectionEstablished()));
     connect( core,  SIGNAL( phoneCodeRequired() ), SIGNAL( phoneCodeRequired() )  );
     connect( core,  SIGNAL( phoneCodeIsInvalid() ), SIGNAL( phoneCodeIsInvalid() )  );
     connect( core,  SIGNAL( authenticated() ), SIGNAL( authenticated() )  );
     connect( core,  SIGNAL( contactListChanged() ), SIGNAL( contactListChanged() )  );
     connect( core,  SIGNAL( phoneStatusReceived(const QString &phone, bool registered, bool invited) ), SIGNAL( phoneStatusReceived(const QString &phone, bool registered, bool invited) )  );
+    connect(core, SIGNAL(phoneNumberInvalid()), SIGNAL(phoneNumberInvalid()));
     connect( core,  SIGNAL( avatarReceived(const QString &contact, const QByteArray &data, const QString &mimeType) ), SIGNAL( avatarReceived(const QString &contact, const QByteArray &data, const QString &mimeType) )  );
     connect( core,  SIGNAL( messageReceived(const QString &phone, const QString &message, quint32 messageId) ), SIGNAL( messageReceived(const QString &phone, const QString &message, quint32 messageId) )  ); // Message id is incremental number
     connect( core,  SIGNAL( chatMessageReceived(quint32 chatId, const QString &phone, const QString &message) ), SIGNAL( chatMessageReceived(quint32 chatId, const QString &phone, const QString &message) )  );
@@ -35,7 +41,7 @@ tgApi::tgApi(){
     connect( core,  SIGNAL( chatChanged(quint32 publichChatId) ), SIGNAL( chatChanged(quint32 publichChatId) )  );
     connect( core,  SIGNAL( initializated() ), SIGNAL( initializated() )  );
 
-    if(core != NULL){
+    if(shouldInit){
         timer = new QTimer(this);
         timer->setInterval(500);
         timer->start();
@@ -49,13 +55,18 @@ tgApi::tgApi(){
         info.setLanguageCode(QLatin1String("en"));
         info.setOsInfo(QLatin1String("BlackBerry 10"));
         core->setAppInformation(&info);
-        connect(core, SIGNAL(phoneStatusReceived(QString, bool, bool)), SLOT(onPhoneStatusReceived(QString, bool, bool)));
         core->initConnection(QLatin1String(TG_IP_TEST), TG_PORT_TEST);
     }
 
 }
 
+void tgApi::connectionEstablished() {
+    qDebug() << "Connection established";
+    timer->stop();
+}
+
 void tgApi::onConnectRetryTimeout() {
+    qDebug() << "Retrying connection";
     const QByteArray secret = core->connectionSecretInfo();
     if(!secret.isEmpty()) {
         core->restoreConnection(secret);
