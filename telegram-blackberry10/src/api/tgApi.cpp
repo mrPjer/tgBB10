@@ -28,7 +28,7 @@ tgApi::tgApi(){
     connect( core,  SIGNAL( phoneCodeIsInvalid() ), SIGNAL( phoneCodeIsInvalid() )  );
     connect( core,  SIGNAL( authenticated() ), SIGNAL( authenticated() )  );
     connect( core,  SIGNAL( contactListChanged() ), SIGNAL( contactListChanged() )  );
-    connect( core,  SIGNAL( phoneStatusReceived(const QString &phone, bool registered, bool invited) ), SIGNAL( phoneStatusReceived(const QString &phone, bool registered, bool invited) )  );
+    connect( core,  SIGNAL( phoneStatusReceived(QString, bool, bool) ), SIGNAL( phoneStatusReceived(QString, bool, bool) )  );
     connect(core, SIGNAL(phoneNumberInvalid()), SIGNAL(phoneNumberInvalid()));
     connect( core,  SIGNAL( avatarReceived(const QString &contact, const QByteArray &data, const QString &mimeType) ), SIGNAL( avatarReceived(const QString &contact, const QByteArray &data, const QString &mimeType) )  );
     connect( core,  SIGNAL( messageReceived(const QString &phone, const QString &message, quint32 messageId) ), SIGNAL( messageReceived(const QString &phone, const QString &message, quint32 messageId) )  ); // Message id is incremental number
