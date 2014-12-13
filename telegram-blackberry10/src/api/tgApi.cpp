@@ -5,6 +5,8 @@
  *      Author: Alfis
  */
 
+#ifdef TG_API_TG
+
 #include "tgApi.hpp"
 #include "app_secrets.hpp"
 
@@ -188,3 +190,4 @@ quint32 tgApi::createChat(const QStringList &phones, const QString chatName){
 	return core->createChat(phones, chatName);
 }
 
+#endif

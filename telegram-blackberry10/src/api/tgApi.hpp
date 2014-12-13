@@ -8,6 +8,10 @@
 #ifndef TGAPI_HPP_
 #define TGAPI_HPP_
 
+#include "config.hpp"
+
+#ifdef TG_API_TG
+
 #include <bb/cascades/CustomControl>
 #include "CAppInformation.hpp"
 #include "TelegramNamespace.hpp"
@@ -96,6 +100,6 @@ private:
     static QTimer* timer;
 };
 
-
+#endif
 
 #endif /* TGAPI_HPP_ */
