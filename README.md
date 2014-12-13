@@ -82,3 +82,7 @@ The *service* label is assigned to issues regarding backend logic.
 The *required* label is assigned to features of higher priority which need to be implemented in the minimum product.
 The *missing info* label is assigned to issues where a part of the info is missing or is not clear. See if you can clarify these.
 Finally, the *nice to have* label is assigned to features which increase the value of the product, but are not essential. Only work on these if you know you'll have the time.
+
+## License
+
+This project is released under GPLv3. Details are available in the file [LICENSE](LICENSE).
