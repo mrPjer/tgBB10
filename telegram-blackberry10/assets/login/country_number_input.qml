@@ -11,9 +11,10 @@ Page {
     }
 
     property string confirmationPhoneNumber
+    property alias phoneNumberText: phoneNumber.text
 
     function phoneNumber() {
-        return countryCode.text + phoneNumber.text
+        return countryCode.text + phoneNumberText
     }
 
     attachedObjects: [
@@ -28,23 +29,22 @@ Page {
         },
         RegistrationApi {
             id: api
-            onPhoneStatusReceived: {
-                console.log("Received phone status for " + phoneNumber)
-                console.log("\t(Registered, invited) = " + registered + ", " + invited)
-                confirmationPhoneNumber = phoneNumber
-                api.requestPhoneCode(phoneNumber)
-            }
-            onSmsSent: {
+            onPhoneNumberInvalid: {
+                console.log("Phone number invalid!")
                 phoneNumberProgress.cancel()
-                if (result) {
-                    console.log("Auth code dispatched")
-                    var newPage = confirmationCodePageDefinition.createObject()
-                    newPage.phoneNumber = confirmationPhoneNumber
-                    navigationPane.push(newPage)
-                } else {
-                    console.log("Auth code wasn't dispatched")
-                    codeErrorToast.show()
-                }
+                invalidNumberToast.show()
+            }
+            onPhoneStatusReceived: {
+                console.log("Received phone status for " + phone)
+                console.log("\t(Registered, invited) = " + registered + ", " + invited)
+                confirmationPhoneNumber = phone
+                api.requestPhoneCode(phone)
+
+                phoneNumberProgress.cancel()
+                console.log("Auth code dispatched")
+                var newPage = confirmationCodePageDefinition.createObject()
+                newPage.phoneNumber = confirmationPhoneNumber
+                navigationPane.push(newPage)
 
             }
         },
@@ -53,13 +53,21 @@ Page {
             dismissAutomatically: false
             title: "Confirming phone number"
             body: "Trying to dispatch the confirmation code..."
-            confirmButton{
+            confirmButton {
                 label: ""
             }
         },
         SystemToast {
             id: codeErrorToast
             body: "An error occurred while sending the SMS. Please check your number."
+            button {
+                label: "OK"
+                enabled: true
+            }
+        },
+        SystemToast {
+            id: invalidNumberToast
+            body: "The phone number you have entered seems to be invalid!"
             button {
                 label: "OK"
                 enabled: true
@@ -165,6 +173,7 @@ Page {
             enabled: false
             horizontalAlignment: HorizontalAlignment.Center
             onClicked: {
+                console.log("Registering with " + page.phoneNumber())
                 phoneNumberProgress.show()
                 api.requestPhoneStatus(page.phoneNumber())
             }

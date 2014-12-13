@@ -22,10 +22,7 @@ Page {
             source: "asset:///login/registration.qml"
         }, RegistrationApi {
             id: api
-            onCallSent: {
-                callSentToast.show()
-            }
-            onSignedIn: {
+            onAuthenticated: {
                 console.log("Signed in")
                 console.log(auth)
                 var page = registrationPageDefinition.createObject()
@@ -60,7 +57,11 @@ Page {
 
                 if (currentCount == 0) {
                     callTimer.stop()
+                    // TODO send actual call
+                    /*
                     api.sendCall(phoneNumber, "what hash?")
+                    callSentToast.show()
+                    */
                 }
             }
         }
@@ -139,6 +140,7 @@ Page {
                 callTimer.stop()
                 // TODO if signIn fails with proper code, go to signUp
                 // else go to main page
+                console.log("Signing in " + phoneNumber + " => " + confirmationCode.text)
                 api.signIn(phoneNumber, confirmationCode.text)
             }
         }
