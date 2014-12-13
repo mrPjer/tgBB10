@@ -91,6 +91,7 @@ signals:
     void authenticated();
     void contactListChanged();
     void phoneStatusReceived(const QString &phone, bool registered, bool invited);
+    void phoneNumberInvalid();
     void avatarReceived(const QString &contact, const QByteArray &data, const QString &mimeType);
     void messageReceived(const QString &phone, const QString &message, quint32 messageId);
     void chatMessageReceived(quint32 chatId, const QString &phone, const QString &message);

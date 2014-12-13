@@ -7,6 +7,7 @@
 
 #include <ctime>
 #include "apiRegAuth.hpp"
+#include <bb/cascades/CustomControl>
 
 APIRegAuth::APIRegAuth(){
     auth.user = new User();
@@ -17,19 +18,20 @@ APIRegAuth::APIRegAuth(){
     auth.user->status = new UserStatus();
 }
 
-void APIRegAuth::requestPhoneStatus(QString* phone_number){
+void APIRegAuth::requestPhoneStatus(const QString &phone_number){
     connect(&delay, SIGNAL(finished()), this, SLOT(phoneStatusReceivedEmitter()));
     delay.start();
 }
-void APIRegAuth::requestPhoneCode(QString* phone_number){
+void APIRegAuth::requestPhoneCode(const QString &phone_number){
     //connect(&delay, SIGNAL(finished()), this, SLOT(codeSentEmitter()));
-    delay.start();
-}
-void APIRegAuth::sendSms(QString* phone_number, QString* phone_code_hash){
     connect(&delay, SIGNAL(finished()), this, SLOT(smsSentEmitter()));
     delay.start();
 }
-void APIRegAuth::sendCall(QString* phone_number, QString* phone_code_hash){
+void APIRegAuth::sendSms(const QString &phone_number, const QString &phone_code_hash){
+    connect(&delay, SIGNAL(finished()), this, SLOT(smsSentEmitter()));
+    delay.start();
+}
+void APIRegAuth::sendCall(const QString &phone_number, const QString &phone_code_hash){
     connect(&delay, SIGNAL(finished()), this, SLOT(callSentEmitter()));
     delay.start();
 }
@@ -37,8 +39,8 @@ void APIRegAuth::signUp(QString* phone_number, QString* phone_code, QString* fir
     //connect(&delay, SIGNAL(finished()), this, SLOT(signedUpEmitter()));
     delay.start();
 }
-void APIRegAuth::signIn(QString* phone_number, QString* phone_code){
-    //connect(&delay, SIGNAL(finished()), this, SLOT(signedInEmitter()));
+void APIRegAuth::signIn(const QString &phone_number, const QString &phone_code){
+    connect(&delay, SIGNAL(finished()), this, SLOT(signedInEmitter()));
     delay.start();
 }
 void APIRegAuth::logOut(){
@@ -77,11 +79,11 @@ void APIRegAuth::codeSentEmitter(){
     cs.phone_code_hash = "2dc02d2cda9e615c84";
     emit codeSent(&cs);
 }
-*/
 void APIRegAuth::smsSentEmitter(){
     disconnect(&delay, SIGNAL(finished()), this, SLOT(smsSentEmitter()));
     emit smsSent(true);
 }
+*/
 void APIRegAuth::callSentEmitter(){
     disconnect(&delay, SIGNAL(finished()), this, SLOT(callSentEmitter()));
     emit callSent(true);
@@ -99,6 +101,8 @@ void APIRegAuth::signedUpEmitter(){
     auth.user->inactive = false;
     emit signedUp(&auth);
 }
+*/
+
 void APIRegAuth::signedInEmitter(){
     disconnect(&delay, SIGNAL(finished()), this, SLOT(signedInEmitter()));
     auth.expires = time(NULL) + 600;
@@ -107,10 +111,12 @@ void APIRegAuth::signedInEmitter(){
     auth.user->last_name = "Serbedzija";
     auth.user->phone = "12345678";
     auth.user->inactive = false;
-    emit signedIn(&auth);
+    emit authenticated();
+    emit signedIn(auth);
 }
-*/
+
 void APIRegAuth::loggedOutEmitter(){
+
     disconnect(&delay, SIGNAL(finished()), this, SLOT(loggedOutEmitter()));
     emit loggedOut(true);
 }
