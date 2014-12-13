@@ -24,6 +24,10 @@ Steps:
 
 #### Building and linking the telegram-qt4 library project
 
+In order to connect to the Telegram API, this project relies on the project telegram-qt4 available here: [https://github.com/Kaffeine/telegram-qt](https://github.com/Kaffeine/telegram-qt).
+
+A version of that project modified to be used as a BlackBerry 10 library project is available in the directory [telegram-qt4](telegram-qt4).
+
 Unfortunately, Momentics won't automatically build all the proper versions of the library project so we need to do this manually.
 
 Steps:
@@ -35,6 +39,24 @@ Steps:
 * Repeat these steps, but set the configuration to Simulator-Debug
 
 After this, the main project should properly link against the library and build without errors.
+
+##### Configuring the build order
+
+Momentics may get the build order wrong and try to build the application project before building the library project during a clean.
+
+To fix this, open the application project's properties and under the section _Project References_ add a checkmark next to telegram-qt4.
+
+#### Connecting to the Telegram API
+
+By default the app will connect to an internal mock API since this eases UI development and testing.
+
+In order to connect to the actual API, the following steps need to be taken:
+
+1. Open the [telegram-blackberry10/src/config.hpp](telegram-blackberry10/src/config.hpp) file and change the defines so that TG_API_TG is defined and TG_API mock is not
+2. Open the [telegram-blackberry10/src/app_secrets.hpp](telegram-blackberry10/src/app_secrets.hpp) and replace the placeholder values with those you obtained on [my.telegram.org](https://my.telegram.org).
+3. Remember to remove the `#error` reminder once you're done putting in your details
+
+Now the app should build, run and use the Telegram API. If you experience problems, check the console for debug information.
 
 ## Contributing guidelines
 
@@ -70,3 +92,7 @@ The *service* label is assigned to issues regarding backend logic.
 The *required* label is assigned to features of higher priority which need to be implemented in the minimum product.
 The *missing info* label is assigned to issues where a part of the info is missing or is not clear. See if you can clarify these.
 Finally, the *nice to have* label is assigned to features which increase the value of the product, but are not essential. Only work on these if you know you'll have the time.
+
+## License
+
+This project is released under GPLv3. Details are available in the file [LICENSE](LICENSE).
