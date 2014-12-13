@@ -11,6 +11,7 @@ Page {
     titleBar: TitleBar {
         id: editTitleBar
         title: "Edit"
+        scrollBehavior: TitleBarScrollBehavior.Sticky
 
         dismissAction: ActionItem {
             id: editCancel

@@ -4,6 +4,7 @@ import '../shared'
 Page {
     titleBar: TitleBar {
         title: "Never Share"
+        scrollBehavior: TitleBarScrollBehavior.Sticky
     }
     attachedObjects: [
         ComponentDefinition {
