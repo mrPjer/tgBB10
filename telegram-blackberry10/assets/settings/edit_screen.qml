@@ -66,7 +66,6 @@ Page {
                     preferredWidth: 180
                     accessibility.name: "User avatar button"
                     onClicked: {
-                        //TODO add camera option
                         filePicker.open()
                     }
                 }
