@@ -40,6 +40,12 @@ Steps:
 
 After this, the main project should properly link against the library and build without errors.
 
+##### Configuring the build order
+
+Momentics may get the build order wrong and try to build the application project before building the library project during a clean.
+
+To fix this, open the application project's properties and under the section _Project References_ add a checkmark next to telegram-qt4.
+
 #### Connecting to the Telegram API
 
 By default the app will connect to an internal mock API since this eases UI development and testing.
