@@ -24,6 +24,10 @@ Steps:
 
 #### Building and linking the telegram-qt4 library project
 
+In order to connect to the Telegram API, this project relies on the project telegram-qt4 available here: [https://github.com/Kaffeine/telegram-qt](https://github.com/Kaffeine/telegram-qt).
+
+A version of that project modified to be used as a BlackBerry 10 library project is available in the directory [telegram-qt4](telegram-qt4).
+
 Unfortunately, Momentics won't automatically build all the proper versions of the library project so we need to do this manually.
 
 Steps:
