@@ -11,6 +11,7 @@ Page {
     titleBar: TitleBar {
         id: editTitleBar
         title: "Edit"
+        scrollBehavior: TitleBarScrollBehavior.Sticky
 
         dismissAction: ActionItem {
             id: editCancel
@@ -65,7 +66,6 @@ Page {
                     preferredWidth: 180
                     accessibility.name: "User avatar button"
                     onClicked: {
-                        //TODO add camera option
                         filePicker.open()
                     }
                 }

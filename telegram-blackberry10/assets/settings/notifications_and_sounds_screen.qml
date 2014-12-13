@@ -7,6 +7,7 @@ Page {
 
     titleBar: TitleBar {
         title: 'Notifications and Sounds'
+        scrollBehavior: TitleBarScrollBehavior.Sticky
     }
 
     ScrollView {
