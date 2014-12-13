@@ -6,6 +6,7 @@ Page {
 
     titleBar: TitleBar {
         title: 'Chat Settings'
+        scrollBehavior: TitleBarScrollBehavior.Sticky
     }
 
     ScrollView {
