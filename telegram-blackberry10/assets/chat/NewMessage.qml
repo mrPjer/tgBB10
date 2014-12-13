@@ -1,6 +1,16 @@
 import bb.cascades 1.2
 
 Container {
+    signal enableSendButton()
+    signal disableSendButton()
+    function validateInput() {
+        if (newMessage.text.length > 0){
+            enableSendButton()
+        }
+        if (newMessage.text.length == 0){
+            disableSendButton()
+        }
+    }
     preferredHeight: 130
     background: Color.create("#282929")
     layout: StackLayout {
@@ -24,7 +34,10 @@ Container {
         hintText: "Enter a message"
         leftMargin: 0
         rightMargin: 0
-    }
+        onTextChanging: {
+            validateInput()
+        }
+            }
     Container {
         verticalAlignment: VerticalAlignment.Center
         preferredWidth: 100
