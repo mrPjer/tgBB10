@@ -162,6 +162,7 @@ signals:
     void actualDcIdReceived(int dc, int newDcId);
     void dcConfigurationReceived(int dc);
     void phoneStatusReceived(const QString &phone, bool registered, bool invited);
+    void phoneNumberInvalid();
     void phoneCodeRequired();
     void phoneCodeIsInvalid();
     void usersReceived(const QVector<TLUser> &users);
