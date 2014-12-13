@@ -2,8 +2,9 @@ import bb.cascades 1.2
 import '../shared'
 
 Page {
-
+    id: chatPage
     property alias backgroundImageSource: backgroundImage.imageSource
+    property alias enableSend: sendButton.enabled
 
     titleBar: TitleBar {
         kind: TitleBarKind.FreeForm
@@ -42,67 +43,79 @@ Page {
             visible: false
             verticalAlignment: VerticalAlignment.Center
             horizontalAlignment: HorizontalAlignment.Center
-            background: Color.create("#89afb4")
-            leftPadding: 20
-            rightPadding: 20
-            topPadding: 20
-            bottomPadding: 20
-            opacity: 0.8
-            ImageView {
-                horizontalAlignment: HorizontalAlignment.Center
-                imageSource: "asset:///images/chat/logo.png"
+            layout: DockLayout {
+
             }
-            Label {
-                text: "No messages yet..."
+            Container {
+                preferredHeight: 300
+                preferredWidth: 400
+                background: Color.create("#89afb4")
+                opacity: 0.5
+            }
+
+            Container {
+                verticalAlignment: VerticalAlignment.Center
                 horizontalAlignment: HorizontalAlignment.Center
-                textStyle.color: Color.White
+                ImageView {
+                    horizontalAlignment: HorizontalAlignment.Center
+                    imageSource: "asset:///images/chat/logo.png"
+                }
+                Label {
+                    text: "No messages yet..."
+                    horizontalAlignment: HorizontalAlignment.Center
+                    textStyle.color: Color.White
+                }
             }
         }
         Container {
             layout: StackLayout {
 
             }
+            //TODO show latest not first when screen is opened
+            ListView {
+                id: listView
+                leftPadding: 10
+                rightPadding: 10
+                topPadding: 10
 
-            Container {
-
-                ListView {
-                    id: listView
-                    leftPadding: 10
-                    rightPadding: 10
-                    topPadding: 10
-
-                    dataModel: groupDataModel
-
-                    function itemType(data, indexPath) {
-                        return data.messageTypeInbound ? "inbound" : "outbound"
-                    }
-
-                    listItemComponents: [
-                        ListItemComponent {
-                            type: "inbound"
-                            InboundChatCell {
-                                messageText: ListItemData.messageText
-                                timestamp: ListItemData.timestamp
-                            }
-                        },
-                        ListItemComponent {
-                            type: "outbound"
-                            OutboundChatCell {
-                                messageText: ListItemData.messageText
-                                timestamp: ListItemData.timestamp
-                                readVisible: ListItemData.readVisible
-                                sentVisible: ListItemData.sentVisible
-                                unsentVisible: ListItemData.unsentVisible
-                                sendingVisible: ListItemData.sendingVisible
-                            }
-                        }
-                    ]
+                dataModel: groupDataModel
+                onDataModelChanged: {
                 }
+
+                function itemType(data, indexPath) {
+                    return data.messageType === "inbound" ? "inbound" : "outbound"
+                }
+                
+                listItemComponents: [
+                    ListItemComponent {
+                        type: "inbound"
+                        InboundChatCell {
+                            messageText: ListItemData.messageText
+                            timestamp: ListItemData.timestamp
+                        }
+                    },
+                    ListItemComponent {
+                        type: "outbound"
+                        OutboundChatCell {
+                            messageText: ListItemData.messageText
+                            timestamp: ListItemData.timestamp
+                            readVisible: ListItemData.readVisible
+                            sentVisible: ListItemData.sentVisible
+                            unsentVisible: ListItemData.unsentVisible
+                            sendingVisible: ListItemData.sendingVisible
+                        }
+                    }
+                ]
             }
+
             Container {
                 verticalAlignment: VerticalAlignment.Bottom
                 NewMessage {
                     id: newMessage
+                    onEnableSendButton: {
+                    }
+                    onDisableSendButton: {
+                    }
                 }
             }
         }
@@ -116,12 +129,14 @@ Page {
         },
         //TODO validate text to make send button available
         ActionItem {
+            id: sendButton
             title: "Send"
             imageSource: "asset:///images/chat/bar_send.png"
             ActionBar.placement: ActionBarPlacement.OnBar
+            enabled: true
             onTriggered: {
-                console.log("insertam")
                 groupDataModel.insert({
+                        "messegeType": "outbound",
                         "messageText": newMessage.body,
                         "timestamp": "19:19 PM",
                         "sendingVisible": true,
@@ -129,6 +144,8 @@ Page {
                         "sentVisible": false,
                         "readVisible": false
                     })
+                    navigatinpane.pop()
+                    //TODO refresh list
             }
         },
         ActionItem {
@@ -150,25 +167,24 @@ Page {
     ]
     onCreationCompleted: {
         groupDataModel.insert({
-                // TODO: messageType should be just inbound or outbound
-                "messageTypeInbound": true,
+                "messageType": "inbound",
                 "messageText": "This is some text. I like trains. And Animu. And games. And Pizza. Yes. Pizza very much. And cats.",
                 "timestamp": "5:06 PM"
             });
         groupDataModel.insert({
-                "messageTypeInbound": false,
+                "messageType": "outbound",
                 "messageText": "Weaboo.",
                 "timestamp": "5:12 PM",
                 "readVisible": true
             });
         groupDataModel.insert({
-                "messageTypeInbound": false,
+                "messageType": "outbound",
                 "messageText": "Such a weaboo.",
                 "timestamp": "5:13 PM",
                 "unsentVisible": true
             });
         groupDataModel.insert({
-                "messageTypeInbound": false,
+                "messageType": "outbound",
                 "messageText": "I'm so funny.",
                 "timestamp": "5:14 PM",
                 "sentVisible": true
