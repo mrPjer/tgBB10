@@ -15,6 +15,7 @@ Container {
 
     onCreationCompleted: {
         listView.triggered.connect(triggered)
+        updateContacts()
     }
 
     function updateContacts() {
