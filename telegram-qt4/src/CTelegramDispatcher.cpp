@@ -22,6 +22,52 @@
 
 #include <QDebug>
 
+// Have a copy in CTelegramConnection
+static QString maskPhoneNumber(const QString &phoneNumber)
+{
+    if (phoneNumber.isEmpty()) {
+        return QString();
+    }
+
+    // We don't want to mask "numbers" like unknown777000, so lets check if phoneNumber is consist of digits only.
+    bool ok1, ok2;
+    phoneNumber.mid(0, phoneNumber.size() / 2).toInt(&ok1);
+
+    if (ok1) {
+        phoneNumber.mid(phoneNumber.size() / 2).toInt(&ok2);
+    }
+
+    if (ok1 && ok2) {
+        // Expected something like: 55xxxxxxxx (hidden).
+        return phoneNumber.mid(0, phoneNumber.size() / 4) + QString(phoneNumber.size() - phoneNumber.size() / 4, QLatin1Char('x')); // + QLatin1String(" (hidden)");
+    } else {
+        return phoneNumber;
+    }
+}
+
+// Have a copy in CTelegramConnection
+static QStringList maskPhoneNumberList(const QStringList &list)
+{
+    if (list.count() == 1) {
+        return QStringList() << maskPhoneNumber(list.first());
+    }
+
+    QStringList result;
+
+    const int listDigits = QString::number(list.count()).size();
+
+    foreach (const QString &number, list) {
+        if (number.length() >= 5 + listDigits) {
+            QString masked = QString(QLatin1String("%1xx%2%3")).arg(number.mid(0, 2)).arg(list.indexOf(number), listDigits, 10, QLatin1Char('0')).arg(QString(number.length() - 4 - listDigits, QLatin1Char('x')));
+            result.append(masked);
+        } else { // fallback
+            result.append(maskPhoneNumber(number) + QLatin1String(" (fallback)"));
+        }
+    }
+
+    return result;
+}
+
 const quint32 secretFormatVersion = 1;
 const int s_userTypingActionPeriod = 6000; // 6 sec
 const int s_localTypingActionPeriod = 5000; // 5 sec
@@ -33,10 +79,12 @@ const int s_timerMaxInterval = 500; // 0.5 sec. Needed to limit max possible typ
 CTelegramDispatcher::CTelegramDispatcher(QObject *parent) :
     QObject(parent),
     m_appInformation(0),
-    m_initState(InitNone),
+    m_initState(InitNothing),
+    m_isAuthenticated(false),
     m_activeDc(0),
     m_wantedActiveDc(0),
     m_updatesStateIsLocked(false),
+    m_emitOnlyIncomingUnreadMessages(true),
     m_selfUserId(0),
     m_typingUpdateTimer(new QTimer(this))
 {
@@ -44,23 +92,48 @@ CTelegramDispatcher::CTelegramDispatcher(QObject *parent) :
     connect(m_typingUpdateTimer, SIGNAL(timeout()), SLOT(whenUserTypingTimerTimeout()));
 }
 
+CTelegramDispatcher::~CTelegramDispatcher()
+{
+    qDeleteAll(m_connections);
+    qDeleteAll(m_users);
+}
+
 void CTelegramDispatcher::setAppInformation(const CAppInformation *newAppInfo)
 {
     m_appInformation = newAppInfo;
 }
 
-bool CTelegramDispatcher::isAuthenticated()
+bool CTelegramDispatcher::isConnected() const
 {
-    return activeConnection() && (activeConnection()->authState() == CTelegramConnection::AuthStateSignedIn) && !m_dcConfiguration.isEmpty();
+    return activeConnection() && !m_dcConfiguration.isEmpty();
+}
+
+bool CTelegramDispatcher::isAuthenticated() const
+{
+    return isConnected() && m_isAuthenticated;
 }
 
 void CTelegramDispatcher::addContacts(const QStringList &phoneNumbers, bool replace)
 {
-    activeConnection()->addContacts(phoneNumbers, replace);
+    qDebug() << "addContacts" << maskPhoneNumberList(phoneNumbers);
+    if (activeConnection()) {
+        TLVector<TLInputContact> contactsVector;
+        for (int i = 0; i < phoneNumbers.count(); ++i) {
+            TLInputContact contact;
+            contact.clientId = i;
+            contact.phone = phoneNumbers.at(i);
+            contactsVector.append(contact);
+        }
+        activeConnection()->contactsImportContacts(contactsVector, replace);
+    } else {
+        qDebug() << Q_FUNC_INFO << "No active connection.";
+    }
 }
 
 void CTelegramDispatcher::deleteContacts(const QStringList &phoneNumbers)
 {
+    qDebug() << Q_FUNC_INFO << maskPhoneNumberList(phoneNumbers);
+
     QVector<TLInputUser> users;
     users.reserve(phoneNumbers.count());
 
@@ -170,28 +243,65 @@ bool CTelegramDispatcher::restoreConnection(const QByteArray &secret)
     return true;
 }
 
-void CTelegramDispatcher::initConnectionSharedFinal(int activeDc)
+void CTelegramDispatcher::initConnectionSharedFinal(quint32 activeDc)
 {
-    m_initState = InitNone;
+    m_initState = InitNothing;
+    m_isAuthenticated = false;
+    setActiveDc(activeDc);
+    m_updatesStateIsLocked = false;
     m_selfUserId = 0;
+
     m_actualState = TLUpdatesState();
 
-    setActiveDc(activeDc);
     activeConnection()->connectToDc();
+}
+
+void CTelegramDispatcher::closeConnection()
+{
+    foreach (CTelegramConnection *o, m_connections) {
+        o->disconnect(this);
+        o->deleteLater();
+    }
+
+    m_isAuthenticated = false;
+    m_connections.clear();
+    m_dcConfiguration.clear();
+    m_delayedPackages.clear();
+    qDeleteAll(m_users);
+    m_users.clear();
+    m_messagesMap.clear();
+    m_contactList.clear();
+    m_requestedFiles.clear();
+    m_userTypingMap.clear();
+    m_userChatTypingMap.clear();
+    m_localTypingMap.clear();
+    m_localChatTypingMap.clear();
+    m_chatIdMap.clear();
+    m_temporaryChatIdMap.clear();
+    m_chatInfo.clear();
 }
 
 void CTelegramDispatcher::requestPhoneStatus(const QString &phoneNumber)
 {
-    activeConnection()->requestPhoneStatus(phoneNumber);
+    if (!activeConnection()) {
+        return;
+    }
+    activeConnection()->authCheckPhone(phoneNumber);
 }
 
 void CTelegramDispatcher::signIn(const QString &phoneNumber, const QString &authCode)
 {
+    if (!activeConnection()) {
+        return;
+    }
     activeConnection()->signIn(phoneNumber, authCode);
 }
 
 void CTelegramDispatcher::signUp(const QString &phoneNumber, const QString &authCode, const QString &firstName, const QString &lastName)
 {
+    if (!activeConnection()) {
+        return;
+    }
     activeConnection()->signUp(phoneNumber, authCode, firstName, lastName);
 }
 
@@ -212,23 +322,23 @@ void CTelegramDispatcher::requestPhoneCode(const QString &phoneNumber)
 
 void CTelegramDispatcher::requestContactAvatar(const QString &phoneNumber)
 {
-    qDebug() << Q_FUNC_INFO << phoneNumber;
+    qDebug() << Q_FUNC_INFO << maskPhoneNumber(phoneNumber);
 
     const TLUser *user = phoneNumberToUser(phoneNumber);
     if (!user) {
-        qDebug() << Q_FUNC_INFO << "Unknown user" << phoneNumber;
+        qDebug() << Q_FUNC_INFO << "Unknown user" << maskPhoneNumber(phoneNumber);
         return;
     }
 
     if (user->photo.tlType == UserProfilePhotoEmpty) {
-        qDebug() << Q_FUNC_INFO << "User" << phoneNumber << "have no avatar";
+        qDebug() << Q_FUNC_INFO << "User" << maskPhoneNumber(phoneNumber) << "have no avatar";
         return;
     }
 
     TLFileLocation avatarLocation = user->photo.photoSmall;
 
     if (avatarLocation.tlType == FileLocationUnavailable) {
-        qDebug() << Q_FUNC_INFO << "Contact" << phoneNumber << "avatar is not available";
+        qDebug() << Q_FUNC_INFO << "Contact" << maskPhoneNumber(phoneNumber) << "avatar is not available";
         return;
     }
 
@@ -238,32 +348,33 @@ void CTelegramDispatcher::requestContactAvatar(const QString &phoneNumber)
     inputFile.secret   = avatarLocation.secret;
 
     requestFile(inputFile, avatarLocation.dcId, user->id);
-    qDebug() << Q_FUNC_INFO << "Requested avatar for user " << phoneNumber;
+    qDebug() << Q_FUNC_INFO << "Requested avatar for user " << maskPhoneNumber(phoneNumber);
 }
 
 quint64 CTelegramDispatcher::sendMessageToContact(const QString &phone, const QString &message)
 {
+    if (!activeConnection()) {
+        return 0;
+    }
     const TLInputPeer peer = phoneNumberToInputPeer(phone);
 
     if (peer.tlType == InputPeerEmpty) {
-        qDebug() << Q_FUNC_INFO << "Can not resolve contact" << phone;
+        qDebug() << Q_FUNC_INFO << "Can not resolve contact" << maskPhoneNumber(phone);
         return 0;
     }
-
-    quint64 randomMessageId;
-    Utils::randomBytes(&randomMessageId);
-
-    activeConnection()->messagesSendMessage(peer, message, randomMessageId);
 
     if (m_localTypingMap.contains(phone)) {
         m_localTypingMap.remove(phone);
     }
 
-    return randomMessageId;
+    return sendMessages(peer, message);
 }
 
 quint64 CTelegramDispatcher::sendMessageToChat(quint32 publicChatId, const QString &message)
 {
+    if (!activeConnection()) {
+        return 0;
+    }
     const TLInputPeer peer = publicChatIdToInputPeer(publicChatId);
 
     if (peer.tlType == InputPeerEmpty) {
@@ -271,20 +382,39 @@ quint64 CTelegramDispatcher::sendMessageToChat(quint32 publicChatId, const QStri
         return 0;
     }
 
-    quint64 randomMessageId;
-    Utils::randomBytes(&randomMessageId);
-
-    activeConnection()->messagesSendMessage(peer, message, randomMessageId);
-
     if (m_localChatTypingMap.contains(publicChatId)) {
         m_localChatTypingMap.remove(publicChatId);
     }
+
+    return sendMessages(peer, message);
+}
+
+quint64 CTelegramDispatcher::sendMessages(const TLInputPeer &peer, const QString &message)
+{
+    quint64 randomMessageId;
+    Utils::randomBytes(&randomMessageId);
+
+    // Probably we have to implement GZip packing to fix this bug.
+    if (message.length() > 400) {
+        qDebug() << Q_FUNC_INFO << "Can not send such long message due to a bug. Current maximum length is 400 characters.";
+        return 0;
+    }
+
+    if (message.length() > 4095) { // 4096 - 1
+        qDebug() << Q_FUNC_INFO << "Can not send such long message due to server limitation. Current maximum length is 4095 characters.";
+        return 0;
+    }
+
+    activeConnection()->messagesSendMessage(peer, message, randomMessageId);
 
     return randomMessageId;
 }
 
 quint32 CTelegramDispatcher::createChat(const QStringList &phones, const QString chatName)
 {
+    if (!activeConnection()) {
+        return 0;
+    }
     TLVector<TLInputUser> users;
 
     foreach (const QString &phone, phones) {
@@ -302,6 +432,9 @@ quint32 CTelegramDispatcher::createChat(const QStringList &phones, const QString
 
 void CTelegramDispatcher::setTyping(const QString &phone, bool typingStatus)
 {
+    if (!activeConnection()) {
+        return;
+    }
     if (typingStatus == m_localTypingMap.contains(phone)) {
         return; // Avoid flood
     }
@@ -309,11 +442,18 @@ void CTelegramDispatcher::setTyping(const QString &phone, bool typingStatus)
     TLInputPeer peer = phoneNumberToInputPeer(phone);
 
     if (peer.tlType == InputPeerEmpty) {
-        qDebug() << Q_FUNC_INFO << "Can not resolve contact" << phone;
+        qDebug() << Q_FUNC_INFO << "Can not resolve contact" << maskPhoneNumber(phone);
         return;
     }
 
-    activeConnection()->messagesSetTyping(peer, typingStatus);
+    TLSendMessageAction action;
+    if (typingStatus) {
+        action.tlType = SendMessageTypingAction;
+    } else {
+        action.tlType = SendMessageCancelAction;
+    }
+
+    activeConnection()->messagesSetTyping(peer, action);
 
     m_localTypingMap.insert(phone, s_localTypingActionPeriod);
     ensureTypingUpdateTimer(s_localTypingActionPeriod);
@@ -321,6 +461,9 @@ void CTelegramDispatcher::setTyping(const QString &phone, bool typingStatus)
 
 void CTelegramDispatcher::setChatTyping(quint32 publicChatId, bool typingStatus)
 {
+    if (!activeConnection()) {
+        return;
+    }
     if (typingStatus == m_localChatTypingMap.contains(publicChatId)) {
         return; // Avoid flood
     }
@@ -332,7 +475,14 @@ void CTelegramDispatcher::setChatTyping(quint32 publicChatId, bool typingStatus)
         return;
     }
 
-    activeConnection()->messagesSetTyping(peer, typingStatus);
+    TLSendMessageAction action;
+    if (typingStatus) {
+        action.tlType = SendMessageTypingAction;
+    } else {
+        action.tlType = SendMessageCancelAction;
+    }
+
+    activeConnection()->messagesSetTyping(peer, action);
 
     m_localChatTypingMap.insert(publicChatId, s_localTypingActionPeriod);
     ensureTypingUpdateTimer(s_localTypingActionPeriod);
@@ -340,15 +490,21 @@ void CTelegramDispatcher::setChatTyping(quint32 publicChatId, bool typingStatus)
 
 void CTelegramDispatcher::setMessageRead(const QString &phone, quint32 messageId)
 {
+    if (!activeConnection()) {
+        return;
+    }
     const TLInputPeer peer = phoneNumberToInputPeer(phone);
 
     if (peer.tlType != InputPeerEmpty) {
-        activeConnection()->messagesReadHistory(peer, messageId, 0);
+        activeConnection()->messagesReadHistory(peer, messageId, /* offset */ 0, /* readContents */ false);
     }
 }
 
 void CTelegramDispatcher::setOnlineStatus(bool onlineStatus)
 {
+    if (!activeConnection()) {
+        return;
+    }
     activeConnection()->accountUpdateStatus(!onlineStatus); // updateStatus accepts bool "offline"
 }
 
@@ -383,6 +539,18 @@ QString CTelegramDispatcher::contactLastName(const QString &phone) const
     } else {
         return QString();
     }
+}
+
+QString CTelegramDispatcher::contactAvatarToken(const QString &identifier) const
+{
+    const TLUser *user = phoneNumberToUser(identifier);
+
+    if (!user) {
+        qDebug() << Q_FUNC_INFO << "Unknown identifier" << maskPhoneNumber(identifier);
+        return QString();
+    }
+
+    return userAvatarToken(user);
 }
 
 QStringList CTelegramDispatcher::chatParticipants(quint32 publicChatId) const
@@ -422,15 +590,15 @@ void CTelegramDispatcher::whenUsersReceived(const QVector<TLUser> &users)
             m_selfUserId = user.id;
             m_selfPhone = user.phone;
 
-            if (m_initState == InitGetSelf) {
-                continueInitialization();
-            }
+            continueInitialization(InitKnowSelf);
         }
     }
 }
 
 void CTelegramDispatcher::whenContactListReceived(const QStringList &contactList)
 {
+    qDebug() << Q_FUNC_INFO << maskPhoneNumberList(contactList);
+
     QStringList newContactList = contactList;
     newContactList.sort();
 
@@ -439,9 +607,7 @@ void CTelegramDispatcher::whenContactListReceived(const QStringList &contactList
         emit contactListChanged();
     }
 
-    if (m_initState == InitGetContactList) {
-        continueInitialization();
-    }
+    continueInitialization(InitHaveContactList);
 }
 
 void CTelegramDispatcher::whenContactListChanged(const QStringList &added, const QStringList &removed)
@@ -580,12 +746,36 @@ void CTelegramDispatcher::getSelfUser()
     }
 }
 
-void CTelegramDispatcher::getContacts()
+void CTelegramDispatcher::getUser(quint32 id)
 {
-    activeConnection()->contactsGetContacts();
+    TLInputUser user;
+    user.tlType = InputUserContact;
+    user.userId = id;
+    activeConnection()->usersGetUsers(QVector<TLInputUser>() << user);
 }
 
-void CTelegramDispatcher::getState()
+void CTelegramDispatcher::getInitialUsers()
+{
+    QVector<TLInputUser> users;
+
+    TLInputUser user;
+
+    user.tlType = InputUserSelf;
+    users << user;
+
+    user.tlType = InputUserContact;
+    user.userId = 777000;
+    users << user;
+
+    activeConnection()->usersGetUsers(users);
+}
+
+void CTelegramDispatcher::getContacts()
+{
+    activeConnection()->contactsGetContacts(QString()); // Empty hash argument for now.
+}
+
+void CTelegramDispatcher::getUpdatesState()
 {
     m_updatesStateIsLocked = true;
     activeConnection()->updatesGetState();
@@ -607,57 +797,62 @@ void CTelegramDispatcher::whenUpdatesDifferenceReceived(const TLUpdatesDifferenc
 {
     switch (updatesDifference.tlType) {
     case UpdatesDifference:
-        qDebug() << "difference" << updatesDifference.newMessages.count();
+        qDebug() << Q_FUNC_INFO << "UpdatesDifference" << updatesDifference.newMessages.count();
         foreach (const TLMessage &message, updatesDifference.newMessages) {
 //            qDebug() << "added message" << message.message;
             if (message.tlType != Message) {
                 continue;
+            }
+            if (m_emitOnlyIncomingUnreadMessages) {
+                if ((message.flags & MessageFlagOut) || !(message.flags & MessageFlagUnread)) {
+                    continue;
+                }
             }
             emit messageReceived(userIdToIdentifier(message.fromId), message.message, message.id);
         }
         m_updatesState = updatesDifference.state;
         break;
     case UpdatesDifferenceSlice:
-        qDebug() << "difference slice" << updatesDifference.newMessages.count();
+        qDebug() << Q_FUNC_INFO << "UpdatesDifferenceSlice" << updatesDifference.newMessages.count();
         foreach (const TLMessage &message, updatesDifference.newMessages) {
 //            qDebug() << "added message" << message.message;
             if (message.tlType != Message) {
                 continue;
             }
+            if (m_emitOnlyIncomingUnreadMessages) {
+                if ((message.flags & MessageFlagOut) || !(message.flags & MessageFlagUnread)) {
+                    continue;
+                }
+            }
             emit messageReceived(userIdToIdentifier(message.fromId), message.message, message.id);
         }
         m_updatesState = updatesDifference.intermediateState;
-
-
         break;
     case UpdatesDifferenceEmpty:
-        qDebug() << "difference_empty";
+        qDebug() << Q_FUNC_INFO << "UpdatesDifferenceEmpty";
 
         // Try to update actual and local state in this weird case.
-        QTimer::singleShot(10, this, SLOT(getState()));
+        QTimer::singleShot(10, this, SLOT(getUpdatesState()));
         return;
         break;
     default:
-        qDebug() << "unknown type of updatesDifference";
+        qDebug() << Q_FUNC_INFO << "unknown diff type:" << QString::number(updatesDifference.tlType, 16);
         break;
     }
 
     checkStateAndCallGetDifference();
 }
 
+// fileId is program-specific handler, not related to Telegram.
 void CTelegramDispatcher::requestFile(const TLInputFileLocation &location, quint32 dc, quint32 fileId)
 {
     CTelegramConnection *connection = m_connections.value(dc);
 
-    if (!connection) {
-        qDebug() << "No connection";
-    }
-
     if (connection && (connection->authState() == CTelegramConnection::AuthStateSignedIn)) {
         connection->getFile(location, fileId);
     } else {
-        qDebug() << Q_FUNC_INFO << "There is no connection to dest dc. Not implemented." << dc;
-        // TODO
+        m_requestedFiles.insertMulti(dc, SRequestedFile(location, fileId));
+        ensureSignedConnection(dc);
     }
 }
 
@@ -895,6 +1090,10 @@ TLInputPeer CTelegramDispatcher::phoneNumberToInputPeer(const QString &phoneNumb
             inputPeer.tlType = InputPeerForeign;
             inputPeer.userId = user->id;
             inputPeer.accessHash = user->accessHash;
+        } else if (user->tlType == UserRequest) {
+            inputPeer.tlType = InputPeerContact; // TODO: Check if there should be InputPeerForeign. Seems like working as-is; can't test at this time.
+            inputPeer.userId = user->id;
+            inputPeer.accessHash = user->accessHash; // Seems to be useless.
         } else {
             qDebug() << Q_FUNC_INFO << "Unknown user type: " << QString::number(user->tlType, 16);
         }
@@ -924,6 +1123,10 @@ TLInputUser CTelegramDispatcher::phoneNumberToInputUser(const QString &phoneNumb
             inputUser.tlType = InputUserForeign;
             inputUser.userId = user->id;
             inputUser.accessHash = user->accessHash;
+        } else if (user->tlType == UserRequest) { // TODO: Check if there should be InputPeerForeign. Seems like working as-is; can't test at this time.
+            inputUser.tlType = InputUserContact;
+            inputUser.userId = user->id;
+            inputUser.accessHash = user->accessHash; // Seems to be useless.
         } else {
             qDebug() << Q_FUNC_INFO << "Unknown user type: " << QString::number(user->tlType, 16);
         }
@@ -963,6 +1166,20 @@ TLUser *CTelegramDispatcher::phoneNumberToUser(const QString &phoneNumber) const
     return m_users.value(phoneNumberToUserId(phoneNumber));
 }
 
+QString CTelegramDispatcher::userAvatarToken(const TLUser *user) const
+{
+    const TLFileLocation &avatar = user->photo.photoSmall;
+
+    if (avatar.tlType == FileLocationUnavailable) {
+        return QString();
+    } else {
+        return QString(QLatin1String("%1%2%3"))
+                .arg(avatar.dcId, sizeof(avatar.dcId) * 2, 16, QLatin1Char('0'))
+                .arg(avatar.volumeId, sizeof(avatar.dcId) * 2, 16, QLatin1Char('0'))
+                .arg(avatar.localId, sizeof(avatar.dcId) * 2, 16, QLatin1Char('0'));
+    }
+}
+
 TelegramNamespace::ContactStatus CTelegramDispatcher::decodeContactStatus(TLValue status) const
 {
     switch (status) {
@@ -976,7 +1193,7 @@ TelegramNamespace::ContactStatus CTelegramDispatcher::decodeContactStatus(TLValu
     }
 }
 
-void CTelegramDispatcher::whenConnectionAuthChanged(int dc, int newState)
+void CTelegramDispatcher::whenConnectionAuthChanged(int newState, quint32 dc)
 {
     CTelegramConnection *connection = m_connections.value(dc);
 
@@ -989,29 +1206,56 @@ void CTelegramDispatcher::whenConnectionAuthChanged(int dc, int newState)
             setActiveDc(dc);
         }
 
-        foreach (const QByteArray &data, m_delayedPackages.values(dc)) {
-            connection->processRedirectedPackage(data);
+        if (m_delayedPackages.contains(dc)) {
+            foreach (const QByteArray &data, m_delayedPackages.values(dc)) {
+                connection->processRedirectedPackage(data);
+            }
+            m_delayedPackages.remove(dc);
         }
 
-        m_delayedPackages.remove(dc);
+        if (connection == activeConnection()) {
+            continueInitialization(InitNothing);
+        }
     }
-
-    if (newState == CTelegramConnection::AuthStateSignedIn) {
-        connect(connection, SIGNAL(usersReceived(QVector<TLUser>)), SLOT(whenUsersReceived(QVector<TLUser>)));
-        connect(connection, SIGNAL(contactListReceived(QStringList)), SLOT(whenContactListReceived(QStringList)));
-        connect(connection, SIGNAL(contactListChanged(QStringList,QStringList)), SLOT(whenContactListChanged(QStringList,QStringList)));
-        connect(connection, SIGNAL(updatesReceived(TLUpdates)), SLOT(whenUpdatesReceived(TLUpdates)));
-        connect(connection, SIGNAL(messageSentInfoReceived(TLInputPeer,quint64,quint32,quint32,quint32,quint32)), SLOT(whenMessageSentInfoReceived(TLInputPeer,quint64,quint32,quint32,quint32,quint32)));
-        connect(connection, SIGNAL(statedMessageReceived(TLMessagesStatedMessage,quint64)), SLOT(whenStatedMessageReceived(TLMessagesStatedMessage,quint64)));
-        connect(connection, SIGNAL(updatesStateReceived(TLUpdatesState)), SLOT(whenUpdatesStateReceived(TLUpdatesState)));
-        connect(connection, SIGNAL(updatesDifferenceReceived(TLUpdatesDifference)), SLOT(whenUpdatesDifferenceReceived(TLUpdatesDifference)));
-
-        continueInitialization();
-    }
-
 }
 
-void CTelegramDispatcher::whenConnectionConfigurationUpdated(int dc)
+void CTelegramDispatcher::whenConnectionStatusChanged(int newStatus, quint32 dc)
+{
+    CTelegramConnection *connection = m_connections.value(dc);
+
+    if (connection == activeConnection()) {
+        if (newStatus == CTelegramConnection::ConnectionStatusSigned) {
+            connect(connection, SIGNAL(usersReceived(QVector<TLUser>)), SLOT(whenUsersReceived(QVector<TLUser>)));
+            connect(connection, SIGNAL(contactListReceived(QStringList)), SLOT(whenContactListReceived(QStringList)));
+            connect(connection, SIGNAL(contactListChanged(QStringList,QStringList)), SLOT(whenContactListChanged(QStringList,QStringList)));
+            connect(connection, SIGNAL(updatesReceived(TLUpdates)), SLOT(whenUpdatesReceived(TLUpdates)));
+            connect(connection, SIGNAL(messageSentInfoReceived(TLInputPeer,quint64,quint32,quint32,quint32,quint32)), SLOT(whenMessageSentInfoReceived(TLInputPeer,quint64,quint32,quint32,quint32,quint32)));
+            connect(connection, SIGNAL(statedMessageReceived(TLMessagesStatedMessage,quint64)), SLOT(whenStatedMessageReceived(TLMessagesStatedMessage,quint64)));
+            connect(connection, SIGNAL(updatesStateReceived(TLUpdatesState)), SLOT(whenUpdatesStateReceived(TLUpdatesState)));
+            connect(connection, SIGNAL(updatesDifferenceReceived(TLUpdatesDifference)), SLOT(whenUpdatesDifferenceReceived(TLUpdatesDifference)));
+            connect(connection, SIGNAL(authExportedAuthorizationReceived(quint32,quint32,QByteArray)), SLOT(whenAuthExportedAuthorizationReceived(quint32,quint32,QByteArray)));
+
+            continueInitialization(InitIsSignIn);
+        }
+    } else {
+        switch (newStatus) {
+        case CTelegramConnection::ConnectionStatusAuthenticated:
+            ensureSignedConnection(dc);
+            break;
+        case CTelegramConnection::ConnectionStatusSigned:
+            if (m_requestedFiles.contains(dc)) {
+                foreach (const SRequestedFile &requestedFile, m_requestedFiles.values(dc)) {
+                    connection->getFile(requestedFile.location, requestedFile.fileId);
+                }
+                m_requestedFiles.remove(dc);
+            }
+        default:
+            break;
+        }
+    }
+}
+
+void CTelegramDispatcher::whenDcConfigurationUpdated(quint32 dc)
 {
     CTelegramConnection *connection = m_connections.value(dc);
 
@@ -1023,18 +1267,10 @@ void CTelegramDispatcher::whenConnectionConfigurationUpdated(int dc)
 
     qDebug() << "Core: Got DC Configuration.";
 
-    emit dcConfigurationObtained();
-
-    if (isAuthenticated()) {
-        emit authenticated();
-    }
-
-    if (m_initState == InitGetDcConfiguration) {
-        continueInitialization();
-    }
+    continueInitialization(InitHaveDcConfiguration);
 }
 
-void CTelegramDispatcher::whenConnectionDcIdUpdated(int connectionId, int newDcId)
+void CTelegramDispatcher::whenConnectionDcIdUpdated(quint32 connectionId, quint32 newDcId)
 {
     CTelegramConnection *connection = m_connections.value(connectionId);
 
@@ -1065,7 +1301,7 @@ void CTelegramDispatcher::whenConnectionDcIdUpdated(int connectionId, int newDcI
     }
 }
 
-void CTelegramDispatcher::whenPackageRedirected(const QByteArray &data, int dc)
+void CTelegramDispatcher::whenPackageRedirected(const QByteArray &data, quint32 dc)
 {
     CTelegramConnection *connection = m_connections.value(dc);
 
@@ -1077,7 +1313,7 @@ void CTelegramDispatcher::whenPackageRedirected(const QByteArray &data, int dc)
     }
 }
 
-void CTelegramDispatcher::whenWantedActiveDcChanged(int dc)
+void CTelegramDispatcher::whenWantedActiveDcChanged(quint32 dc)
 {
     CTelegramConnection *connection = m_connections.value(dc);
 
@@ -1102,14 +1338,14 @@ void CTelegramDispatcher::whenFileReceived(const TLUploadFile &file, quint32 fil
         return;
     }
 
-    emit avatarReceived(user->phone, file.bytes, mimeType);
+    emit avatarReceived(user->phone, file.bytes, mimeType, userAvatarToken(user));
 }
 
 void CTelegramDispatcher::whenUpdatesReceived(const TLUpdates &updates)
 {
     switch (updates.tlType) {
     case UpdatesTooLong:
-        getState();
+        getUpdatesState();
         break;
     case UpdateShortMessage:
         processMessageReceived(updates.id, updates.fromId, updates.message);
@@ -1136,15 +1372,29 @@ void CTelegramDispatcher::whenUpdatesReceived(const TLUpdates &updates)
     }
 }
 
-void CTelegramDispatcher::setActiveDc(int dc, bool syncWantedDc)
+void CTelegramDispatcher::whenAuthExportedAuthorizationReceived(quint32 dc, quint32 id, const QByteArray &data)
 {
+    m_exportedAuthentications.insert(dc, QPair<quint32, QByteArray>(id,data));
+
+    CTelegramConnection *connection = m_connections.value(dc);
+    if (connection && (connection->status() == CTelegramConnection::ConnectionStatusAuthenticated)) {
+        connection->authImportAuthorization(id, data);
+    }
+}
+
+void CTelegramDispatcher::setActiveDc(quint32 dc, bool syncWantedDc)
+{
+    if ((m_activeDc == dc) && (m_wantedActiveDc == dc)) {
+        return;
+    }
+
     m_activeDc = dc;
 
     if (syncWantedDc) {
         m_wantedActiveDc = dc;
     }
 
-    qDebug() << "New active dc:" << dc;
+    qDebug() << Q_FUNC_INFO << dc;
 }
 
 void CTelegramDispatcher::ensureTypingUpdateTimer(int interval)
@@ -1159,34 +1409,70 @@ void CTelegramDispatcher::ensureTypingUpdateTimer(int interval)
     }
 }
 
-void CTelegramDispatcher::continueInitialization()
+void CTelegramDispatcher::continueInitialization(CTelegramDispatcher::InitializationState justDone)
 {
-    if (m_initState == InitDone) {
-        // Should never happen.
+    if (justDone == InitNothing) {
+        if (m_initState == InitNothing) {
+            getDcConfiguration();
+        } else {
+            // We can have Dc Configuration obtained from *not* our primary dc. Silence this case.
+            if (m_initState != InitHaveDcConfiguration) {
+                qDebug() << "Invalid initialization order." << justDone;
+            }
+        }
         return;
     }
 
-    m_initState = InitializationState(m_initState + 1);
+    if ((m_initState | justDone) == m_initState) {
+        return; // Nothing new
+    }
 
-    // m_initState contains "what is in progress"
-    switch (m_initState) {
-    case InitGetDcConfiguration:
-        getDcConfiguration();
-        break;
-    case InitGetSelf:
-        getSelfUser();
-        break;
-    case InitGetContactList:
-        getContacts();
-        break;
-    case InitCheckUpdates:
-        getState();
-        break;
-    case InitDone:
+    m_initState = InitializationState(m_initState|justDone);
+
+    if ((m_initState & InitHaveDcConfiguration) && (m_initState & InitIsSignIn)) { // Have config and sign in
+        setAuthenticated(true);
+    }
+
+    if (justDone == InitHaveDcConfiguration) {
+        emit connected();
+    }
+
+    if (m_initState == (InitHaveDcConfiguration|InitIsSignIn)) {
+        getInitialUsers();
+        // Sadly, we don't support creation of RPC messages containers, so we fails on attempt to send more than one package in time. (Got "Sequence number too high")
+        // That is why we have to comment out this getContacts() and add BadCode1.
+//        getContacts();
+        return;
+    }
+
+    // BadCode1
+    if (justDone == InitKnowSelf) {
+        if (!(m_initState & InitHaveContactList)) {
+            getContacts();
+        }
+    }
+
+    if (m_initState == InitDone) {
         emit initializated();
-        break;
-    default:
-        break;
+        return;
+    }
+
+    if ((m_initState & InitHaveContactList) && (m_initState & InitKnowSelf)) {
+        getUpdatesState();
+        return;
+    }
+}
+
+void CTelegramDispatcher::setAuthenticated(bool newAuth)
+{
+    if (m_isAuthenticated == newAuth) {
+        return;
+    }
+
+    m_isAuthenticated = newAuth;
+
+    if (m_isAuthenticated) {
+        emit authenticated();
     }
 }
 
@@ -1215,8 +1501,8 @@ void CTelegramDispatcher::checkStateAndCallGetDifference()
 
     if (m_updatesStateIsLocked) {
         QTimer::singleShot(10, this, SLOT(getDifference()));
-    } else if (m_initState == InitCheckUpdates) {
-        continueInitialization();
+    } else {
+        continueInitialization(InitHaveUpdates);
     }
 }
 
@@ -1225,16 +1511,18 @@ CTelegramConnection *CTelegramDispatcher::createConnection(const TLDcOption &dc)
     CTelegramConnection *connection = new CTelegramConnection(m_appInformation, this);
 
     connect(connection, SIGNAL(selfPhoneReceived(QString)), SLOT(whenSelfPhoneReceived(QString)));
-    connect(connection, SIGNAL(authStateChanged(int,int)), SLOT(whenConnectionAuthChanged(int,int)));
-    connect(connection, SIGNAL(dcConfigurationReceived(int)), SLOT(whenConnectionConfigurationUpdated(int)));
-    connect(connection, SIGNAL(actualDcIdReceived(int,int)), SLOT(whenConnectionDcIdUpdated(int,int)));
-    connect(connection, SIGNAL(newRedirectedPackage(QByteArray,int)), SLOT(whenPackageRedirected(QByteArray,int)));
-    connect(connection, SIGNAL(wantedActiveDcChanged(int)), SLOT(whenWantedActiveDcChanged(int)));
+
+    connect(connection, SIGNAL(authStateChanged(int,quint32)), SLOT(whenConnectionAuthChanged(int,quint32)));
+    connect(connection, SIGNAL(statusChanged(int,quint32)), SLOT(whenConnectionStatusChanged(int,quint32)));
+    connect(connection, SIGNAL(dcConfigurationReceived(quint32)), SLOT(whenDcConfigurationUpdated(quint32)));
+    connect(connection, SIGNAL(actualDcIdReceived(quint32,quint32)), SLOT(whenConnectionDcIdUpdated(quint32,quint32)));
+    connect(connection, SIGNAL(newRedirectedPackage(QByteArray,quint32)), SLOT(whenPackageRedirected(QByteArray,quint32)));
+    connect(connection, SIGNAL(wantedActiveDcChanged(quint32)), SLOT(whenWantedActiveDcChanged(quint32)));
 
     connect(connection, SIGNAL(phoneStatusReceived(QString,bool,bool)), SIGNAL(phoneStatusReceived(QString,bool,bool)));
-    connect(connection, SIGNAL(phoneNumberInvalid()), SIGNAL(phoneNumberInvalid()));
     connect(connection, SIGNAL(phoneCodeRequired()), SIGNAL(phoneCodeRequired()));
     connect(connection, SIGNAL(phoneCodeIsInvalid()), SIGNAL(phoneCodeIsInvalid()));
+    connect(connection, SIGNAL(authorizationErrorReceived()), SIGNAL(authorizationErrorReceived()));
 
     connect(connection, SIGNAL(fileReceived(TLUploadFile,quint32)), SLOT(whenFileReceived(TLUploadFile,quint32)));
 
@@ -1243,7 +1531,7 @@ CTelegramConnection *CTelegramDispatcher::createConnection(const TLDcOption &dc)
     return connection;
 }
 
-CTelegramConnection *CTelegramDispatcher::establishConnectionToDc(int dc)
+CTelegramConnection *CTelegramDispatcher::establishConnectionToDc(quint32 dc)
 {
     CTelegramConnection *connection = m_connections.value(dc);
 
@@ -1264,6 +1552,32 @@ CTelegramConnection *CTelegramDispatcher::establishConnectionToDc(int dc)
     }
 
     return connection;
+}
+
+void CTelegramDispatcher::ensureSignedConnection(quint32 dc)
+{
+    if (dc == m_activeDc) {
+        return;
+    }
+
+    CTelegramConnection *connection = m_connections.value(dc);
+
+    if (connection) {
+        switch (connection->status()) {
+        case CTelegramConnection::ConnectionStatusAuthenticated:
+            if (m_exportedAuthentications.contains(dc)) {
+                connection->authImportAuthorization(m_exportedAuthentications.value(dc).first, m_exportedAuthentications.value(dc).second);
+            } else {
+                activeConnection()->authExportAuthorization(dc);
+            }
+            // Fall through by design.
+        case CTelegramConnection::ConnectionStatusSigned:
+            return;
+        default:
+            break;
+        }
+    }
+    establishConnectionToDc(dc);
 }
 
 TLDcOption CTelegramDispatcher::dcInfoById(quint32 dc)

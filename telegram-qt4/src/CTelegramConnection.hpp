@@ -32,6 +32,14 @@ class CTelegramConnection : public QObject
 {
     Q_OBJECT
 public:
+    enum ConnectionStatus {
+        ConnectionStatusNone,
+        ConnectionStatusConnecting,
+        ConnectionStatusConnected,
+        ConnectionStatusAuthenticated,
+        ConnectionStatusSigned
+    };
+
     enum AuthState {
         AuthStateNone,
         AuthStatePqRequested,
@@ -55,6 +63,8 @@ public:
 
     void connectToDc();
 
+    inline ConnectionStatus status() const { return m_status; }
+
     bool isConnected() const;
 
     static quint64 formatTimeStamp(qint64 timeInMs);
@@ -66,6 +76,30 @@ public:
     void getConfiguration();
 
     // Generated Telegram API methods declaration
+    quint64 authBindTempAuthKey(quint64 permAuthKeyId, quint64 nonce, quint32 expiresAt, const QByteArray &encryptedMessage);
+    quint64 authCheckPhone(const QString &phoneNumber);
+    quint64 authExportAuthorization(quint32 dcId);
+    quint64 authImportAuthorization(quint32 id, const QByteArray &bytes);
+    quint64 authLogOut();
+    quint64 authResetAuthorizations();
+    quint64 authSendCall(const QString &phoneNumber, const QString &phoneCodeHash);
+    quint64 authSendCode(const QString &phoneNumber, quint32 smsType, quint32 apiId, const QString &apiHash, const QString &langCode);
+    quint64 authSendInvites(const TLVector<QString> &phoneNumbers, const QString &message);
+    quint64 authSendSms(const QString &phoneNumber, const QString &phoneCodeHash);
+    quint64 authSignIn(const QString &phoneNumber, const QString &phoneCodeHash, const QString &phoneCode);
+    quint64 authSignUp(const QString &phoneNumber, const QString &phoneCodeHash, const QString &phoneCode, const QString &firstName, const QString &lastName);
+    quint64 contactsBlock(const TLInputUser &id);
+    quint64 contactsDeleteContact(const TLInputUser &id);
+    quint64 contactsDeleteContacts(const TLVector<TLInputUser> &id);
+    quint64 contactsExportCard();
+    quint64 contactsGetBlocked(quint32 offset, quint32 limit);
+    quint64 contactsGetContacts(const QString &hash);
+    quint64 contactsGetStatuses();
+    quint64 contactsGetSuggested(quint32 limit);
+    quint64 contactsImportCard(const TLVector<quint32> &exportCard);
+    quint64 contactsImportContacts(const TLVector<TLInputContact> &contacts, bool replace);
+    quint64 contactsSearch(const QString &q, quint32 limit);
+    quint64 contactsUnblock(const TLInputUser &id);
     quint64 messagesAcceptEncryption(const TLInputEncryptedChat &peer, const QByteArray &gB, quint64 keyFingerprint);
     quint64 messagesAddChatUser(quint32 chatId, const TLInputUser &userId, quint32 fwdLimit);
     quint64 messagesCreateChat(const TLVector<TLInputUser> &users, const QString &title);
@@ -84,7 +118,8 @@ public:
     quint64 messagesGetHistory(const TLInputPeer &peer, quint32 offset, quint32 maxId, quint32 limit);
     quint64 messagesGetMessages(const TLVector<quint32> &id);
     quint64 messagesReadEncryptedHistory(const TLInputEncryptedChat &peer, quint32 maxDate);
-    quint64 messagesReadHistory(const TLInputPeer &peer, quint32 maxId, quint32 offset);
+    quint64 messagesReadHistory(const TLInputPeer &peer, quint32 maxId, quint32 offset, bool readContents);
+    quint64 messagesReadMessageContents(const TLVector<quint32> &id);
     quint64 messagesReceivedMessages(quint32 maxId);
     quint64 messagesReceivedQueue(quint32 maxQts);
     quint64 messagesRequestEncryption(const TLInputUser &userId, quint32 randomId, const QByteArray &gA);
@@ -97,26 +132,18 @@ public:
     quint64 messagesSendMedia(const TLInputPeer &peer, const TLInputMedia &media, quint64 randomId);
     quint64 messagesSendMessage(const TLInputPeer &peer, const QString &message, quint64 randomId);
     quint64 messagesSetEncryptedTyping(const TLInputEncryptedChat &peer, bool typing);
-    quint64 messagesSetTyping(const TLInputPeer &peer, bool typing);
+    quint64 messagesSetTyping(const TLInputPeer &peer, const TLSendMessageAction &action);
+    quint64 updatesGetDifference(quint32 pts, quint32 date, quint32 qts);
+    quint64 updatesGetState();
+    quint64 usersGetFullUser(const TLInputUser &id);
+    quint64 usersGetUsers(const TLVector<TLInputUser> &id);
     // End of generated Telegram API methods declaration
 
-    void requestPhoneStatus(const QString &phoneNumber);
-    void requestPhoneCode(const QString &phoneNumber);
-    void signIn(const QString &phoneNumber, const QString &authCode);
-    void signUp(const QString &phoneNumber, const QString &authCode, const QString &firstName, const QString &lastName);
-
-    void contactsGetContacts();
-
-    void updatesGetState();
-    void updatesGetDifference(quint32 pts, quint32 date, quint32 qts);
+    quint64 requestPhoneCode(const QString &phoneNumber);
+    quint64 signIn(const QString &phoneNumber, const QString &authCode);
+    quint64 signUp(const QString &phoneNumber, const QString &authCode, const QString &firstName, const QString &lastName);
 
     void getFile(const TLInputFileLocation &location, quint32 fileId);
-
-    void usersGetUsers(const TLVector<TLInputUser> &users);
-    void usersGetFullUser(const TLInputUser &user);
-
-    void contactsDeleteContacts(const TLVector<TLInputUser> &users);
-    void addContacts(const QStringList &phoneNumbers, bool replace);
 
     void accountUpdateStatus(bool offline);
 
@@ -154,17 +181,18 @@ public:
     void processRedirectedPackage(const QByteArray &data);
 
 signals:
-    void wantedActiveDcChanged(int dc);
-    void newRedirectedPackage(const QByteArray &data, int dc);
+    void wantedActiveDcChanged(quint32 dc);
+    void newRedirectedPackage(const QByteArray &data, quint32 dc);
 
     void selfPhoneReceived(const QString &phoneNumber);
-    void authStateChanged(int dc, int state);
-    void actualDcIdReceived(int dc, int newDcId);
-    void dcConfigurationReceived(int dc);
+    void statusChanged(int status, quint32 dc);
+    void authStateChanged(int status, quint32 dc);
+    void actualDcIdReceived(quint32 dc, quint32 newDcId);
+    void dcConfigurationReceived(quint32 dc);
     void phoneStatusReceived(const QString &phone, bool registered, bool invited);
-    void phoneNumberInvalid();
     void phoneCodeRequired();
     void phoneCodeIsInvalid();
+    void authorizationErrorReceived();
     void usersReceived(const QVector<TLUser> &users);
     void contactListReceived(const QStringList &contactList);
     void contactListChanged(const QStringList &added, const QStringList &removed);
@@ -178,6 +206,7 @@ signals:
     void updatesDifferenceReceived(const TLUpdatesDifference &updatesDifference);
 
     void messageSentInfoReceived(const TLInputPeer &peer, quint64 randomId, quint32 messageId, quint32 pts, quint32 date, quint32 seq);
+    void authExportedAuthorizationReceived(quint32 dc, quint32 id, const QByteArray &data);
 
 private slots:
     void whenConnected();
@@ -203,7 +232,9 @@ protected:
     TLValue processUpdatesGetState(CTelegramStream &stream, quint64 id);
     TLValue processUpdatesGetDifference(CTelegramStream &stream, quint64 id);
     TLValue processAuthCheckPhone(CTelegramStream &stream, quint64 id);
+    TLValue processAuthExportAuthorization(CTelegramStream &stream, quint64 id);
     TLValue processAuthSendCode(CTelegramStream &stream, quint64 id);
+    TLValue processAuthSendSms(CTelegramStream &stream, quint64 id);
     TLValue processAuthSign(CTelegramStream &stream, quint64 id);
     TLValue processUploadGetFile(CTelegramStream &stream, quint64 id);
     TLValue processUsersGetUsers(CTelegramStream &stream, quint64 id);
@@ -231,10 +262,12 @@ protected:
     quint64 sendEncryptedPackage(const QByteArray &buffer);
     void setTransport(CTelegramTransport *newTransport);
 
+    void setStatus(ConnectionStatus status);
     void setAuthState(AuthState newState);
 
     quint64 newMessageId();
 
+    ConnectionStatus m_status;
     const CAppInformation *m_appInfo;
 
     QMap<quint64, QByteArray> m_submittedPackages; // <message id, package data>
