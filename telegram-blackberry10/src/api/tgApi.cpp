@@ -5,6 +5,7 @@
  *      Author: Alfis
  */
 
+#include "config.hpp"
 #ifdef TG_API_TG
 
 #include "tgApi.hpp"
