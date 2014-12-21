@@ -18,6 +18,11 @@ APIRegAuth::APIRegAuth(){
     auth.user->status = new UserStatus();
 }
 
+QByteArray APIRegAuth::connectionSecretInfo() const
+{
+    return QString("mock-connection-secret-info").toLatin1();
+}
+
 void APIRegAuth::requestPhoneStatus(const QString &phone_number){
     connect(&delay, SIGNAL(finished()), this, SLOT(phoneStatusReceivedEmitter()));
     delay.start();
