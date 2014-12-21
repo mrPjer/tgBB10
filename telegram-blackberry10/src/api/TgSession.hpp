@@ -8,7 +8,7 @@
 #define TG_SESSION_APP "tgBB10"
 #define TG_SESSION_KEY "session/key"
 
-class TgSession: QObject
+class TgSession: public QObject
 {
     Q_OBJECT
     Q_PROPERTY(QString session READ session WRITE setSession NOTIFY sessionChanged)
