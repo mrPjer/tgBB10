@@ -27,7 +27,7 @@ public:
     inline const CAppInformation *appInfo() { return core->appInfo(); }
     void setAppInformation(const CAppInformation *newAppInfo);
 
-    QByteArray connectionSecretInfo() const;
+    Q_INVOKABLE QByteArray connectionSecretInfo() const;
 
     Q_INVOKABLE bool isAuthenticated();
     Q_INVOKABLE QString selfPhone() const;
