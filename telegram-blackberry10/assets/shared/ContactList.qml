@@ -9,6 +9,8 @@ Container {
     property alias showStatus: listView.showStatus
     property alias showHeader: listView.showHeader
 
+    property alias dataModel: listView.dataModel
+
     signal triggered(variant indexPath)
 
     onCreationCompleted: {
