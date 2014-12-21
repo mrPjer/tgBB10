@@ -14,7 +14,6 @@
 #include <qdebug.h>
 
 CTelegramCore* tgApi::core = NULL;
-QTimer* tgApi::timer = NULL;
 
 tgApi::tgApi(){
 
@@ -56,11 +55,6 @@ tgApi::tgApi(){
     connect(core, SIGNAL(initializated()), SIGNAL(initializated()));
 
     if(shouldInit){
-        timer = new QTimer(this);
-        timer->setInterval(500);
-        timer->start();
-        connect(timer, SIGNAL(timeout()), this, SLOT(onConnectRetryTimeout()));
-
         CAppInformation info;
         info.setAppId(TG_APP_ID);
         info.setAppHash(QLatin1String(TG_API_HASH));
@@ -76,7 +70,6 @@ tgApi::tgApi(){
 
 void tgApi::connectionEstablished() {
     qDebug() << "Connection established";
-    timer->stop();
 }
 
 void tgApi::onConnectRetryTimeout() {
@@ -162,10 +155,6 @@ void tgApi::deleteContact(const QString &phoneNumber){
 
 void tgApi::deleteContacts(const QStringList &phoneNumbers){
 	return core->deleteContacts(phoneNumbers);
-}
-
-void tgApi::requestContactList(){
-	return core->requestContactList();
 }
 
 void tgApi::requestContactAvatar(const QString &contact){

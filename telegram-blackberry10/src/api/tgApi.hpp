@@ -16,7 +16,6 @@
 #include "CAppInformation.hpp"
 #include "TelegramNamespace.hpp"
 #include "CTelegramCore.hpp"
-#include <QTimer>
 
 class tgApi: public bb::cascades::CustomControl{
     Q_OBJECT
@@ -54,7 +53,6 @@ public slots:
     void deleteContact(const QString &phoneNumber);
     void deleteContacts(const QStringList &phoneNumbers);
 
-    void requestContactList();
     void requestContactAvatar(const QString &contact);
 
     quint64 sendMessage(const QString &phone, const QString &message); // Message id is random number
@@ -97,7 +95,6 @@ private slots:
 
 private:
     static CTelegramCore* core;
-    static QTimer* timer;
 };
 
 #endif
