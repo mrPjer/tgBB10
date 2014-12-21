@@ -28,6 +28,7 @@
 
 #ifdef TG_API_MOCK
 #include "api/apiRegAuth.hpp"
+#include "api/apiContacts.hpp"
 #endif
 
 #ifdef TG_API_TG
@@ -45,6 +46,7 @@ ApplicationUI::ApplicationUI() :
 #ifdef TG_API_MOCK
     // Register out Registration API in QML
     qmlRegisterType<APIRegAuth>("TgApi", 1, 0, "RegistrationApi");
+    qmlRegisterType<APIContacts>("TgApi", 1, 0, "ContactsApi");
 #endif
 #ifdef TG_API_TG
     qmlRegisterType<tgApi>("TgApi", 1, 0, "RegistrationApi");
