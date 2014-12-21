@@ -29,10 +29,19 @@ Page {
             MainPage {
             }
         },
+        Session {
+            id: session
+            onSessionChanged: {
+                console.log("New session stored")
+                console.log(session.session)
+            }
+        },
         RegistrationApi {
             id: api
             onAuthenticated: {
                 console.log("Signed in")
+                var sessionInfo = api.connectionSecretInfo()
+                session.session = sessionInfo
                 if (registered) {
                     // User is already registered, push the main page
                     mainPageSheet.open()
