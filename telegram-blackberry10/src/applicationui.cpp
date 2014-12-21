@@ -43,6 +43,7 @@ ApplicationUI::ApplicationUI() :
     // Register our Timer class in QML
     qmlRegisterType<Timer>("Timer", 1, 0, "Timer");
 
+    qmlRegisterType<TelegramNamespace>("TgApi", 1, 0, "ContactStatus");
 #ifdef TG_API_MOCK
     // Register out Registration API in QML
     qmlRegisterType<APIRegAuth>("TgApi", 1, 0, "RegistrationApi");
@@ -51,7 +52,6 @@ ApplicationUI::ApplicationUI() :
 #ifdef TG_API_TG
     qmlRegisterType<tgApi>("TgApi", 1, 0, "RegistrationApi");
     qmlRegisterType<tgApi>("TgApi", 1, 0, "ContactsApi");
-    qmlRegisterType<TelegramNamespace>("TgApi", 1, 0, "ContactStatus");
 #endif
 
     // prepare the localization
