@@ -3,6 +3,8 @@ import Timer 1.0
 import TgApi 1.0
 import bb.system 1.2
 
+import "../main"
+
 Page {
     property string phoneNumber
     property bool registered
@@ -20,14 +22,33 @@ Page {
         ComponentDefinition {
             id: registrationPageDefinition
             source: "asset:///login/registration.qml"
-        }, RegistrationApi {
+        },
+        Sheet {
+            id: mainPageSheet
+            peekEnabled: false
+            MainPage {
+            }
+        },
+        RegistrationApi {
             id: api
             onAuthenticated: {
                 console.log("Signed in")
-                var page = registrationPageDefinition.createObject()
-                navigationPane.push(page)
+                if (registered) {
+                    // User is already registered, push the main page
+                    mainPageSheet.open()
+                } else {
+                    /*
+                     * This is the first time this number is used on Telegram.
+                     * Open the registration page.
+                     * 
+                     * TODO: test this flow.
+                     */
+                    var page = registrationPageDefinition.createObject()
+                    navigationPane.push(page)
+                }
             }
-        }, SystemToast {
+        },
+        SystemToast {
             id: callSentToast
             body: "The voice call has been dispatched."
         }
@@ -58,9 +79,9 @@ Page {
                     callTimer.stop()
                     // TODO send actual call
                     /*
-                    api.sendCall(phoneNumber, "what hash?")
-                    callSentToast.show()
-                    */
+                     * api.sendCall(phoneNumber, "what hash?")
+                     * callSentToast.show()
+                     */
                 }
             }
         }
