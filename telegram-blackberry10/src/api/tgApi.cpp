@@ -25,24 +25,35 @@ tgApi::tgApi(){
         shouldInit = true;
     }
 
-    connect( core,  SIGNAL( connected() ), SIGNAL( connected() )  );
-    connect( core,  SIGNAL( connected() ), SLOT(connectionEstablished()));
-    connect( core,  SIGNAL( phoneCodeRequired() ), SIGNAL( phoneCodeRequired() )  );
-    connect( core,  SIGNAL( phoneCodeIsInvalid() ), SIGNAL( phoneCodeIsInvalid() )  );
-    connect( core,  SIGNAL( authenticated() ), SIGNAL( authenticated() )  );
-    connect( core,  SIGNAL( contactListChanged() ), SIGNAL( contactListChanged() )  );
-    connect( core,  SIGNAL( phoneStatusReceived(QString, bool, bool) ), SIGNAL( phoneStatusReceived(QString, bool, bool) )  );
+    connect(core, SIGNAL(connected()), SIGNAL(connected()));
+    connect(core, SIGNAL(connected()), SLOT(connectionEstablished()));
+    connect(core, SIGNAL(phoneCodeRequired()), SIGNAL(phoneCodeRequired()));
+    connect(core, SIGNAL(phoneCodeIsInvalid()), SIGNAL(phoneCodeIsInvalid()));
+    connect(core, SIGNAL(authenticated()), SIGNAL(authenticated()));
+    connect(core, SIGNAL(contactListChanged()), SIGNAL(contactListChanged()));
+    connect(core, SIGNAL(phoneStatusReceived(QString, bool, bool)),
+            SIGNAL(phoneStatusReceived(QString, bool, bool)));
     connect(core, SIGNAL(phoneNumberInvalid()), SIGNAL(phoneNumberInvalid()));
-    connect( core,  SIGNAL( avatarReceived(const QString &contact, const QByteArray &data, const QString &mimeType) ), SIGNAL( avatarReceived(const QString &contact, const QByteArray &data, const QString &mimeType) )  );
-    connect( core,  SIGNAL( messageReceived(const QString &phone, const QString &message, quint32 messageId) ), SIGNAL( messageReceived(const QString &phone, const QString &message, quint32 messageId) )  ); // Message id is incremental number
-    connect( core,  SIGNAL( chatMessageReceived(quint32 chatId, const QString &phone, const QString &message) ), SIGNAL( chatMessageReceived(quint32 chatId, const QString &phone, const QString &message) )  );
-    connect( core,  SIGNAL( contactStatusChanged(const QString &phone, TelegramNamespace::ContactStatus status) ), SIGNAL( contactStatusChanged(const QString &phone, TelegramNamespace::ContactStatus status) )  );
-    connect( core,  SIGNAL( contactTypingStatusChanged(const QString &phone, bool typingStatus) ), SIGNAL( contactTypingStatusChanged(const QString &phone, bool typingStatus) )  );
-    connect( core,  SIGNAL( contactChatTypingStatusChanged(quint32 chatId, const QString &phone, bool typingStatus) ), SIGNAL( contactChatTypingStatusChanged(quint32 chatId, const QString &phone, bool typingStatus) )  );
-    connect( core,  SIGNAL( sentMessageStatusChanged(const QString &phone, quint64 messageId, TelegramNamespace::MessageDeliveryStatus status) ), SIGNAL( sentMessageStatusChanged(const QString &phone, quint64 messageId, TelegramNamespace::MessageDeliveryStatus status) )  ); // Message id is random number
-    connect( core,  SIGNAL( chatAdded(quint32 publichChatId) ), SIGNAL( chatAdded(quint32 publichChatId) )  );
-    connect( core,  SIGNAL( chatChanged(quint32 publichChatId) ), SIGNAL( chatChanged(quint32 publichChatId) )  );
-    connect( core,  SIGNAL( initializated() ), SIGNAL( initializated() )  );
+    connect(core, SIGNAL(avatarReceived(QString, QByteArray, QString)),
+            SIGNAL(avatarReceived(QString, QByteArray, QString)));
+    connect(core, SIGNAL(messageReceived(QString, QString, quint32)),
+            SIGNAL(messageReceived(QString, QString, quint32)));
+    connect(core, SIGNAL(chatMessageReceived(quint32, QString, QString)),
+            SIGNAL(chatMessageReceived(quint32, QString, QString)));
+    connect(core, SIGNAL(contactStatusChanged(QString, TelegramNamespace::ContactStatus)),
+            SIGNAL(contactStatusChanged(QString, TelegramNamespace::ContactStatus)));
+    connect(core, SIGNAL(contactTypingStatusChanged(QString, bool)),
+            SIGNAL(contactTypingStatusChanged(QString, bool)));
+    connect(core, SIGNAL(contactChatTypingStatusChanged(quint32, QString, bool)),
+            SIGNAL(contactChatTypingStatusChanged(quint32, QString, bool)));
+    connect(core,
+            SIGNAL(
+                    sentMessageStatusChanged(QString, quint64, TelegramNamespace::MessageDeliveryStatus)),
+            SIGNAL(
+                    sentMessageStatusChanged(QString, quint64, TelegramNamespace::MessageDeliveryStatus)));
+    connect(core, SIGNAL(chatAdded(quint32)), SIGNAL(chatAdded(quint32)));
+    connect(core, SIGNAL(chatChanged(quint32)), SIGNAL(chatChanged(quint32)));
+    connect(core, SIGNAL(initializated()), SIGNAL(initializated()));
 
     if(shouldInit){
         timer = new QTimer(this);
