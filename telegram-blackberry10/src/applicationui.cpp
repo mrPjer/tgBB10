@@ -48,6 +48,8 @@ ApplicationUI::ApplicationUI() :
 #endif
 #ifdef TG_API_TG
     qmlRegisterType<tgApi>("TgApi", 1, 0, "RegistrationApi");
+    qmlRegisterType<tgApi>("TgApi", 1, 0, "ContactsApi");
+    qmlRegisterType<TelegramNamespace>("TgApi", 1, 0, "ContactStatus");
 #endif
 
     // prepare the localization
