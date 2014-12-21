@@ -1,4 +1,5 @@
 import bb.cascades 1.2
+import bb.system 1.0
 import '../shared'
 
 Page {
@@ -193,6 +194,23 @@ Page {
                     Button {
                         text: "Log Out"
                         preferredWidth: maxWidth
+                        onClicked: {
+                            logOut.show();
+                        }
+                    }
+
+                    attachedObjects: SystemDialog {
+                        id: logOut
+                        title: "Log Out"
+                        body: "Are you sure you want to log out?"
+                        confirmButton.label: "Log Out"
+                        onFinished: {
+                            if (result == SystemUiResult.ConfirmButtonSelection) {
+                                //TODO: do something
+                            }
+
+                        }
+
                     }
                 }
                 Label {
