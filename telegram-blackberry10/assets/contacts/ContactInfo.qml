@@ -5,6 +5,7 @@ Page {
 
     property alias contactName: name.text
     property alias contactStatus: status.text
+    property alias phoneNumber: phoneNumberLabel.text
     property alias image: avatar.image
     property alias imageSource: avatar.imageSource
 
@@ -91,6 +92,7 @@ Page {
         }
 
         SubtitleCell {
+            id: phoneNumberLabel
             text: "+44 7400 890000"
             subtitle: "Mobile"
             leftPadding: 24
