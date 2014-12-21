@@ -32,7 +32,7 @@ public:
     Q_INVOKABLE bool isAuthenticated();
     Q_INVOKABLE QString selfPhone() const;
     Q_INVOKABLE QStringList contactList() const;
-    Q_INVOKABLE TelegramNamespace::ContactStatus contactStatus(const QString &phone) const;
+    Q_INVOKABLE QVariant contactStatus(const QString &phone) const;
     Q_INVOKABLE QString contactFirstName(const QString &phone) const;
     Q_INVOKABLE QString contactLastName(const QString &phone) const;
     Q_INVOKABLE QStringList chatParticipants(quint32 publicChatId) const;

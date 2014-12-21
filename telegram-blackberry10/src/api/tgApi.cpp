@@ -100,8 +100,9 @@ QStringList tgApi::contactList() const{
     return core->contactList();
 }
 
-TelegramNamespace::ContactStatus tgApi::contactStatus(const QString &phone) const{
-    return core->contactStatus(phone);
+QVariant tgApi::contactStatus(const QString &phone) const{
+    TelegramNamespace::ContactStatus result = core->contactStatus(phone);
+    return result;
 }
 
 QString tgApi::contactFirstName(const QString &phone) const{
