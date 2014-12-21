@@ -11,15 +11,15 @@
 class TgSession: public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(QString session READ session WRITE setSession NOTIFY sessionChanged)
+    Q_PROPERTY(QByteArray session READ session WRITE setSession NOTIFY sessionChanged)
     Q_PROPERTY(bool sessionStored READ isSessionStored NOTIFY sessionStoredChanged)
 
 public:
 
     explicit TgSession(QObject* parent = 0);
 
-    QString session() const;
-    void setSession(const QString &session);
+    QByteArray session() const;
+    void setSession(const QByteArray &session);
 
     bool isSessionStored();
 

@@ -6,12 +6,12 @@ TgSession::TgSession(QObject* parent) :
     Q_UNUSED(parent);
 }
 
-QString TgSession::session() const
+QByteArray TgSession::session() const
 {
-    return settings.value(TG_SESSION_KEY).toString();
+    return settings.value(TG_SESSION_KEY).toByteArray();
 }
 
-void TgSession::setSession(const QString &session)
+void TgSession::setSession(const QByteArray &session)
 {
     settings.setValue(TG_SESSION_KEY, session);
     emit sessionChanged();
@@ -20,5 +20,5 @@ void TgSession::setSession(const QString &session)
 
 bool TgSession::isSessionStored()
 {
-    return settings.contains(TG_SESSION_KEY) && session() != QString();
+    return settings.contains(TG_SESSION_KEY) && session() != QByteArray();
 }
