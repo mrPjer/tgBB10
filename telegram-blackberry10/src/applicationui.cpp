@@ -24,6 +24,8 @@
 #include "util/timer.hpp"
 #include "util/countries.hpp"
 
+#include "api/TgSession.hpp"
+
 #include "config.hpp"
 
 #ifdef TG_API_MOCK
@@ -43,6 +45,7 @@ ApplicationUI::ApplicationUI() :
     // Register our Timer class in QML
     qmlRegisterType<Timer>("Timer", 1, 0, "Timer");
 
+    qmlRegisterType<TgSession>("TgApi", 1, 0, "Session");
     qmlRegisterType<TelegramNamespace>("TgApi", 1, 0, "ContactStatus");
 #ifdef TG_API_MOCK
     // Register out Registration API in QML
