@@ -7,6 +7,7 @@ TabbedPane {
     id: root
 
     showTabsOnActionBar: true
+    activeTab: chatsTab
 
     property bool showBackButton: false
     signal dismiss
@@ -30,6 +31,7 @@ TabbedPane {
     Tab {
         title: "Contacts"
         imageSource: "asset:///images/main/attach_contact.png"
+
         ContactsWithPane {
             titleBar: TitleBar {
                 id: contacts
@@ -48,6 +50,7 @@ TabbedPane {
     }
 
     Tab {
+        id: chatsTab
         title: "Chats"
         imageSource: "asset:///images/main/bar_chats.png"
 
