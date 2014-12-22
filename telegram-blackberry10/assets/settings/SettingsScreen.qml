@@ -1,5 +1,6 @@
 import bb.cascades 1.2
 import bb.system 1.0
+import TgApi 1.0
 import '../shared'
 
 Page {
@@ -199,19 +200,23 @@ Page {
                         }
                     }
 
-                    attachedObjects: SystemDialog {
-                        id: logOut
-                        title: "Log Out"
-                        body: "Are you sure you want to log out?"
-                        confirmButton.label: "Log Out"
-                        onFinished: {
-                            if (result == SystemUiResult.ConfirmButtonSelection) {
-                                //TODO: do something
+                    attachedObjects: [
+                        SystemDialog {
+                            id: logOut
+                            title: "Log Out"
+                            body: "Are you sure you want to log out?"
+                            confirmButton.label: "Log Out"
+                            onFinished: {
+                                if (result == SystemUiResult.ConfirmButtonSelection) {
+                                    session.clearSession()
+                                    Application.quit()
+                                }
                             }
-
+                        },
+                        Session {
+                            id: session
                         }
-
-                    }
+                    ]
                 }
                 Label {
                     text: "Telegram for Blackberry v0.1"
