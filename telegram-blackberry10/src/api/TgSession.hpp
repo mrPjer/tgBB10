@@ -27,6 +27,9 @@ public:
     void sessionChanged();
     void sessionStoredChanged();
 
+public slots:
+    void clearSession();
+
 private:
     QSettings settings;
 

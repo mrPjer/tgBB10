@@ -18,6 +18,13 @@ void TgSession::setSession(const QByteArray &session)
     emit sessionStoredChanged();
 }
 
+void TgSession::clearSession()
+{
+    settings.remove(TG_SESSION_KEY);
+    emit sessionChanged();
+    emit sessionStoredChanged();
+}
+
 bool TgSession::isSessionStored()
 {
     return settings.contains(TG_SESSION_KEY) && session() != QByteArray();
