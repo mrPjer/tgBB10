@@ -24,17 +24,21 @@ template CTelegramStream &CTelegramStream::operator>>(TLVector<qint32> &v);
 template CTelegramStream &CTelegramStream::operator>>(TLVector<quint32> &v);
 template CTelegramStream &CTelegramStream::operator>>(TLVector<qint64> &v);
 template CTelegramStream &CTelegramStream::operator>>(TLVector<quint64> &v);
+template CTelegramStream &CTelegramStream::operator>>(TLVector<QString> &v);
 
 template CTelegramStream &CTelegramStream::operator<<(const TLVector<qint32> &v);
 template CTelegramStream &CTelegramStream::operator<<(const TLVector<quint32> &v);
 template CTelegramStream &CTelegramStream::operator<<(const TLVector<qint64> &v);
 template CTelegramStream &CTelegramStream::operator<<(const TLVector<quint64> &v);
+template CTelegramStream &CTelegramStream::operator<<(const TLVector<QString> &v);
 
 template CTelegramStream &CTelegramStream::operator>>(TLVector<TLUser> &v);
 template CTelegramStream &CTelegramStream::operator>>(TLVector<TLContact> &v);
+template CTelegramStream &CTelegramStream::operator>>(TLVector<TLDcOption> &v);
 
 template CTelegramStream &CTelegramStream::operator<<(const TLVector<TLInputContact> &v);
 template CTelegramStream &CTelegramStream::operator<<(const TLVector<TLInputUser> &v);
+template CTelegramStream &CTelegramStream::operator<<(const TLVector<TLDcOption> &v);
 
 CTelegramStream::CTelegramStream(QByteArray *data, bool write) :
     CRawStream(data, write)
@@ -87,7 +91,7 @@ CTelegramStream &CTelegramStream::operator>>(TLVector<T> &v)
     if (result.tlType == Vector) {
         quint32 length = 0;
         *this >> length;
-        for (int i = 0; i < length; ++i) {
+        for (quint32 i = 0; i < length; ++i) {
             T value;
             *this >> value;
             result.append(value);
@@ -176,6 +180,12 @@ CTelegramStream &CTelegramStream::operator>>(TLAuthSentCode &authSentCode)
 
     switch (result.tlType) {
     case AuthSentCode:
+        *this >> result.phoneRegistered;
+        *this >> result.phoneCodeHash;
+        *this >> result.sendCallTimeout;
+        *this >> result.isPassword;
+        break;
+    case AuthSentAppCode:
         *this >> result.phoneRegistered;
         *this >> result.phoneCodeHash;
         *this >> result.sendCallTimeout;
@@ -423,106 +433,6 @@ CTelegramStream &CTelegramStream::operator>>(TLDcOption &dcOption)
     return *this;
 }
 
-CTelegramStream &CTelegramStream::operator>>(TLDecryptedMessageAction &decryptedMessageAction)
-{
-    TLDecryptedMessageAction result;
-
-    *this >> result.tlType;
-
-    switch (result.tlType) {
-    case DecryptedMessageActionSetMessageTTL:
-        *this >> result.ttlSeconds;
-        break;
-    case DecryptedMessageActionReadMessages:
-        *this >> result.randomIds;
-        break;
-    case DecryptedMessageActionDeleteMessages:
-        *this >> result.randomIds;
-        break;
-    case DecryptedMessageActionScreenshotMessages:
-        *this >> result.randomIds;
-        break;
-    case DecryptedMessageActionFlushHistory:
-        break;
-    case DecryptedMessageActionNotifyLayer:
-        *this >> result.layer;
-        break;
-    default:
-        break;
-    }
-
-    decryptedMessageAction = result;
-
-    return *this;
-}
-
-CTelegramStream &CTelegramStream::operator>>(TLDecryptedMessageMedia &decryptedMessageMedia)
-{
-    TLDecryptedMessageMedia result;
-
-    *this >> result.tlType;
-
-    switch (result.tlType) {
-    case DecryptedMessageMediaEmpty:
-        break;
-    case DecryptedMessageMediaPhoto:
-        *this >> result.thumb;
-        *this >> result.thumbW;
-        *this >> result.thumbH;
-        *this >> result.w;
-        *this >> result.h;
-        *this >> result.size;
-        *this >> result.key;
-        *this >> result.iv;
-        break;
-    case DecryptedMessageMediaVideo:
-        *this >> result.thumb;
-        *this >> result.thumbW;
-        *this >> result.thumbH;
-        *this >> result.duration;
-        *this >> result.mimeType;
-        *this >> result.w;
-        *this >> result.h;
-        *this >> result.size;
-        *this >> result.key;
-        *this >> result.iv;
-        break;
-    case DecryptedMessageMediaGeoPoint:
-        *this >> result.latitude;
-        *this >> result.longitude;
-        break;
-    case DecryptedMessageMediaContact:
-        *this >> result.phoneNumber;
-        *this >> result.firstName;
-        *this >> result.lastName;
-        *this >> result.userId;
-        break;
-    case DecryptedMessageMediaDocument:
-        *this >> result.thumb;
-        *this >> result.thumbW;
-        *this >> result.thumbH;
-        *this >> result.fileName;
-        *this >> result.mimeType;
-        *this >> result.size;
-        *this >> result.key;
-        *this >> result.iv;
-        break;
-    case DecryptedMessageMediaAudio:
-        *this >> result.duration;
-        *this >> result.mimeType;
-        *this >> result.size;
-        *this >> result.key;
-        *this >> result.iv;
-        break;
-    default:
-        break;
-    }
-
-    decryptedMessageMedia = result;
-
-    return *this;
-}
-
 CTelegramStream &CTelegramStream::operator>>(TLEncryptedChat &encryptedChat)
 {
     TLEncryptedChat result;
@@ -688,6 +598,28 @@ CTelegramStream &CTelegramStream::operator>>(TLGeoPoint &geoPoint)
     }
 
     geoPoint = result;
+
+    return *this;
+}
+
+CTelegramStream &CTelegramStream::operator>>(TLGlobalPrivacySettings &globalPrivacySettings)
+{
+    TLGlobalPrivacySettings result;
+
+    *this >> result.tlType;
+
+    switch (result.tlType) {
+    case GlobalPrivacySettings:
+        *this >> result.noSuggestions;
+        *this >> result.hideContacts;
+        *this >> result.hideLocated;
+        *this >> result.hideLastVisit;
+        break;
+    default:
+        break;
+    }
+
+    globalPrivacySettings = result;
 
     return *this;
 }
@@ -1385,6 +1317,42 @@ CTelegramStream &CTelegramStream::operator>>(TLPhotoSize &photoSize)
     return *this;
 }
 
+CTelegramStream &CTelegramStream::operator>>(TLSendMessageAction &sendMessageAction)
+{
+    TLSendMessageAction result;
+
+    *this >> result.tlType;
+
+    switch (result.tlType) {
+    case SendMessageTypingAction:
+        break;
+    case SendMessageCancelAction:
+        break;
+    case SendMessageRecordVideoAction:
+        break;
+    case SendMessageUploadVideoAction:
+        break;
+    case SendMessageRecordAudioAction:
+        break;
+    case SendMessageUploadAudioAction:
+        break;
+    case SendMessageUploadPhotoAction:
+        break;
+    case SendMessageUploadDocumentAction:
+        break;
+    case SendMessageGeoLocationAction:
+        break;
+    case SendMessageChooseContactAction:
+        break;
+    default:
+        break;
+    }
+
+    sendMessageAction = result;
+
+    return *this;
+}
+
 CTelegramStream &CTelegramStream::operator>>(TLStorageFileType &storageFileType)
 {
     TLStorageFileType result;
@@ -1615,53 +1583,6 @@ CTelegramStream &CTelegramStream::operator>>(TLConfig &config)
     }
 
     config = result;
-
-    return *this;
-}
-
-CTelegramStream &CTelegramStream::operator>>(TLDecryptedMessage &decryptedMessage)
-{
-    TLDecryptedMessage result;
-
-    *this >> result.tlType;
-
-    switch (result.tlType) {
-    case DecryptedMessage:
-        *this >> result.randomId;
-        *this >> result.randomBytes;
-        *this >> result.message;
-        *this >> result.media;
-        break;
-    case DecryptedMessageService:
-        *this >> result.randomId;
-        *this >> result.randomBytes;
-        *this >> result.action;
-        break;
-    default:
-        break;
-    }
-
-    decryptedMessage = result;
-
-    return *this;
-}
-
-CTelegramStream &CTelegramStream::operator>>(TLDecryptedMessageLayer &decryptedMessageLayer)
-{
-    TLDecryptedMessageLayer result;
-
-    *this >> result.tlType;
-
-    switch (result.tlType) {
-    case DecryptedMessageLayer:
-        *this >> result.layer;
-        *this >> result.message;
-        break;
-    default:
-        break;
-    }
-
-    decryptedMessageLayer = result;
 
     return *this;
 }
@@ -1911,6 +1832,7 @@ CTelegramStream &CTelegramStream::operator>>(TLUser &user)
         *this >> result.id;
         *this >> result.firstName;
         *this >> result.lastName;
+        *this >> result.username;
         *this >> result.phone;
         *this >> result.photo;
         *this >> result.status;
@@ -1920,6 +1842,7 @@ CTelegramStream &CTelegramStream::operator>>(TLUser &user)
         *this >> result.id;
         *this >> result.firstName;
         *this >> result.lastName;
+        *this >> result.username;
         *this >> result.accessHash;
         *this >> result.phone;
         *this >> result.photo;
@@ -1929,6 +1852,7 @@ CTelegramStream &CTelegramStream::operator>>(TLUser &user)
         *this >> result.id;
         *this >> result.firstName;
         *this >> result.lastName;
+        *this >> result.username;
         *this >> result.accessHash;
         *this >> result.phone;
         *this >> result.photo;
@@ -1938,6 +1862,7 @@ CTelegramStream &CTelegramStream::operator>>(TLUser &user)
         *this >> result.id;
         *this >> result.firstName;
         *this >> result.lastName;
+        *this >> result.username;
         *this >> result.accessHash;
         *this >> result.photo;
         *this >> result.status;
@@ -1946,6 +1871,7 @@ CTelegramStream &CTelegramStream::operator>>(TLUser &user)
         *this >> result.id;
         *this >> result.firstName;
         *this >> result.lastName;
+        *this >> result.username;
         break;
     default:
         break;
@@ -2554,33 +2480,30 @@ CTelegramStream &CTelegramStream::operator>>(TLMessage &message)
         *this >> result.id;
         break;
     case Message:
+        *this >> result.flags;
         *this >> result.id;
         *this >> result.fromId;
         *this >> result.toId;
-        *this >> result.out;
-        *this >> result.unread;
         *this >> result.date;
         *this >> result.message;
         *this >> result.media;
         break;
     case MessageForwarded:
+        *this >> result.flags;
         *this >> result.id;
         *this >> result.fwdFromId;
         *this >> result.fwdDate;
         *this >> result.fromId;
         *this >> result.toId;
-        *this >> result.out;
-        *this >> result.unread;
         *this >> result.date;
         *this >> result.message;
         *this >> result.media;
         break;
     case MessageService:
+        *this >> result.flags;
         *this >> result.id;
         *this >> result.fromId;
         *this >> result.toId;
-        *this >> result.out;
-        *this >> result.unread;
         *this >> result.date;
         *this >> result.action;
         break;
@@ -2763,10 +2686,12 @@ CTelegramStream &CTelegramStream::operator>>(TLUpdate &update)
         break;
     case UpdateUserTyping:
         *this >> result.userId;
+        *this >> result.action;
         break;
     case UpdateChatUserTyping:
         *this >> result.chatId;
         *this >> result.userId;
+        *this >> result.action;
         break;
     case UpdateChatParticipants:
         *this >> result.participants;
@@ -2779,6 +2704,7 @@ CTelegramStream &CTelegramStream::operator>>(TLUpdate &update)
         *this >> result.userId;
         *this >> result.firstName;
         *this >> result.lastName;
+        *this >> result.username;
         break;
     case UpdateUserPhoto:
         *this >> result.userId;
@@ -2844,6 +2770,12 @@ CTelegramStream &CTelegramStream::operator>>(TLUpdate &update)
     case UpdateNotifySettings:
         *this >> result.peer;
         *this >> result.notifySettings;
+        break;
+    case UpdateServiceNotification:
+        *this >> result.type;
+        *this >> result.message;
+        *this >> result.media;
+        *this >> result.popup;
         break;
     default:
         break;
@@ -3289,6 +3221,38 @@ CTelegramStream &CTelegramStream::operator<<(const TLMessagesFilter &messagesFil
     case InputMessagesFilterDocument:
         break;
     case InputMessagesFilterAudio:
+        break;
+    default:
+        break;
+    }
+
+    return *this;
+}
+
+CTelegramStream &CTelegramStream::operator<<(const TLSendMessageAction &sendMessageAction)
+{
+    *this << sendMessageAction.tlType;
+
+    switch (sendMessageAction.tlType) {
+    case SendMessageTypingAction:
+        break;
+    case SendMessageCancelAction:
+        break;
+    case SendMessageRecordVideoAction:
+        break;
+    case SendMessageUploadVideoAction:
+        break;
+    case SendMessageRecordAudioAction:
+        break;
+    case SendMessageUploadAudioAction:
+        break;
+    case SendMessageUploadPhotoAction:
+        break;
+    case SendMessageUploadDocumentAction:
+        break;
+    case SendMessageGeoLocationAction:
+        break;
+    case SendMessageChooseContactAction:
         break;
     default:
         break;

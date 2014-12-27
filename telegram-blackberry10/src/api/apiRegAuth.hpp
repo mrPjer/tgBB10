@@ -19,6 +19,8 @@ class APIRegAuth: public bb::cascades::CustomControl{
 public:
     APIRegAuth();
 
+    Q_INVOKABLE QByteArray connectionSecretInfo() const;
+
 signals:
     void phoneStatusReceived(const QString& phone, bool registered, bool invited);
     void phoneNumberInvalid();

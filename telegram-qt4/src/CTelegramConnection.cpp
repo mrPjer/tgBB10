@@ -25,8 +25,19 @@
 #include "CTcpTransport.hpp"
 #include "Utils.hpp"
 
+// Have a copy in CTelegramDispatcher
+static QString maskPhoneNumber(const QString &phoneNumber)
+{
+    if (phoneNumber.isEmpty()) {
+        return QString();
+    }
+
+    return phoneNumber.mid(0, phoneNumber.size() / 4) + QString(phoneNumber.size() - phoneNumber.size() / 4, QLatin1Char('x')); // + QLatin1String(" (hidden)");
+}
+
 CTelegramConnection::CTelegramConnection(const CAppInformation *appInfo, QObject *parent) :
     QObject(parent),
+    m_status(ConnectionStatusNone),
     m_appInfo(appInfo),
     m_transport(0),
     m_authState(AuthStateNone),
@@ -51,6 +62,11 @@ void CTelegramConnection::setDcInfo(const TLDcOption &newDcInfo)
 
 void CTelegramConnection::connectToDc()
 {
+    if (isConnected() || (m_status == ConnectionStatusConnecting)) {
+        return;
+    }
+
+    setStatus(ConnectionStatusConnecting);
     m_transport->connectToHost(m_dcInfo.ipAddress, m_dcInfo.port);
 }
 
@@ -135,98 +151,24 @@ void CTelegramConnection::getConfiguration()
     sendEncryptedPackage(output);
 }
 
-void CTelegramConnection::requestPhoneStatus(const QString &phoneNumber)
+quint64 CTelegramConnection::requestPhoneCode(const QString &phoneNumber)
 {
-    QByteArray output;
-    CTelegramStream outputStream(&output, /* write */ true);
+    qDebug() << "requestPhoneCode" << maskPhoneNumber(phoneNumber) << m_dcInfo.id;
 
-    outputStream << AuthCheckPhone;
-    outputStream << phoneNumber;
-
-    sendEncryptedPackage(output);
+    return authSendCode(phoneNumber, 0, m_appInfo->appId(), m_appInfo->appHash(), m_appInfo->languageCode());
 }
 
-void CTelegramConnection::requestPhoneCode(const QString &phoneNumber)
+quint64 CTelegramConnection::signIn(const QString &phoneNumber, const QString &authCode)
 {
-    qDebug() << "requestPhoneCode" << phoneNumber << m_dcInfo.id;
-    QByteArray output;
+    qDebug() << "SignIn with number " << maskPhoneNumber(phoneNumber);
 
-    CTelegramStream outputStream(&output, /* write */ true);
-
-    outputStream << AuthSendCode;
-    outputStream << phoneNumber;
-    outputStream << quint32(0);
-    outputStream << m_appInfo->appId();
-    outputStream << m_appInfo->appHash();
-    outputStream << m_appInfo->languageCode();
-
-    sendEncryptedPackage(output);
+    return authSignIn(phoneNumber, m_authCodeHash, authCode);
 }
 
-void CTelegramConnection::signIn(const QString &phoneNumber, const QString &authCode)
+quint64 CTelegramConnection::signUp(const QString &phoneNumber, const QString &authCode, const QString &firstName, const QString &lastName)
 {
-    qDebug() << "SignIn" << phoneNumber;
-    QByteArray output;
-    CTelegramStream outputStream(&output, /* write */ true);
-
-    outputStream << AuthSignIn;
-    outputStream << phoneNumber;
-    outputStream << m_authCodeHash;
-    outputStream << authCode;
-
-    sendEncryptedPackage(output);
-}
-
-void CTelegramConnection::signUp(const QString &phoneNumber, const QString &authCode, const QString &firstName, const QString &lastName)
-{
-    qDebug() << "SignUp" << phoneNumber;
-    QByteArray output;
-    CTelegramStream outputStream(&output, /* write */ true);
-
-    outputStream << AuthSignUp;
-    outputStream << phoneNumber;
-    outputStream << m_authCodeHash;
-    outputStream << authCode;
-    outputStream << firstName;
-    outputStream << lastName;
-
-    sendEncryptedPackage(output);
-}
-
-void CTelegramConnection::contactsGetContacts()
-{
-    qDebug() << "GetContacts";
-
-    QByteArray output;
-    CTelegramStream outputStream(&output, /* write */ true);
-
-    outputStream << ContactsGetContacts;
-    outputStream << QString(); // Hash
-
-    sendEncryptedPackage(output);
-}
-
-void CTelegramConnection::updatesGetState()
-{
-    QByteArray output;
-    CTelegramStream outputStream(&output, /* write */ true);
-
-    outputStream << UpdatesGetState;
-
-    sendEncryptedPackage(output);
-}
-
-void CTelegramConnection::updatesGetDifference(quint32 pts, quint32 date, quint32 qts)
-{
-    QByteArray output;
-    CTelegramStream outputStream(&output, /* write */ true);
-
-    outputStream << UpdatesGetDifference;
-    outputStream << pts;
-    outputStream << date;
-    outputStream << qts;
-
-    sendEncryptedPackage(output);
+    qDebug() << "SignUp with number " << maskPhoneNumber(phoneNumber);
+    return authSignUp(phoneNumber, m_authCodeHash, authCode, firstName, lastName);
 }
 
 void CTelegramConnection::getFile(const TLInputFileLocation &location, quint32 fileId)
@@ -244,63 +186,6 @@ void CTelegramConnection::getFile(const TLInputFileLocation &location, quint32 f
     m_requestedFilesIds.insert(messageId, fileId);
 }
 
-void CTelegramConnection::usersGetUsers(const TLVector<TLInputUser> &users)
-{
-    QByteArray output;
-    CTelegramStream outputStream(&output, /* write */ true);
-
-    outputStream << UsersGetUsers;
-    outputStream << users;
-
-    sendEncryptedPackage(output);
-}
-
-void CTelegramConnection::usersGetFullUser(const TLInputUser &user)
-{
-    QByteArray output;
-    CTelegramStream outputStream(&output, /* write */ true);
-
-    outputStream << UsersGetFullUser;
-    outputStream << user;
-
-    sendEncryptedPackage(output);
-}
-
-void CTelegramConnection::contactsDeleteContacts(const TLVector<TLInputUser> &users)
-{
-    qDebug() << Q_FUNC_INFO << users.count();
-
-    QByteArray output;
-    CTelegramStream outputStream(&output, /* write */ true);
-
-    outputStream << ContactsDeleteContacts;
-    outputStream << users;
-
-    sendEncryptedPackage(output);
-}
-
-void CTelegramConnection::addContacts(const QStringList &phoneNumbers, bool replace)
-{
-    qDebug() << "addContacts" << phoneNumbers;
-
-    TLVector<TLInputContact> contactsVector;
-    for (int i = 0; i < phoneNumbers.count(); ++i) {
-        TLInputContact contact;
-        contact.clientId = i;
-        contact.phone = phoneNumbers.at(i);
-        contactsVector.append(contact);
-    }
-
-    QByteArray output;
-    CTelegramStream outputStream(&output, /* write */ true);
-
-    outputStream << ContactsImportContacts;
-    outputStream << contactsVector; // Hash
-    outputStream << replace;
-
-    sendEncryptedPackage(output);
-}
-
 void CTelegramConnection::accountUpdateStatus(bool offline)
 {
     QByteArray output;
@@ -313,6 +198,286 @@ void CTelegramConnection::accountUpdateStatus(bool offline)
 }
 
 // Generated Telegram API methods implementation
+quint64 CTelegramConnection::authBindTempAuthKey(quint64 permAuthKeyId, quint64 nonce, quint32 expiresAt, const QByteArray &encryptedMessage)
+{
+    QByteArray output;
+    CTelegramStream outputStream(&output, /* write */ true);
+
+    outputStream << AuthBindTempAuthKey;
+    outputStream << permAuthKeyId;
+    outputStream << nonce;
+    outputStream << expiresAt;
+    outputStream << encryptedMessage;
+
+    return sendEncryptedPackage(output);
+}
+
+quint64 CTelegramConnection::authCheckPhone(const QString &phoneNumber)
+{
+    QByteArray output;
+    CTelegramStream outputStream(&output, /* write */ true);
+
+    outputStream << AuthCheckPhone;
+    outputStream << phoneNumber;
+
+    return sendEncryptedPackage(output);
+}
+
+quint64 CTelegramConnection::authExportAuthorization(quint32 dcId)
+{
+    QByteArray output;
+    CTelegramStream outputStream(&output, /* write */ true);
+
+    outputStream << AuthExportAuthorization;
+    outputStream << dcId;
+
+    return sendEncryptedPackage(output);
+}
+
+quint64 CTelegramConnection::authImportAuthorization(quint32 id, const QByteArray &bytes)
+{
+    QByteArray output;
+    CTelegramStream outputStream(&output, /* write */ true);
+
+    outputStream << AuthImportAuthorization;
+    outputStream << id;
+    outputStream << bytes;
+
+    return sendEncryptedPackage(output);
+}
+
+quint64 CTelegramConnection::authLogOut()
+{
+    QByteArray output;
+    CTelegramStream outputStream(&output, /* write */ true);
+
+    outputStream << AuthLogOut;
+
+    return sendEncryptedPackage(output);
+}
+
+quint64 CTelegramConnection::authResetAuthorizations()
+{
+    QByteArray output;
+    CTelegramStream outputStream(&output, /* write */ true);
+
+    outputStream << AuthResetAuthorizations;
+
+    return sendEncryptedPackage(output);
+}
+
+quint64 CTelegramConnection::authSendCall(const QString &phoneNumber, const QString &phoneCodeHash)
+{
+    QByteArray output;
+    CTelegramStream outputStream(&output, /* write */ true);
+
+    outputStream << AuthSendCall;
+    outputStream << phoneNumber;
+    outputStream << phoneCodeHash;
+
+    return sendEncryptedPackage(output);
+}
+
+quint64 CTelegramConnection::authSendCode(const QString &phoneNumber, quint32 smsType, quint32 apiId, const QString &apiHash, const QString &langCode)
+{
+    QByteArray output;
+    CTelegramStream outputStream(&output, /* write */ true);
+
+    outputStream << AuthSendCode;
+    outputStream << phoneNumber;
+    outputStream << smsType;
+    outputStream << apiId;
+    outputStream << apiHash;
+    outputStream << langCode;
+
+    return sendEncryptedPackage(output);
+}
+
+quint64 CTelegramConnection::authSendInvites(const TLVector<QString> &phoneNumbers, const QString &message)
+{
+    QByteArray output;
+    CTelegramStream outputStream(&output, /* write */ true);
+
+    outputStream << AuthSendInvites;
+    outputStream << phoneNumbers;
+    outputStream << message;
+
+    return sendEncryptedPackage(output);
+}
+
+quint64 CTelegramConnection::authSendSms(const QString &phoneNumber, const QString &phoneCodeHash)
+{
+    QByteArray output;
+    CTelegramStream outputStream(&output, /* write */ true);
+
+    outputStream << AuthSendSms;
+    outputStream << phoneNumber;
+    outputStream << phoneCodeHash;
+
+    return sendEncryptedPackage(output);
+}
+
+quint64 CTelegramConnection::authSignIn(const QString &phoneNumber, const QString &phoneCodeHash, const QString &phoneCode)
+{
+    QByteArray output;
+    CTelegramStream outputStream(&output, /* write */ true);
+
+    outputStream << AuthSignIn;
+    outputStream << phoneNumber;
+    outputStream << phoneCodeHash;
+    outputStream << phoneCode;
+
+    return sendEncryptedPackage(output);
+}
+
+quint64 CTelegramConnection::authSignUp(const QString &phoneNumber, const QString &phoneCodeHash, const QString &phoneCode, const QString &firstName, const QString &lastName)
+{
+    QByteArray output;
+    CTelegramStream outputStream(&output, /* write */ true);
+
+    outputStream << AuthSignUp;
+    outputStream << phoneNumber;
+    outputStream << phoneCodeHash;
+    outputStream << phoneCode;
+    outputStream << firstName;
+    outputStream << lastName;
+
+    return sendEncryptedPackage(output);
+}
+
+quint64 CTelegramConnection::contactsBlock(const TLInputUser &id)
+{
+    QByteArray output;
+    CTelegramStream outputStream(&output, /* write */ true);
+
+    outputStream << ContactsBlock;
+    outputStream << id;
+
+    return sendEncryptedPackage(output);
+}
+
+quint64 CTelegramConnection::contactsDeleteContact(const TLInputUser &id)
+{
+    QByteArray output;
+    CTelegramStream outputStream(&output, /* write */ true);
+
+    outputStream << ContactsDeleteContact;
+    outputStream << id;
+
+    return sendEncryptedPackage(output);
+}
+
+quint64 CTelegramConnection::contactsDeleteContacts(const TLVector<TLInputUser> &id)
+{
+    QByteArray output;
+    CTelegramStream outputStream(&output, /* write */ true);
+
+    outputStream << ContactsDeleteContacts;
+    outputStream << id;
+
+    return sendEncryptedPackage(output);
+}
+
+quint64 CTelegramConnection::contactsExportCard()
+{
+    QByteArray output;
+    CTelegramStream outputStream(&output, /* write */ true);
+
+    outputStream << ContactsExportCard;
+
+    return sendEncryptedPackage(output);
+}
+
+quint64 CTelegramConnection::contactsGetBlocked(quint32 offset, quint32 limit)
+{
+    QByteArray output;
+    CTelegramStream outputStream(&output, /* write */ true);
+
+    outputStream << ContactsGetBlocked;
+    outputStream << offset;
+    outputStream << limit;
+
+    return sendEncryptedPackage(output);
+}
+
+quint64 CTelegramConnection::contactsGetContacts(const QString &hash)
+{
+    QByteArray output;
+    CTelegramStream outputStream(&output, /* write */ true);
+
+    outputStream << ContactsGetContacts;
+    outputStream << hash;
+
+    return sendEncryptedPackage(output);
+}
+
+quint64 CTelegramConnection::contactsGetStatuses()
+{
+    QByteArray output;
+    CTelegramStream outputStream(&output, /* write */ true);
+
+    outputStream << ContactsGetStatuses;
+
+    return sendEncryptedPackage(output);
+}
+
+quint64 CTelegramConnection::contactsGetSuggested(quint32 limit)
+{
+    QByteArray output;
+    CTelegramStream outputStream(&output, /* write */ true);
+
+    outputStream << ContactsGetSuggested;
+    outputStream << limit;
+
+    return sendEncryptedPackage(output);
+}
+
+quint64 CTelegramConnection::contactsImportCard(const TLVector<quint32> &exportCard)
+{
+    QByteArray output;
+    CTelegramStream outputStream(&output, /* write */ true);
+
+    outputStream << ContactsImportCard;
+    outputStream << exportCard;
+
+    return sendEncryptedPackage(output);
+}
+
+quint64 CTelegramConnection::contactsImportContacts(const TLVector<TLInputContact> &contacts, bool replace)
+{
+    QByteArray output;
+    CTelegramStream outputStream(&output, /* write */ true);
+
+    outputStream << ContactsImportContacts;
+    outputStream << contacts;
+    outputStream << replace;
+
+    return sendEncryptedPackage(output);
+}
+
+quint64 CTelegramConnection::contactsSearch(const QString &q, quint32 limit)
+{
+    QByteArray output;
+    CTelegramStream outputStream(&output, /* write */ true);
+
+    outputStream << ContactsSearch;
+    outputStream << q;
+    outputStream << limit;
+
+    return sendEncryptedPackage(output);
+}
+
+quint64 CTelegramConnection::contactsUnblock(const TLInputUser &id)
+{
+    QByteArray output;
+    CTelegramStream outputStream(&output, /* write */ true);
+
+    outputStream << ContactsUnblock;
+    outputStream << id;
+
+    return sendEncryptedPackage(output);
+}
+
 quint64 CTelegramConnection::messagesAcceptEncryption(const TLInputEncryptedChat &peer, const QByteArray &gB, quint64 keyFingerprint)
 {
     QByteArray output;
@@ -530,7 +695,7 @@ quint64 CTelegramConnection::messagesReadEncryptedHistory(const TLInputEncrypted
     return sendEncryptedPackage(output);
 }
 
-quint64 CTelegramConnection::messagesReadHistory(const TLInputPeer &peer, quint32 maxId, quint32 offset)
+quint64 CTelegramConnection::messagesReadHistory(const TLInputPeer &peer, quint32 maxId, quint32 offset, bool readContents)
 {
     QByteArray output;
     CTelegramStream outputStream(&output, /* write */ true);
@@ -539,6 +704,18 @@ quint64 CTelegramConnection::messagesReadHistory(const TLInputPeer &peer, quint3
     outputStream << peer;
     outputStream << maxId;
     outputStream << offset;
+    outputStream << readContents;
+
+    return sendEncryptedPackage(output);
+}
+
+quint64 CTelegramConnection::messagesReadMessageContents(const TLVector<quint32> &id)
+{
+    QByteArray output;
+    CTelegramStream outputStream(&output, /* write */ true);
+
+    outputStream << MessagesReadMessageContents;
+    outputStream << id;
 
     return sendEncryptedPackage(output);
 }
@@ -698,14 +875,59 @@ quint64 CTelegramConnection::messagesSetEncryptedTyping(const TLInputEncryptedCh
     return sendEncryptedPackage(output);
 }
 
-quint64 CTelegramConnection::messagesSetTyping(const TLInputPeer &peer, bool typing)
+quint64 CTelegramConnection::messagesSetTyping(const TLInputPeer &peer, const TLSendMessageAction &action)
 {
     QByteArray output;
     CTelegramStream outputStream(&output, /* write */ true);
 
     outputStream << MessagesSetTyping;
     outputStream << peer;
-    outputStream << typing;
+    outputStream << action;
+
+    return sendEncryptedPackage(output);
+}
+
+quint64 CTelegramConnection::updatesGetDifference(quint32 pts, quint32 date, quint32 qts)
+{
+    QByteArray output;
+    CTelegramStream outputStream(&output, /* write */ true);
+
+    outputStream << UpdatesGetDifference;
+    outputStream << pts;
+    outputStream << date;
+    outputStream << qts;
+
+    return sendEncryptedPackage(output);
+}
+
+quint64 CTelegramConnection::updatesGetState()
+{
+    QByteArray output;
+    CTelegramStream outputStream(&output, /* write */ true);
+
+    outputStream << UpdatesGetState;
+
+    return sendEncryptedPackage(output);
+}
+
+quint64 CTelegramConnection::usersGetFullUser(const TLInputUser &id)
+{
+    QByteArray output;
+    CTelegramStream outputStream(&output, /* write */ true);
+
+    outputStream << UsersGetFullUser;
+    outputStream << id;
+
+    return sendEncryptedPackage(output);
+}
+
+quint64 CTelegramConnection::usersGetUsers(const TLVector<TLInputUser> &id)
+{
+    QByteArray output;
+    CTelegramStream outputStream(&output, /* write */ true);
+
+    outputStream << UsersGetUsers;
+    outputStream << id;
 
     return sendEncryptedPackage(output);
 }
@@ -714,8 +936,6 @@ quint64 CTelegramConnection::messagesSetTyping(const TLInputPeer &peer, bool typ
 
 bool CTelegramConnection::answerPqAuthorization(const QByteArray &payload)
 {
-    // Payload is passed as const, but we open device in read-only mode, so
-    // Let's workaround const by construction variable copy with COW-feature.
     CTelegramStream inputStream(payload);
 
     TLValue responsePqValue;
@@ -854,7 +1074,7 @@ bool CTelegramConnection::answerDh(const QByteArray &payload)
     inputStream >> responseTLValue;
 
     if (responseTLValue != ServerDHParamsOk) {
-        qDebug() << "Error: Server did not accept our DH params";
+        qDebug() << "Error: Server did not accept our DH params.";
         return false;
     }
 
@@ -896,7 +1116,7 @@ bool CTelegramConnection::answerDh(const QByteArray &payload)
     encryptedInputStream >> responseTLValue;
 
     if (responseTLValue != ServerDHInnerData) {
-        qDebug() << "Error: Unexpected TL Value in encrypted answer";
+        qDebug() << "Error: Unexpected TL Value in encrypted answer.";
         return false;
     }
 
@@ -917,6 +1137,21 @@ bool CTelegramConnection::answerDh(const QByteArray &payload)
     encryptedInputStream >> m_g;
     encryptedInputStream >> m_dhPrime;
     encryptedInputStream >> m_gA;
+
+    if ((m_g < 2) || (m_g > 7)) {
+        qDebug() << "Error: Received 'g' number is out of acceptable range [2-7].";
+        return false;
+    }
+
+    if (m_dhPrime.length() != 2048 / 8) {
+        qDebug() << "Error: Received dhPrime number length is not correct." << m_dhPrime.length() << 2048 / 8;
+        return false;
+    }
+
+    if (!(m_dhPrime.at(0) & 128)) {
+        qDebug() << "Error: Received dhPrime is too small.";
+        return false;
+    }
 
     quint32 serverTime;
 
@@ -1177,6 +1412,7 @@ void CTelegramConnection::processRpcResult(CTelegramStream &stream, quint64 idHi
         case UsersGetFullUser:
             processingResult = processUsersGetFullUser(stream, id);
             break;
+        case AuthImportAuthorization:
         case AuthSignIn:
         case AuthSignUp:
             processingResult = processAuthSign(stream, id);
@@ -1187,8 +1423,14 @@ void CTelegramConnection::processRpcResult(CTelegramStream &stream, quint64 idHi
         case AuthCheckPhone:
             processingResult = processAuthCheckPhone(stream, id);
             break;
+        case AuthExportAuthorization:
+            processingResult = processAuthExportAuthorization(stream, id);
+            break;
         case AuthSendCode:
             processingResult = processAuthSendCode(stream, id);
+            break;
+        case AuthSendSms:
+            processingResult = processAuthSendSms(stream, id);
             break;
         case MessagesCreateChat:
             processingResult = processMessagesCreateChat(stream, id);
@@ -1264,7 +1506,7 @@ bool CTelegramConnection::processRpcError(CTelegramStream &stream, quint64 id, T
     QString errorMessage;
     stream >> errorMessage;
 
-    qDebug() << "RPC Error" << errorCode << ":" << errorMessage << "for message" << id;
+    qDebug() << "RPC Error" << errorCode << ":" << errorMessage << "for message" << id << QString::number(request, 16);
 
     switch (errorCode) {
     case 303: // ERROR_SEE_OTHER
@@ -1272,15 +1514,14 @@ bool CTelegramConnection::processRpcError(CTelegramStream &stream, quint64 id, T
             return true;
         }
         break;
-    case 400:
+    case 400: // BAD_REQUEST
         if (request == AuthSignIn) {
             emit phoneCodeIsInvalid();
             return true;
         }
-        if(errorMessage == "PHONE_NUMBER_INVALID") {
-            emit phoneNumberInvalid();
-            return true;
-        }
+    case 401: // UNAUTHORIZED
+        emit authorizationErrorReceived();
+        break;
     default:
         qDebug() << "RPC Error can not be handled.";
         break;
@@ -1491,10 +1732,10 @@ TLValue CTelegramConnection::processAuthCheckPhone(CTelegramStream &stream, quin
     stream >> result;
 
     if (result.tlType == AuthCheckedPhone) {
-        const QByteArray data = m_submittedPackages.take(id);
+        const QByteArray data = m_submittedPackages.value(id);
 
         if (data.isEmpty()) {
-            qDebug() << Q_FUNC_INFO << "Can not restore message" << id;
+            qDebug() << Q_FUNC_INFO << "Can not restore rpc message" << id;
             return result.tlType;
         }
 
@@ -1510,6 +1751,31 @@ TLValue CTelegramConnection::processAuthCheckPhone(CTelegramStream &stream, quin
     return result.tlType;
 }
 
+TLValue CTelegramConnection::processAuthExportAuthorization(CTelegramStream &stream, quint64 id)
+{
+    TLAuthExportedAuthorization result;
+    stream >> result;
+
+    if (result.tlType == AuthExportedAuthorization) {
+        const QByteArray data = m_submittedPackages.value(id);
+
+        if (data.isEmpty()) {
+            qDebug() << Q_FUNC_INFO << "Can not restore rpc message" << id;
+            return result.tlType;
+        }
+
+        CTelegramStream stream(data);
+        TLValue value;
+        quint32 dc;
+        stream >> value;
+        stream >> dc;
+
+        emit authExportedAuthorizationReceived(dc, result.id, result.bytes);
+    }
+
+    return result.tlType;
+}
+
 TLValue CTelegramConnection::processAuthSendCode(CTelegramStream &stream, quint64 id)
 {
     TLAuthSentCode result;
@@ -1519,9 +1785,35 @@ TLValue CTelegramConnection::processAuthSendCode(CTelegramStream &stream, quint6
         m_authCodeHash = result.phoneCodeHash;
 
         emit phoneCodeRequired();
+    } else if (result.tlType == AuthSentAppCode) {
+        qDebug() << Q_FUNC_INFO << "AuthSentAppCode";
+        m_authCodeHash = result.phoneCodeHash;
+
+        const QByteArray data = m_submittedPackages.value(id);
+
+        if (data.isEmpty()) {
+            qDebug() << Q_FUNC_INFO << "Can not restore rpc message" << id;
+            return result.tlType;
+        }
+
+        CTelegramStream stream(data);
+        TLValue value;
+        QString phoneNumber;
+        stream >> value;
+        stream >> phoneNumber;
+
+        authSendSms(phoneNumber, m_authCodeHash);
     }
 
     return result.tlType;
+}
+
+TLValue CTelegramConnection::processAuthSendSms(CTelegramStream &stream, quint64 id)
+{
+    TLValue result;
+    stream >> result;
+
+    return result;
 }
 
 TLValue CTelegramConnection::processAuthSign(CTelegramStream &stream, quint64 id)
@@ -1529,7 +1821,7 @@ TLValue CTelegramConnection::processAuthSign(CTelegramStream &stream, quint64 id
     TLAuthAuthorization result;
     stream >> result;
 
-    qDebug() << "AuthAuthorization" << result.user.phone << result.expires;
+    qDebug() << "AuthAuthorization" << maskPhoneNumber(result.user.phone) << result.expires;
 
     if (result.tlType == AuthAuthorization) {
         setAuthState(AuthStateSignedIn);
@@ -1718,6 +2010,8 @@ TLValue CTelegramConnection::processUpdate(CTelegramStream &stream, bool *ok)
 
 void CTelegramConnection::whenConnected()
 {
+    setStatus(ConnectionStatusConnected);
+
     if (m_authKey.isEmpty()) {
         initAuth();
     } else {
@@ -1855,7 +2149,7 @@ void CTelegramConnection::insertInitConnection(QByteArray *data) const
 {
     CTelegramStream outputStream(data, /* write */ true);
 
-    outputStream << InvokeWithLayer14;
+    outputStream << InvokeWithLayer18;
     outputStream << InitConnection;
 
     outputStream << m_appInfo->appId();
@@ -1941,9 +2235,19 @@ quint64 CTelegramConnection::sendEncryptedPackage(const QByteArray &buffer)
     return messageId;
 }
 
+void CTelegramConnection::setStatus(CTelegramConnection::ConnectionStatus status)
+{
+    if (m_status == status) {
+        return;
+    }
+
+    m_status = status;
+    emit statusChanged(status, m_dcInfo.id);
+}
+
 void CTelegramConnection::setAuthState(CTelegramConnection::AuthState newState)
 {
-    qDebug() << "NAS:" << newState;
+    qDebug() << Q_FUNC_INFO << newState;
     if (m_authState == newState)
         return;
 
@@ -1953,7 +2257,13 @@ void CTelegramConnection::setAuthState(CTelegramConnection::AuthState newState)
         Utils::randomBytes(&m_sessionId);
     }
 
-    emit authStateChanged(m_dcInfo.id, m_authState);
+    emit authStateChanged(m_authState, m_dcInfo.id);
+
+    if (m_authState >= AuthStateSignedIn) {
+        setStatus(ConnectionStatusSigned);
+    } else if (m_authState >= AuthStateSuccess) {
+        setStatus(ConnectionStatusAuthenticated);
+    }
 }
 
 quint64 CTelegramConnection::newMessageId()

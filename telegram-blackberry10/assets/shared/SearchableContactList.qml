@@ -4,6 +4,8 @@ Container {
 
     signal triggered(variant indexPath)
 
+    property alias dataModel: contactList.dataModel
+
     onCreationCompleted: {
         contactList.triggered.connect(triggered)
     }

@@ -4,9 +4,13 @@ import "../shared/"
 Page {
     Container {
         SearchableContactList {
+            id: contactList
             onTriggered: {
                 console.log("Selected contact " + indexPath)
+                var item = contactList.dataModel.data(indexPath)
                 var page = contactDetailsPage.createObject()
+                page.phoneNumber = "+" + item.phone
+                page.contactName = item.name
                 navigationPane.push(page)
             }
 

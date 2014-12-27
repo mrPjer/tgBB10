@@ -16,7 +16,6 @@
 #include "CAppInformation.hpp"
 #include "TelegramNamespace.hpp"
 #include "CTelegramCore.hpp"
-#include <QTimer>
 
 class tgApi: public bb::cascades::CustomControl{
     Q_OBJECT
@@ -28,12 +27,12 @@ public:
     inline const CAppInformation *appInfo() { return core->appInfo(); }
     void setAppInformation(const CAppInformation *newAppInfo);
 
-    QByteArray connectionSecretInfo() const;
+    Q_INVOKABLE QByteArray connectionSecretInfo() const;
 
     Q_INVOKABLE bool isAuthenticated();
     Q_INVOKABLE QString selfPhone() const;
     Q_INVOKABLE QStringList contactList() const;
-    Q_INVOKABLE TelegramNamespace::ContactStatus contactStatus(const QString &phone) const;
+    Q_INVOKABLE QVariant contactStatus(const QString &phone) const;
     Q_INVOKABLE QString contactFirstName(const QString &phone) const;
     Q_INVOKABLE QString contactLastName(const QString &phone) const;
     Q_INVOKABLE QStringList chatParticipants(quint32 publicChatId) const;
@@ -54,7 +53,6 @@ public slots:
     void deleteContact(const QString &phoneNumber);
     void deleteContacts(const QStringList &phoneNumbers);
 
-    void requestContactList();
     void requestContactAvatar(const QString &contact);
 
     quint64 sendMessage(const QString &phone, const QString &message); // Message id is random number
@@ -97,7 +95,6 @@ private slots:
 
 private:
     static CTelegramCore* core;
-    static QTimer* timer;
 };
 
 #endif

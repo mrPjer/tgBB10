@@ -24,10 +24,13 @@
 #include "util/timer.hpp"
 #include "util/countries.hpp"
 
+#include "api/TgSession.hpp"
+
 #include "config.hpp"
 
 #ifdef TG_API_MOCK
 #include "api/apiRegAuth.hpp"
+#include "api/apiContacts.hpp"
 #endif
 
 #ifdef TG_API_TG
@@ -42,12 +45,16 @@ ApplicationUI::ApplicationUI() :
     // Register our Timer class in QML
     qmlRegisterType<Timer>("Timer", 1, 0, "Timer");
 
+    qmlRegisterType<TgSession>("TgApi", 1, 0, "Session");
+    qmlRegisterType<TelegramNamespace>("TgApi", 1, 0, "ContactStatus");
 #ifdef TG_API_MOCK
     // Register out Registration API in QML
     qmlRegisterType<APIRegAuth>("TgApi", 1, 0, "RegistrationApi");
+    qmlRegisterType<APIContacts>("TgApi", 1, 0, "ContactsApi");
 #endif
 #ifdef TG_API_TG
     qmlRegisterType<tgApi>("TgApi", 1, 0, "RegistrationApi");
+    qmlRegisterType<tgApi>("TgApi", 1, 0, "ContactsApi");
 #endif
 
     // prepare the localization
@@ -64,9 +71,31 @@ ApplicationUI::ApplicationUI() :
     // initial load
     onSystemLanguageChanged();
 
+    QString pageAsset;
+
+#ifdef TG_API_TG
+    TgSession session;
+
+    if(session.isSessionStored()) {
+        QByteArray secret = session.session();
+        qDebug() << "Existing session already present - " << secret;
+
+        tgApi api;
+        api.restoreConnection(secret);
+        pageAsset = "asset:///main/MainPage.qml";
+    } else {
+        qDebug() << "No existing session";
+        pageAsset = "asset:///intro/IntroWithPane.qml";
+    }
+#endif
+#ifdef TG_API_MOCK
+    pageAsset = "asset:///main.qml";
+#endif
+
+
     // Create scene document from main.qml asset, the parent is set
     // to ensure the document gets destroyed properly at shut down.
-    QmlDocument *qml = QmlDocument::create("asset:///main.qml").parent(this);
+    QmlDocument *qml = QmlDocument::create(pageAsset).parent(this);
 
     // Create root object for the UI
     AbstractPane *root = qml->createRootObject<AbstractPane>();

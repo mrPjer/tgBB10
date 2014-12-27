@@ -44,6 +44,8 @@ Page {
                 console.log("Auth code dispatched")
                 var newPage = confirmationCodePageDefinition.createObject()
                 newPage.phoneNumber = confirmationPhoneNumber
+                newPage.registered = registered
+                newPage.invited = invited
                 navigationPane.push(newPage)
 
             }

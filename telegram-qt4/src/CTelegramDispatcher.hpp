@@ -17,6 +17,7 @@
 #include <QObject>
 
 #include <QMap>
+#include <QMultiMap>
 #include <QPair>
 #include <QStringList>
 
@@ -28,24 +29,47 @@ class QTimer;
 class CAppInformation;
 class CTelegramConnection;
 
+struct SRequestedFile
+{
+    SRequestedFile(const SRequestedFile &rf) :
+        location(rf.location),
+        fileId(rf.fileId)
+    {
+    }
+
+    SRequestedFile(const TLInputFileLocation &l, quint32 id) :
+        location(l),
+        fileId(id)
+    {
+    }
+
+    TLInputFileLocation location;
+    quint32 fileId;
+};
+
+Q_DECLARE_TYPEINFO(SRequestedFile, Q_MOVABLE_TYPE);
+
 class CTelegramDispatcher : public QObject
 {
     Q_OBJECT
 public:
     enum InitializationState {
-        InitNone,
-        InitGetDcConfiguration,
-        InitGetSelf,
-        InitGetContactList,
-        InitCheckUpdates,
-        InitDone
+        InitNothing             = 0,
+        InitHaveDcConfiguration = 1 << 0,
+        InitIsSignIn            = 1 << 1,
+        InitKnowSelf            = 1 << 2,
+        InitHaveContactList     = 1 << 3,
+        InitHaveUpdates         = 1 << 4,
+        InitDone                = InitHaveDcConfiguration|InitIsSignIn|InitKnowSelf|InitHaveContactList|InitHaveUpdates
     };
 
     explicit CTelegramDispatcher(QObject *parent = 0);
+    ~CTelegramDispatcher();
 
     void setAppInformation(const CAppInformation *newAppInfo);
 
-    bool isAuthenticated();
+    bool isConnected() const;
+    bool isAuthenticated() const;
     QString selfPhone() const { return m_selfPhone; }
 
     QStringList contactList() const { return m_contactList; }
@@ -57,6 +81,7 @@ public:
 
     void initConnection(const QString &address, quint32 port);
     bool restoreConnection(const QByteArray &secret);
+    void closeConnection();
 
     void requestPhoneStatus(const QString &phoneNumber);
     void signIn(const QString &phoneNumber, const QString &authCode);
@@ -81,18 +106,19 @@ public:
 
     QString contactFirstName(const QString &phone) const;
     QString contactLastName(const QString &phone) const;
+    QString contactAvatarToken(const QString &identifier) const;
 
     QStringList chatParticipants(quint32 publicChatId) const;
 
 signals:
-    void dcConfigurationObtained();
+    void connected();
     void phoneCodeRequired();
     void phoneCodeIsInvalid();
     void authenticated();
+    void authorizationErrorReceived();
     void contactListChanged();
     void phoneStatusReceived(const QString &phone, bool registered, bool invited);
-    void phoneNumberInvalid();
-    void avatarReceived(const QString &contact, const QByteArray &data, const QString &mimeType);
+    void avatarReceived(const QString &contact, const QByteArray &data, const QString &mimeType, const QString &avatarToken);
     void messageReceived(const QString &phone, const QString &message, quint32 messageId);
     void chatMessageReceived(quint32 chatId, const QString &phone, const QString &message);
     void contactStatusChanged(const QString &phone, TelegramNamespace::ContactStatus status);
@@ -107,14 +133,16 @@ signals:
 
 protected slots:
     void whenSelfPhoneReceived(const QString &phone);
-    void whenConnectionAuthChanged(int dc, int newState);
-    void whenConnectionConfigurationUpdated(int dc);
-    void whenConnectionDcIdUpdated(int connectionId, int newDcId);
-    void whenPackageRedirected(const QByteArray &data, int dc);
-    void whenWantedActiveDcChanged(int dc);
+    void whenConnectionAuthChanged(int newState, quint32 dc);
+    void whenConnectionStatusChanged(int newStatus, quint32 dc);
+    void whenDcConfigurationUpdated(quint32 dc);
+    void whenConnectionDcIdUpdated(quint32 connectionId, quint32 newDcId);
+    void whenPackageRedirected(const QByteArray &data, quint32 dc);
+    void whenWantedActiveDcChanged(quint32 dc);
 
     void whenFileReceived(const TLUploadFile &file, quint32 fileId);
     void whenUpdatesReceived(const TLUpdates &updates);
+    void whenAuthExportedAuthorizationReceived(quint32 dc, quint32 id, const QByteArray &data);
 
     void whenUsersReceived(const QVector<TLUser> &users);
 
@@ -129,7 +157,7 @@ protected slots:
     void getSelfUser();
     void getContacts();
 
-    void getState();
+    void getUpdatesState();
     void whenUpdatesStateReceived(const TLUpdatesState &updatesState);
 
     void getDifference();
@@ -144,7 +172,12 @@ protected:
 
     void setFullChat(const TLChatFull &newChat);
 
-    void initConnectionSharedFinal(int activeDc = 0);
+    void initConnectionSharedFinal(quint32 activeDc = 0);
+
+    void getUser(quint32 id);
+    void getInitialUsers();
+
+    quint64 sendMessages(const TLInputPeer &peer, const QString &message);
 
 private:
     TLInputPeer publicChatIdToInputPeer(quint32 publicChatId) const;
@@ -154,32 +187,37 @@ private:
     quint32 phoneNumberToUserId(const QString &phoneNumber) const;
     TLUser *phoneNumberToUser(const QString &phoneNumber) const;
 
+    QString userAvatarToken(const TLUser *user) const;
+
     TelegramNamespace::ContactStatus decodeContactStatus(TLValue status) const;
 
     CTelegramConnection *activeConnection() const { return m_connections.value(m_activeDc); }
 
     CTelegramConnection *createConnection(const TLDcOption &dc);
-    CTelegramConnection *establishConnectionToDc(int dc);
+    CTelegramConnection *establishConnectionToDc(quint32 dc);
+    void ensureSignedConnection(quint32 dc);
 
     TLDcOption dcInfoById(quint32 dc);
 
     QString mimeTypeByStorageFileType(TLValue type);
 
-    void setActiveDc(int dc, bool syncWantedDc = true);
+    void setActiveDc(quint32 dc, bool syncWantedDc = true);
 
     void ensureTypingUpdateTimer(int interval);
     void ensureUpdateState(quint32 pts = 0, quint32 seq = 0, quint32 date = 0);
 
     void checkStateAndCallGetDifference();
 
-    void continueInitialization();
+    void continueInitialization(InitializationState justDone);
+    void setAuthenticated(bool newAuth);
 
     const CAppInformation *m_appInformation;
 
     InitializationState m_initState;
+    bool m_isAuthenticated;
 
-    int m_activeDc;
-    int m_wantedActiveDc;
+    quint32 m_activeDc;
+    quint32 m_wantedActiveDc;
 
     QVector<TLDcOption> m_dcConfiguration;
     QMap<int, CTelegramConnection *> m_connections;
@@ -187,8 +225,10 @@ private:
     TLUpdatesState m_updatesState; // Current application update state (may be older than actual server-side message box state)
     TLUpdatesState m_actualState; // State reported by server as actual
     bool m_updatesStateIsLocked; // True if we are (going to) getting updatesDifference.
+    bool m_emitOnlyIncomingUnreadMessages;
 
-    QMap<int, QByteArray> m_delayedPackages; // dc, package data
+    QMap<quint32, QPair<quint32,QByteArray> > m_exportedAuthentications; // dc, <id, auth data>
+    QMap<quint32, QByteArray> m_delayedPackages; // dc, package data
     QMap<quint32, TLUser*> m_users;
 
     QMap<quint32, QPair<QString, quint64> >m_messagesMap; // message id to phone and big_random message id
@@ -198,7 +238,7 @@ private:
 
     QStringList m_contactList;
 
-    QList<quint32> m_requestedFilesMessageIds;
+    QMultiMap<quint32, SRequestedFile> m_requestedFiles; // dc, <file location, fileId>
 
     QTimer *m_typingUpdateTimer;
     QMap<quint32, int> m_userTypingMap; // user id, typing time (ms)
