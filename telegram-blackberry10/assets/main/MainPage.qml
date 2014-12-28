@@ -7,7 +7,9 @@ TabbedPane {
     id: root
 
     showTabsOnActionBar: true
-    activeTab: chatsTab
+
+//    Setting the activeTab crashes the 10.3 simulator
+//    activeTab: chatsTab
 
     property bool showBackButton: false
     signal dismiss
