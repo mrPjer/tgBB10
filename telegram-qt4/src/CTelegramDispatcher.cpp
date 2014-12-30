@@ -68,7 +68,7 @@ static QStringList maskPhoneNumberList(const QStringList &list)
     return result;
 }
 
-const quint32 secretFormatVersion = 1;
+const quint32 secretFormatVersion = 2;
 const int s_userTypingActionPeriod = 6000; // 6 sec
 const int s_localTypingActionPeriod = 5000; // 5 sec
 
@@ -168,6 +168,7 @@ QByteArray CTelegramDispatcher::connectionSecretInfo() const
     outputStream << m_updatesState.pts;
     outputStream << m_updatesState.qts;
     outputStream << m_updatesState.date;
+    outputStream << m_chatIds;
 
     return output;
 }
@@ -181,6 +182,7 @@ void CTelegramDispatcher::initConnection(const QString &address, quint32 port)
     m_updatesState.pts = 1;
     m_updatesState.qts = 1;
     m_updatesState.date = 1;
+    m_chatIds.clear();
 
     CTelegramConnection *connection = createConnection(dcInfo);
 
@@ -222,6 +224,12 @@ bool CTelegramDispatcher::restoreConnection(const QByteArray &secret)
         m_updatesState.pts = 1;
         m_updatesState.qts = 1;
         m_updatesState.date = 1;
+    }
+
+    m_chatIds.clear();
+
+    if (format >= 2) {
+        inputStream >> m_chatIds;
     }
 
     CTelegramConnection *connection = createConnection(dcInfo);
@@ -276,9 +284,10 @@ void CTelegramDispatcher::closeConnection()
     m_userChatTypingMap.clear();
     m_localTypingMap.clear();
     m_localChatTypingMap.clear();
-    m_chatIdMap.clear();
+    m_chatIds.clear();
     m_temporaryChatIdMap.clear();
     m_chatInfo.clear();
+    m_chatFullInfo.clear();
 }
 
 void CTelegramDispatcher::requestPhoneStatus(const QString &phoneNumber)
@@ -422,7 +431,7 @@ quint32 CTelegramDispatcher::createChat(const QStringList &phones, const QString
         users.append(user);
     }
 
-    quint32 publicChatId = m_chatIdMap.count() + 1;
+    quint32 publicChatId = insertTelegramChatId(0); // Real telegram id is not known at this moment.
     quint64 apiCallId = activeConnection()->messagesCreateChat(users, chatName);
 
     m_temporaryChatIdMap.insert(apiCallId, publicChatId);
@@ -553,13 +562,34 @@ QString CTelegramDispatcher::contactAvatarToken(const QString &identifier) const
     return userAvatarToken(user);
 }
 
+QString CTelegramDispatcher::chatTitle(quint32 publicChatId) const
+{
+    if (!havePublicChatId(publicChatId)) {
+        return QString();
+    }
+
+    const quint32 chatId = m_chatIds.at(publicChatId);
+
+    if (!m_chatInfo.contains(chatId)) {
+        return QString();
+    }
+
+    return m_chatInfo.value(chatId).title;
+}
+
 QStringList CTelegramDispatcher::chatParticipants(quint32 publicChatId) const
 {
-    if (!m_chatIdMap.contains(publicChatId)) {
+    if (!havePublicChatId(publicChatId)) {
         return QStringList();
     }
 
-    const TLChatFull &fullChat = m_chatInfo.value(m_chatIdMap.value(publicChatId)).second;
+    const quint32 chatId = m_chatIds.at(publicChatId);
+
+    if (!m_chatFullInfo.contains(chatId)) {
+        return QStringList();
+    }
+
+    const TLChatFull &fullChat = m_chatFullInfo.value(chatId);
 
     QStringList result;
 
@@ -568,6 +598,64 @@ QStringList CTelegramDispatcher::chatParticipants(quint32 publicChatId) const
     }
 
     return result;
+}
+
+bool CTelegramDispatcher::getChatInfo(TelegramNamespace::GroupChat *outputChat, quint32 publicChatId) const
+{
+    if (!havePublicChatId(publicChatId)) {
+        return false;
+    }
+
+    const quint32 chatId = m_chatIds.at(publicChatId);
+
+    if (!chatId) {
+        // Probably: New chat created, but telegram id is not known yet.
+        return false;
+    }
+
+    if (!m_chatInfo.contains(chatId)) {
+        return false;
+    }
+
+    if (!outputChat) {
+        return false;
+    }
+
+    const TLChat &chat = m_chatInfo.value(chatId);
+    outputChat->id = publicChatId;
+    outputChat->title = chat.title;
+    outputChat->participantsCount = chat.participantsCount;
+
+    return true;
+}
+
+bool CTelegramDispatcher::getChatParticipants(QStringList *participants, quint32 publicChatId)
+{
+    if (!havePublicChatId(publicChatId)) {
+        return false;
+    }
+
+    const quint32 chatId = m_chatIds.at(publicChatId);
+
+    if (!chatId) {
+        // Probably: New chat created, but telegram id is not known yet.
+        return false;
+    }
+
+    participants->clear();
+
+    if (m_chatFullInfo.contains(chatId)) {
+        const TLChatFull &fullChat = m_chatFullInfo.value(chatId);
+
+        foreach (const TLChatParticipant &participant, fullChat.participants.participants) {
+            participants->append(userIdToIdentifier(participant.userId));
+        }
+        return true;
+    } else {
+        activeConnection()->messagesGetFullChat(chatId);
+    }
+
+    return true;
 }
 
 void CTelegramDispatcher::whenSelfPhoneReceived(const QString &phone)
@@ -712,11 +800,13 @@ void CTelegramDispatcher::whenStatedMessageReceived(const TLMessagesStatedMessag
             return;
         }
 
-        qDebug() << "chat id resolved to" << statedMessage.chats.first().id;
-
-        m_chatIdMap.insert(m_temporaryChatIdMap.take(messageId), statedMessage.chats.first().id);
-        qDebug() << m_chatIdMap;
-        qDebug() << m_chatIdMap.keys() << m_chatIdMap.values();
+        const quint32 publicChatId = m_temporaryChatIdMap.take(messageId);
+        if (!havePublicChatId(publicChatId)) {
+            qDebug() << Q_FUNC_INFO << "Unexpected stated message public id " << publicChatId << " for chat " << statedMessage.chats.first().id;
+        } else {
+            m_chatIds[publicChatId] = statedMessage.chats.first().id;
+            qDebug() << Q_FUNC_INFO << "public chat id " << publicChatId << " resolved to " << statedMessage.chats.first().id;
+        }
     }
 }
 
@@ -775,6 +865,15 @@ void CTelegramDispatcher::getContacts()
     activeConnection()->contactsGetContacts(QString()); // Empty hash argument for now.
 }
 
+void CTelegramDispatcher::getChatsInfo()
+{
+    if (m_chatIds.isEmpty()) {
+        continueInitialization(InitKnowChats);
+    } else {
+        activeConnection()->messagesGetChats(m_chatIds);
+    }
+}
+
 void CTelegramDispatcher::getUpdatesState()
 {
     m_updatesStateIsLocked = true;
@@ -797,23 +896,12 @@ void CTelegramDispatcher::whenUpdatesDifferenceReceived(const TLUpdatesDifferenc
 {
     switch (updatesDifference.tlType) {
     case UpdatesDifference:
-        qDebug() << Q_FUNC_INFO << "UpdatesDifference" << updatesDifference.newMessages.count();
-        foreach (const TLMessage &message, updatesDifference.newMessages) {
-//            qDebug() << "added message" << message.message;
-            if (message.tlType != Message) {
-                continue;
-            }
-            if (m_emitOnlyIncomingUnreadMessages) {
-                if ((message.flags & MessageFlagOut) || !(message.flags & MessageFlagUnread)) {
-                    continue;
-                }
-            }
-            emit messageReceived(userIdToIdentifier(message.fromId), message.message, message.id);
-        }
-        m_updatesState = updatesDifference.state;
-        break;
     case UpdatesDifferenceSlice:
-        qDebug() << Q_FUNC_INFO << "UpdatesDifferenceSlice" << updatesDifference.newMessages.count();
+        qDebug() << Q_FUNC_INFO << "UpdatesDifference" << updatesDifference.newMessages.count();
+        foreach (const TLChat &chat, updatesDifference.chats) {
+            updateChat(chat);
+        }
+
         foreach (const TLMessage &message, updatesDifference.newMessages) {
 //            qDebug() << "added message" << message.message;
             if (message.tlType != Message) {
@@ -826,7 +914,11 @@ void CTelegramDispatcher::whenUpdatesDifferenceReceived(const TLUpdatesDifferenc
             }
             emit messageReceived(userIdToIdentifier(message.fromId), message.message, message.id);
         }
-        m_updatesState = updatesDifference.intermediateState;
+        if (updatesDifference.tlType == UpdatesDifference) {
+            m_updatesState = updatesDifference.state;
+        } else { // UpdatesDifferenceSlice
+            m_updatesState = updatesDifference.intermediateState;
+        }
         break;
     case UpdatesDifferenceEmpty:
         qDebug() << Q_FUNC_INFO << "UpdatesDifferenceEmpty";
@@ -841,6 +933,17 @@ void CTelegramDispatcher::whenUpdatesDifferenceReceived(const TLUpdatesDifferenc
     }
 
     checkStateAndCallGetDifference();
+}
+
+void CTelegramDispatcher::whenMessagesChatsReceived(const QVector<TLChat> &chats)
+{
+    qDebug() << Q_FUNC_INFO << chats.count();
+
+    foreach (const TLChat &chat, chats) {
+        updateChat(chat);
+    }
+
+    continueInitialization(InitKnowChats);
 }
 
 // fileId is program-specific handler, not related to Telegram.
@@ -901,8 +1004,8 @@ void CTelegramDispatcher::processUpdate(const TLUpdate &update)
         break;
     case UpdateChatUserTyping:
         if (m_users.contains(update.userId)) {
-            emit contactChatTypingStatusChanged(m_chatIdMap.key(update.chatId), userIdToIdentifier(update.userId), /* typingStatus */ true);
-            const QPair<quint32,quint32> key(m_chatIdMap.key(update.chatId), update.userId);
+            emit contactChatTypingStatusChanged(telegramChatIdToPublicId(update.chatId), userIdToIdentifier(update.userId), /* typingStatus */ true);
+            const QPair<quint32,quint32> key(telegramChatIdToPublicId(update.chatId), update.userId);
 #if QT_VERSION >= 0x050000
             m_userChatTypingMap.insert(key, m_typingUpdateTimer->remainingTime() + s_userTypingActionPeriod);
 #else
@@ -912,10 +1015,10 @@ void CTelegramDispatcher::processUpdate(const TLUpdate &update)
         }
         break;
     case UpdateChatParticipants: {
-        TLChatFull newChatState = m_chatInfo.value(update.participants.chatId).second;
+        TLChatFull newChatState = m_chatFullInfo.value(update.participants.chatId);
         newChatState.id = update.participants.chatId; // newChatState can be newly created emtpy chat
         newChatState.participants = update.participants;
-        setFullChat(newChatState);
+        updateFullChat(newChatState);
 
         qDebug() << "chat id resolved to" << update.participants.chatId;
         break;
@@ -1023,11 +1126,11 @@ void CTelegramDispatcher::processChatMessageReceived(quint32 messageId, quint32 
     Q_UNUSED(messageId)
 
     const QString phone = userIdToIdentifier(fromId);
-    const quint32 publicChatId = m_chatIdMap.key(chatId);
+    const quint32 publicChatId = telegramChatIdToPublicId(chatId);
 
     emit chatMessageReceived(publicChatId, phone, message);
 
-    const QPair<quint32,quint32> key(m_chatIdMap.key(chatId), fromId);
+    const QPair<quint32,quint32> key(publicChatId, fromId);
 
     if (m_userChatTypingMap.contains(key)) {
         m_userChatTypingMap.remove(key);
@@ -1035,31 +1138,47 @@ void CTelegramDispatcher::processChatMessageReceived(quint32 messageId, quint32 
     }
 }
 
-void CTelegramDispatcher::setFullChat(const TLChatFull &newChat)
+void CTelegramDispatcher::updateChat(const TLChat &newChat)
 {
+    int publicChatId = telegramChatIdToPublicId(newChat.id);
     if (!m_chatInfo.contains(newChat.id)) {
-        QPair<TLChat, TLChatFull> pair;
-        pair.second = newChat;
+        m_chatInfo.insert(newChat.id, newChat);
 
-        m_chatInfo.insert(newChat.id, pair);
-
-        quint32 publicChatId = m_chatIdMap.count() + 1;
-        m_chatIdMap.insert(publicChatId, newChat.id);
-
-        emit chatAdded(publicChatId);
+        if (publicChatId < 0) {
+            publicChatId = insertTelegramChatId(newChat.id);
+            emit chatAdded(publicChatId);
+        } else {
+            emit chatChanged(publicChatId);
+        }
     } else {
-        m_chatInfo[newChat.id].second = newChat;
-        emit chatChanged(m_chatIdMap.key(newChat.id));
+        m_chatInfo[newChat.id] = newChat;
+        emit chatChanged(publicChatId);
+    }
+}
+
+void CTelegramDispatcher::updateFullChat(const TLChatFull &newChat)
+{
+    int publicChatId = telegramChatIdToPublicId(newChat.id);
+    if (!m_chatFullInfo.contains(newChat.id)) {
+        m_chatFullInfo.insert(newChat.id, newChat);
+
+        if (publicChatId < 0) {
+            publicChatId = insertTelegramChatId(newChat.id);
+            emit chatAdded(publicChatId);
+        } else {
+            emit chatChanged(publicChatId);
+        }
+    } else {
+        m_chatFullInfo[newChat.id] = newChat;
+        emit chatChanged(publicChatId);
     }
 }
 
 TLInputPeer CTelegramDispatcher::publicChatIdToInputPeer(quint32 publicChatId) const
 {
-    qDebug() << Q_FUNC_INFO << m_chatIdMap;
-
     TLInputPeer inputPeer;
 
-    quint32 chatId = m_chatIdMap.value(publicChatId);
+    quint32 chatId = m_chatIds.at(publicChatId);
 
     if (!chatId) {
         return inputPeer;
@@ -1234,6 +1353,7 @@ void CTelegramDispatcher::whenConnectionStatusChanged(int newStatus, quint32 dc)
             connect(connection, SIGNAL(updatesStateReceived(TLUpdatesState)), SLOT(whenUpdatesStateReceived(TLUpdatesState)));
             connect(connection, SIGNAL(updatesDifferenceReceived(TLUpdatesDifference)), SLOT(whenUpdatesDifferenceReceived(TLUpdatesDifference)));
             connect(connection, SIGNAL(authExportedAuthorizationReceived(quint32,quint32,QByteArray)), SLOT(whenAuthExportedAuthorizationReceived(quint32,quint32,QByteArray)));
+            connect(connection, SIGNAL(messagesChatsReceived(QVector<TLChat>,QVector<TLUser>)), SLOT(whenMessagesChatsReceived(QVector<TLChat>)));
 
             continueInitialization(InitIsSignIn);
         }
@@ -1411,6 +1531,8 @@ void CTelegramDispatcher::ensureTypingUpdateTimer(int interval)
 
 void CTelegramDispatcher::continueInitialization(CTelegramDispatcher::InitializationState justDone)
 {
+    qDebug() << Q_FUNC_INFO << justDone;
+
     if (justDone == InitNothing) {
         if (m_initState == InitNothing) {
             getDcConfiguration();
@@ -1440,12 +1562,12 @@ void CTelegramDispatcher::continueInitialization(CTelegramDispatcher::Initializa
     if (m_initState == (InitHaveDcConfiguration|InitIsSignIn)) {
         getInitialUsers();
         // Sadly, we don't support creation of RPC messages containers, so we fails on attempt to send more than one package in time. (Got "Sequence number too high")
-        // That is why we have to comment out this getContacts() and add BadCode1.
+        // That is why we have to comment out this getContacts() and add #BadCode1.
 //        getContacts();
         return;
     }
 
-    // BadCode1
+    // #BadCode1
     if (justDone == InitKnowSelf) {
         if (!(m_initState & InitHaveContactList)) {
             getContacts();
@@ -1455,6 +1577,10 @@ void CTelegramDispatcher::continueInitialization(CTelegramDispatcher::Initializa
     if (m_initState == InitDone) {
         emit initializated();
         return;
+    }
+
+    if (m_initState == (InitDone & ~InitKnowChats)) {
+        getChatsInfo();
     }
 
     if ((m_initState & InitHaveContactList) && (m_initState & InitKnowSelf)) {
@@ -1474,6 +1600,29 @@ void CTelegramDispatcher::setAuthenticated(bool newAuth)
     if (m_isAuthenticated) {
         emit authenticated();
     }
+}
+
+qint32 CTelegramDispatcher::telegramChatIdToPublicId(quint32 telegramChatId) const
+{
+    for (int i = 0; i < m_chatIds.count(); ++i) {
+        if (m_chatIds.at(i) == telegramChatId) {
+            return i;
+        }
+    }
+
+    return -1;
+}
+
+/* Return public chat id */
+quint32 CTelegramDispatcher::insertTelegramChatId(quint32 telegramChatId)
+{
+    m_chatIds.append(telegramChatId);
+    return m_chatIds.count() - 1;
+}
+
+bool CTelegramDispatcher::havePublicChatId(quint32 publicChatId) const
+{
+    return m_chatIds.count() > int(publicChatId);
 }
 
 void CTelegramDispatcher::ensureUpdateState(quint32 pts, quint32 seq, quint32 date)
