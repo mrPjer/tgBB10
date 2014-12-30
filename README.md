@@ -20,13 +20,15 @@ Steps:
 * (Optional) Pull in the git submodules with `git submodule init` and `git submodule update`
 * (Optional) Switch the workspace to the root of the git repository
 * In Momentics, select File -> Import -> Existing Projects into Workspace and point the browser to the root of the repository. You should be presented with the option to import telegram-blackberry10 as a project, as well as the telegram-qt4 library
-* In order to link the project to the library properly, it is necessary to build the library for all variants. See the following section for more details.
+* In order to link the project to the library properly, it is necessary to generate it's src directory and build the library for all device variants. See the following section for more details.
 
 #### Building and linking the telegram-qt4 library project
 
 In order to connect to the Telegram API, this project relies on the project telegram-qt4 available here: [https://github.com/Kaffeine/telegram-qt](https://github.com/Kaffeine/telegram-qt).
 
-A version of that project modified to be used as a BlackBerry 10 library project is available in the directory [telegram-qt4](telegram-qt4).
+A version of that project modified to be used as a BlackBerry 10 library project is available in the directory [telegram-qt4](telegram-qt4). However, this project doesn't contain any code since all of it can be generated from the library itself.
+
+In order to generate the library project, a bash script is provided under [support/update-telegram-qt4.sh](support/update-telegram-qt4.sh). Simply run this script from anywhere in the project and the necessary files should be generated.
 
 Unfortunately, Momentics won't automatically build all the proper versions of the library project so we need to do this manually.
 
