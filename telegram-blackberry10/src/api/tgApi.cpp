@@ -63,7 +63,7 @@ tgApi::tgApi(){
         info.setLanguageCode(QLatin1String("en"));
         info.setOsInfo(QLatin1String("BlackBerry 10"));
         core->setAppInformation(&info);
-        core->initConnection(QLatin1String(TG_IP_TEST), TG_PORT_TEST);
+        core->initConnection(QLatin1String(TG_API_IP), TG_API_PORT);
     }
 
 }
