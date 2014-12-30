@@ -53,6 +53,7 @@ tgApi::tgApi(){
     connect(core, SIGNAL(chatAdded(quint32)), SIGNAL(chatAdded(quint32)));
     connect(core, SIGNAL(chatChanged(quint32)), SIGNAL(chatChanged(quint32)));
     connect(core, SIGNAL(initializated()), SIGNAL(initializated()));
+    connect(core, SIGNAL(authorizationErrorReceived()), SIGNAL(authorizationErrorReceived()));
 
     if(shouldInit){
         CAppInformation info;
@@ -113,6 +114,22 @@ QString tgApi::contactLastName(const QString &phone) const{
     return core->contactLastName(phone);
 }
 
+QString tgApi::contactAvatarToken(const QString &phone) const {
+    return core->contactAvatarToken(phone);
+}
+
+QString tgApi::chatTitle(quint32 chatId) const {
+    return core->chatTitle(chatId);
+}
+
+bool tgApi::getChatInfo(TelegramNamespace::GroupChat *chatInfo, quint32 chatId) const {
+    return core->getChatInfo(chatInfo, chatId);
+}
+
+bool tgApi::getChatParticipants(QStringList *participants, quint32 chatId) {
+    return core->getChatParticipants(participants, chatId);
+}
+
 QStringList tgApi::chatParticipants(quint32 publicChatId) const{
     return core->chatParticipants(publicChatId);
 }
@@ -123,6 +140,10 @@ bool tgApi::initConnection(const QString &address, quint32 port){
 
 bool tgApi::restoreConnection(const QByteArray &secret){
     return core->restoreConnection(secret);
+}
+
+void tgApi::closeConnection() {
+    core->closeConnection();
 }
 
 void tgApi::requestPhoneStatus(const QString &phoneNumber){
