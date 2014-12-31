@@ -28,7 +28,7 @@ In order to connect to the Telegram API, this project relies on the project tele
 
 A version of that project modified to be used as a BlackBerry 10 library project is available in the directory [telegram-qt4](telegram-qt4). However, this project doesn't contain any code since all of it can be generated from the library itself.
 
-In order to generate the library project, a bash script is provided under [support/update-telegram-qt4.sh](support/update-telegram-qt4.sh). Simply run this script from anywhere in the project and the necessary files should be generated.
+In order to generate the library project, a bash script is provided under [support/update-telegram-qt4.sh](support/update-telegram-qt4.sh). Simply run this script from anywhere in the project and the necessary files should be generated. Since this needs to be run *every time the revision changes*, a post-checkout hook is provided under [support/git/hooks/post-checkout](support/git/hooks/post-checkout). Copy this into your local .git repository (present in the project root) and the process will run automatically on every checkout.
 
 Unfortunately, Momentics won't automatically build all the proper versions of the library project so we need to do this manually.
 
