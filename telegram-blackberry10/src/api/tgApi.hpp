@@ -35,12 +35,18 @@ public:
     Q_INVOKABLE QVariant contactStatus(const QString &phone) const;
     Q_INVOKABLE QString contactFirstName(const QString &phone) const;
     Q_INVOKABLE QString contactLastName(const QString &phone) const;
+    Q_INVOKABLE QString contactAvatarToken(const QString &phone) const;
+    Q_INVOKABLE QString chatTitle(quint32 chatId) const;
     Q_INVOKABLE QStringList chatParticipants(quint32 publicChatId) const;
+
+    Q_INVOKABLE bool getChatInfo(TelegramNamespace::GroupChat *chatInfo, quint32 chatId) const;
+    Q_INVOKABLE bool getChatParticipants(QStringList *participants, quint32 chatId);
 
 public slots:
     void onConnectRetryTimeout();
     bool initConnection(const QString &address, quint32 port);
     bool restoreConnection(const QByteArray &secret);
+    void closeConnection();
 
     void requestPhoneStatus(const QString &phoneNumber);
     void requestPhoneCode(const QString &phoneNumber);
@@ -69,9 +75,10 @@ public slots:
 
 signals:
     void connected();
+    void authenticated();
+    void initializated();
     void phoneCodeRequired();
     void phoneCodeIsInvalid();
-    void authenticated();
     void contactListChanged();
     void phoneStatusReceived(const QString &phone, bool registered, bool invited);
     void phoneNumberInvalid();
@@ -88,7 +95,7 @@ signals:
     void chatAdded(quint32 publichChatId);
     void chatChanged(quint32 publichChatId);
 
-    void initializated();
+    void authorizationErrorReceived();
 
 private slots:
     void connectionEstablished();

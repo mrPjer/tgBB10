@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+set -e;
+
+./support/update-telegram-qt4.sh 1>/dev/null;
