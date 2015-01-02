@@ -18,7 +18,7 @@ say 'Updating submodules';
 git submodule update --recursive;
 
 say 'Cleaning telegram-qt4';
-rm -rv telegram-qt4/src/!(telegram-qt.pro);
+rm -frv telegram-qt4/src/!(telegram-qt.pro);
 
 say 'Populating telegram-qt4';
 cp -rv support/telegram-qt/telegram-qt/!(telegram-qt.pro) telegram-qt4/src/;
