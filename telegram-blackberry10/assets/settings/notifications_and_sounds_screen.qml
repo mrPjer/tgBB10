@@ -22,12 +22,14 @@ Page {
             }
 
             LabeledToggleButton {
+                id: alert
                 text: "Alert"
             }
             Divider {
 
             }
             LabeledToggleButton {
+                id: messagePreview
                 text: "Message Preview"
             }
             Divider {
@@ -40,6 +42,7 @@ Page {
                 DropDown {
                     title: "Sound"
                     Option {
+                        id: defaultSound
                         text: "Default"
                         selected: true
                     }
@@ -53,12 +56,14 @@ Page {
                 bottomMargin: 15
             }
             LabeledToggleButton {
+                id: inAppSounds
                 text: "In-App Sounds"
             }
             Divider {
 
             }
             LabeledToggleButton {
+                id: inAppVibrate
                 text: "In-App Vibrate"
                 checked: false
             }
@@ -66,6 +71,7 @@ Page {
 
             }
             LabeledToggleButton {
+                id: inAppPreview
                 text: "In-App Preview"
             }
             Divider {
@@ -79,6 +85,15 @@ Page {
                 accessoryVisible: false
                 topPadding: 32
                 bottomPadding: 32
+                onRowClicked: {
+                    alert.checked = true
+                    messagePreview.checked = true
+                    defaultSound.selected = true
+                    inAppSounds.checked = true
+                    inAppVibrate.checked = false
+                    inAppPreview.checked = true
+                    
+                }
             }
 
         }
