@@ -245,6 +245,19 @@ Page {
         ActionItem {
             title: "Telegram FAQ"
             imageSource: "asset:///images/settings/menu_FAQ.png"
+            onTriggered: {
+                tgFAQInvocation.trigger("bb.action.OPEN")
+            }
+            
+            attachedObjects: [
+                Invocation {
+                    id: tgFAQInvocation
+                    query: InvokeQuery {
+                        uri: "https://telegram.org/faq"
+                        invokeActionId: "bb.action.OPEN"
+                    }
+                }
+            ]
         },
         ActionItem {
             title: "Log Out"
