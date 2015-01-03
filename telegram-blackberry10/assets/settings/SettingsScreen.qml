@@ -249,6 +249,9 @@ Page {
         ActionItem {
             title: "Log Out"
             imageSource: "asset:///images/settings/menu_logout.png"
+            onTriggered: {
+                logOut.show()
+            }
         }
     ]
 
