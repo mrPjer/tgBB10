@@ -14,6 +14,9 @@ pwd;
 say 'Initializing submodules';
 git submodule init;
 
+say 'Syncing submodules';
+git submodule sync;
+
 say 'Updating submodules';
 git submodule update --recursive;
 
