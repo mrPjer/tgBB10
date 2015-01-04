@@ -55,8 +55,8 @@ By default the app will connect to an internal mock API since this eases UI deve
 In order to connect to the actual API, the following steps need to be taken:
 
 1. Open the [telegram-blackberry10/src/config.hpp](telegram-blackberry10/src/config.hpp) file and change the defines so that TG_API_TG is defined and TG_API mock is not
-2. Open the [telegram-blackberry10/src/app_secrets.hpp](telegram-blackberry10/src/app_secrets.hpp) and replace the placeholder values with those you obtained on [my.telegram.org](https://my.telegram.org).
-3. Remember to remove the `#error` reminder once you're done putting in your details
+2. Copy the example configuration file [telegram-blackberry10/src/app_secrets.example.hpp](telegram-blackberry10/src/app_secrets.example.hpp) into telegram-blackberry10/src/app_secrets.hpp.
+3. Open the configuration file and replace the placeholder values with those you obtained on [my.telegram.org](https://my.telegram.org).
 
 Now the app should build, run and use the Telegram API. If you experience problems, check the console for debug information.
 
