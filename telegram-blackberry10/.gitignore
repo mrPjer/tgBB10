@@ -1,3 +1,4 @@
 .settings/com.rim.tad.tools.qml.core.prefs
 assets/.assets.index
 config.pri
+/src/app_secrets.hpp
