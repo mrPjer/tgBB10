@@ -219,7 +219,7 @@ Page {
                     ]
                 }
                 Label {
-                    text: "Telegram for Blackberry v0.1"
+                    text: "Telegram for BlackBerry v0.1"
                     textStyle.fontSize: FontSize.XXSmall
                     textStyle.color: Color.LightGray
                     horizontalAlignment: HorizontalAlignment.Center
@@ -245,10 +245,26 @@ Page {
         ActionItem {
             title: "Telegram FAQ"
             imageSource: "asset:///images/settings/menu_FAQ.png"
+            onTriggered: {
+                tgFAQInvocation.trigger("bb.action.OPEN")
+            }
+            
+            attachedObjects: [
+                Invocation {
+                    id: tgFAQInvocation
+                    query: InvokeQuery {
+                        uri: "https://telegram.org/faq"
+                        invokeActionId: "bb.action.OPEN"
+                    }
+                }
+            ]
         },
         ActionItem {
             title: "Log Out"
             imageSource: "asset:///images/settings/menu_logout.png"
+            onTriggered: {
+                logOut.show()
+            }
         }
     ]
 
