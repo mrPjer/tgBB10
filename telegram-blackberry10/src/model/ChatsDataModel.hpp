@@ -1,12 +1,19 @@
 #ifndef CHATSDATAMODEL_HPP_
 #define CHATSDATAMODEL_HPP_
 
+#include "../config.hpp"
 #include <bb/cascades/DataModel>
-#include "api/tgApi.hpp"
+
+// TODO This needs to be solved better so that this component doesn't care about which API type is being used
+#ifdef TG_API_MOCK
+#include <api/mock/MockMessagesApi.hpp>
+#else
+#include <api/tgApi.hpp>
+#endif
 
 class ChatsDataModel: public bb::cascades::DataModel
 {
-    Q_OBJECT
+Q_OBJECT
 
 public:
     static const QString TYPE_NORMAL;
@@ -24,8 +31,11 @@ private slots:
     void onDialogsChanged();
 
 private:
+#ifdef TG_API_MOCK
+    MockMessagesApi api;
+#else
     tgApi api;
-    //QList<ChatListItem*> chats;
+#endif
 
 };
 
