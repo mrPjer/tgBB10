@@ -53,6 +53,7 @@ tgApi::tgApi(){
     connect(core, SIGNAL(chatAdded(quint32)), SIGNAL(chatAdded(quint32)));
     connect(core, SIGNAL(chatChanged(quint32)), SIGNAL(chatChanged(quint32)));
     connect(core, SIGNAL(initializated()), SIGNAL(initializated()));
+    connect(core, SIGNAL(dialogsChanged()), SIGNAL(dialogsChanged()));
     connect(core, SIGNAL(authorizationErrorReceived()), SIGNAL(authorizationErrorReceived()));
 
     if(shouldInit){
@@ -99,6 +100,33 @@ QString tgApi::selfPhone() const{
 
 QStringList tgApi::contactList() const{
     return core->contactList();
+}
+
+QList<ChatListItem*> tgApi::dialogs() const{
+    TLMessagesDialogs dialogs = core->dialogs();
+    qDebug() << "Creating dialog item list with " << dialogs.count;
+
+    QList<ChatListItem*> result;
+
+    foreach(const TLMessage m, dialogs.messages) {
+        qDebug() << m.message;
+        result.append(new ChatListItem());
+    }
+
+    for(int i = 0; i < 10; ++i) {
+        result.append(new ChatListItem(
+                0,
+                "Hello " + QString::number(i),
+                "World " + QString::number(i),
+                "12:0" + QString::number(i),
+                "author_" + QString::number(i),
+                "asset:///images/chatsList/chatAvatars/SingleChatAvatars/user_placeholder_pink.png",
+                "seen",
+                i
+        ));
+    }
+
+    return result;
 }
 
 QVariant tgApi::contactStatus(const QString &phone) const{
@@ -177,6 +205,10 @@ void tgApi::deleteContact(const QString &phoneNumber){
 
 void tgApi::deleteContacts(const QStringList &phoneNumbers){
 	return core->deleteContacts(phoneNumbers);
+}
+
+void tgApi::getDialogs(quint32 offset, quint32 maxId, quint32 limit) {
+    return core->getDialogs(offset, maxId, limit);
 }
 
 void tgApi::requestContactAvatar(const QString &contact){
