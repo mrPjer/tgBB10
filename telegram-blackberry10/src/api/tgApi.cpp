@@ -10,8 +10,11 @@
 
 #include "tgApi.hpp"
 #include "app_secrets.hpp"
+#include "TLValues.h"
 
 #include <qdebug.h>
+#include <QDate>
+#include <QDateTime>
 
 CTelegramCore* tgApi::core = NULL;
 
@@ -104,26 +107,96 @@ QStringList tgApi::contactList() const{
 
 QList<ChatListItem*> tgApi::dialogs() const{
     TLMessagesDialogs dialogs = core->dialogs();
-    qDebug() << "Creating dialog item list with " << dialogs.count;
 
     QList<ChatListItem*> result;
+    QDate today = QDate::currentDate();
+    QMap<int, TLUser> userMap;
+    QMap<int, TLChat> chatMap;
+    QMap<int, TLMessage> messageMap;
 
-    foreach(const TLMessage m, dialogs.messages) {
-        qDebug() << m.message;
-        result.append(new ChatListItem());
+    foreach(const TLUser& user, dialogs.users) {
+        userMap.insert(user.id, user);
     }
 
-    for(int i = 0; i < 10; ++i) {
+    foreach(const TLChat& chat, dialogs.chats) {
+        chatMap.insert(chat.id, chat);
+    }
+
+    foreach(const TLMessage& message, dialogs.messages) {
+        messageMap.insert(message.id, message);
+    }
+
+    foreach(const TLDialog dialog, dialogs.dialogs) {
+        int unreadCount = dialog.unreadCount;
+
+        QString author;
+
+        if(dialog.peer.tlType == PeerUser) {
+            int userId = dialog.peer.userId;
+            if(userMap.contains(userId)) {
+                TLUser user = userMap[userId];
+                author = QString("%1 %2").arg(user.firstName, user.lastName);
+            } else {
+                author = QString("Unknown user %1").arg(userId);
+            }
+        } else if(dialog.peer.tlType == PeerChat) {
+            int chatId = dialog.peer.chatId;
+            if(chatMap.contains(chatId)) {
+                TLChat chat = chatMap[chatId];
+                author = chat.title;
+            } else {
+                author = QString("Unknown chat %1").arg(chatId);
+            }
+        }
+
+        QString content;
+        QString timestamp;
+        QString seen;
+
+        if(messageMap.contains(dialog.topMessage)) {
+            TLMessage topMessage = messageMap[dialog.topMessage];
+            content = topMessage.message;
+
+            int time = topMessage.date;
+
+            QDateTime qdt;
+            qdt.setTime_t(time);
+            QDate date = qdt.date();
+            if(date == today) {
+                timestamp = qdt.toString("hh:mm");
+            } else if(date.daysTo(today) < 7) {
+                timestamp = qdt.toString("ddd");
+            } else {
+                timestamp = qdt.toString("dd.MM.yy");
+            }
+
+            bool unread = topMessage.flags & 0x1;
+            bool out = topMessage.flags & 0x2;
+            if(!unread) {
+                seen = "seen";
+            } else if(out) {
+                seen = "delivered";
+            } else {
+                seen = "none";
+            }
+        } else {
+            content = "Unknown content";
+        }
+
         result.append(new ChatListItem(
+                // TODO asign proper parent
                 0,
-                "Hello " + QString::number(i),
-                "World " + QString::number(i),
-                "12:0" + QString::number(i),
-                "author_" + QString::number(i),
+                // TODO assign proper title
+                "TODO: title",
+                content,
+                timestamp,
+                author,
+                // TODO assign proper avatar
                 "asset:///images/chatsList/chatAvatars/SingleChatAvatars/user_placeholder_pink.png",
-                "seen",
-                i
+                seen,
+                unreadCount
         ));
+
     }
 
     return result;
