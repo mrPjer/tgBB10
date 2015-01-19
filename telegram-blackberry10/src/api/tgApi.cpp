@@ -129,29 +129,30 @@ QList<ChatListItem*> tgApi::dialogs() const{
     foreach(const TLDialog dialog, dialogs.dialogs) {
         int unreadCount = dialog.unreadCount;
 
-        QString author;
+        QString title;
 
         if(dialog.peer.tlType == PeerUser) {
             int userId = dialog.peer.userId;
             if(userMap.contains(userId)) {
                 TLUser user = userMap[userId];
-                author = QString("%1 %2").arg(user.firstName, user.lastName);
+                title = QString("%1 %2").arg(user.firstName, user.lastName);
             } else {
-                author = QString("Unknown user %1").arg(userId);
+                title = QString("Unknown user %1").arg(userId);
             }
         } else if(dialog.peer.tlType == PeerChat) {
             int chatId = dialog.peer.chatId;
             if(chatMap.contains(chatId)) {
                 TLChat chat = chatMap[chatId];
-                author = chat.title;
+                title = chat.title;
             } else {
-                author = QString("Unknown chat %1").arg(chatId);
+                title = QString("Unknown chat %1").arg(chatId);
             }
         }
 
         QString content;
         QString timestamp;
         QString seen;
+        QString author;
 
         if(messageMap.contains(dialog.topMessage)) {
             TLMessage topMessage = messageMap[dialog.topMessage];
@@ -179,6 +180,13 @@ QList<ChatListItem*> tgApi::dialogs() const{
             } else {
                 seen = "none";
             }
+
+            if(out) {
+                author = "You";
+            } else {
+                TLUser messageAuthor = userMap[topMessage.fromId];
+                author = QString("%1").arg(messageAuthor.firstName);
+            }
         } else {
             content = "Unknown content";
         }
@@ -186,8 +194,7 @@ QList<ChatListItem*> tgApi::dialogs() const{
         result.append(new ChatListItem(
                 // TODO asign proper parent
                 0,
-                // TODO assign proper title
-                "TODO: title",
+                title,
                 content,
                 timestamp,
                 author,
