@@ -56,6 +56,7 @@
 
     <!-- Fourth digit segment of the package version. First three segments are taken from the
          <versionNumber> element.  Must be an integer from 0 to 2^16-1 -->
+    <author>Ante &#x10c;ulo, Luka Stri&#x17e;i&#x107;, Petar &#x160;egina, Brigita Vrbanec</author>
     <buildId>2</buildId>
 
     <!-- A string value (such as "v1", "2.5", or "Alpha 1") that represents the version of the application, as it should be shown to users. Optional. -->
@@ -73,7 +74,6 @@
        <image>114.png</image>
        <image>94.png</image>
     </icon>
-    <author>Example Inc.</author>
 
     <!--  Unique author ID assigned by signing authority. Required if using debug tokens. -->
     <!-- <authorId>ABC1234YjsnUk235h</authorId> -->
