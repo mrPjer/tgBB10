@@ -131,21 +131,8 @@ Page {
             ActionBar.placement: ActionBarPlacement.OnBar
             enabled: newMessage.body.length > 0
             onTriggered: {
-                // TODO handle sending chat messages
                 dataModel.sendMessage(newMessage.body)
                 newMessage.body = ""
-                /*
-                groupDataModel.insert({
-                        "messegeType": "outbound",
-                        "messageText": newMessage.body,
-                        "timestamp": "19:19 PM",
-                        "sendingVisible": true,
-                        "unsentVisible": false,
-                        "sentVisible": false,
-                        "readVisible": false
-                    })
-                    */
-                //TODO refresh list
             }
         },
         ActionItem {
