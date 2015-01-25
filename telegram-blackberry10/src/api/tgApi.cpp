@@ -395,11 +395,13 @@ void tgApi::messagesHistoryReceived(const QVector<TLMessage> &messages,
     QVector<ChatItem*> result;
 
     foreach(const TLMessage m, messages) {
+        bool unread = m.flags & 0x1;
+        bool outgoing = m.flags & 0x2;
         ChatItem* item = new ChatItem(0,
                 m.message,
                 m.date,
-                m.flags & 0x1 == 0,
-                m.flags & 0x2 == 1,
+                !unread,
+                outgoing,
                 false,
                 false
         );
