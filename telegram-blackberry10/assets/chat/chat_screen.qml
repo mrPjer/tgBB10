@@ -16,7 +16,7 @@ Page {
             ChatTitleBar {
                 id: chatTitleBar
                 chatName: "Ante Kovach"
-                chatStatus: "typing..."
+                chatStatus: dataModel.typingStatus
                 imagePath: "asset:///images/testUsers/luka.jpg"
             }
         }
