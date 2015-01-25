@@ -32,7 +32,7 @@ Page {
 
         ImageView {
             id: backgroundImage
-            imageSource: "asset:///images/testUsers/pjer.jpg"
+            imageSource: "asset:///images/chat/background.jpg"
             scalingMethod: ScalingMethod.AspectFill
             preferredHeight: maxHeight
             preferredWidth: maxWidth
