@@ -2,17 +2,18 @@ import bb.cascades 1.2
 import TgApi 1.0
 
 Page {
+    property alias unreadCount: dataModel.unreadCount
+
+    attachedObjects: [
+        ChatsDataModel {
+            id: dataModel
+        }
+    ]
 
     Container {
         id: root
         layout: DockLayout {
         }
-
-        attachedObjects: [
-            ChatsDataModel {
-                id: dataModel
-            }
-        ]
 
         ListView {
             dataModel: dataModel

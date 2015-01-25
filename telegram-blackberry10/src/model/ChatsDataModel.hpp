@@ -13,7 +13,8 @@
 
 class ChatsDataModel: public bb::cascades::DataModel
 {
-Q_OBJECT
+    Q_OBJECT
+    Q_PROPERTY(int unreadCount READ unreadCount NOTIFY unreadCountChanged)
 
 public:
     static const QString TYPE_NORMAL;
@@ -22,10 +23,15 @@ public:
 
     ChatsDataModel(QObject* parent = 0);
 
+    int unreadCount();
+
     virtual int childCount(const QVariantList& indexPath);
     virtual bool hasChildren(const QVariantList& indexPath);
     virtual QVariant data(const QVariantList& indexPath);
     virtual QString itemType(const QVariantList& indexPath);
+
+    signals:
+    void unreadCountChanged();
 
 private slots:
     void onDialogsChanged();

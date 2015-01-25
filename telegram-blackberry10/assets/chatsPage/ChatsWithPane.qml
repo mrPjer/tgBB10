@@ -4,6 +4,7 @@ NavigationPane {
     id: navigationPane
 
     property alias titleBar: chatsPage.titleBar
+    property alias unreadCount: chatsPage.unreadCount
 
     ChatsPage {
         id: chatsPage

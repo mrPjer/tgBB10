@@ -12,6 +12,17 @@ const QString ChatsDataModel::TYPE_NORMAL = "normalChat";
 const QString ChatsDataModel::TYPE_GROUP = "groupChat";
 const QString ChatsDataModel::TYPE_SECRET = "secretChat";
 
+int ChatsDataModel::unreadCount()
+{
+    int result = 0;
+
+    foreach(ChatListItem* item, items){
+        result += item->unreadCount();
+    }
+
+    return result;
+}
+
 int ChatsDataModel::childCount(const QVariantList& indexPath)
 {
     Q_UNUSED(indexPath);
@@ -58,5 +69,6 @@ void ChatsDataModel::onDialogsChanged()
 {
     qDebug() << "Dialogs have changed!";
     items = api.dialogs();
+    emit unreadCountChanged();
     emit itemsChanged(bb::cascades::DataModelChangeType::Init);
 }
