@@ -78,8 +78,23 @@ void ContactsDataModel::loadContacts()
         localDir.mkpath(AvatarUtil::AVATAR_DIR);
         const QString firstName = api.contactFirstName(number);
         const QString lastName = api.contactLastName(number);
-        const QVariant status = api.contactStatus(number);
+        const TelegramNamespace::ContactStatus statusType = static_cast<TelegramNamespace::ContactStatus>(api.contactStatus(number).toInt());
         const QString avatarToken = api.contactAvatarToken(number);
+
+        QString status;
+
+        switch(statusType) {
+            case TelegramNamespace::ContactStatusOffline:
+                status = ContactsDataModel::STATUS_OFFLINE;
+                break;
+            case TelegramNamespace::ContactStatusOnline:
+                status = ContactsDataModel::STATUS_ONLINE;
+                break;
+            case TelegramNamespace::ContactStatusUnknown:
+            default:
+                status = ContactsDataModel::STATUS_UNKNOWN;
+                break;
+        }
 
         QMap<QString, QVariant> item;
         item.insert("name", QString("%1 %2").arg(firstName, lastName));
