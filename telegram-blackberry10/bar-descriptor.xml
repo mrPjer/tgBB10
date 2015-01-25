@@ -47,7 +47,6 @@
 
     <!-- The name that is displayed in the BlackBerry 10 application installer.
          May have multiple values for each language. See samples or xsd schema file. Optional. -->
-    <name>tgBB10</name>
 
     <!-- A string value of the format <0-999>.<0-999>.<0-999> that represents application version which can be used to check for application upgrade.
          Values can also be 1-part or 2-part. It is not necessary to have a 3-part value.
@@ -56,6 +55,7 @@
 
     <!-- Fourth digit segment of the package version. First three segments are taken from the
          <versionNumber> element.  Must be an integer from 0 to 2^16-1 -->
+    <name>Teletonne</name>
     <author>Ante &#x10c;ulo, Luka Stri&#x17e;i&#x107;, Petar &#x160;egina, Brigita Vrbanec</author>
     <buildId>2</buildId>
 
