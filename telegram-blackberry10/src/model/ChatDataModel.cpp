@@ -73,6 +73,7 @@ void ChatDataModel::sendMessage(const QString& message)
 {
     // TODO handle sending message in a chat
     api.sendMessage(m_peerPhoneNumber, message);
+    this->getHistory();
 }
 
 bool ChatDataModel::messageComparator(const ChatItem* lhs, const ChatItem* rhs)
@@ -125,15 +126,7 @@ void ChatDataModel::onChatHistoryReceived(QVector<ChatItem*> items)
 void ChatDataModel::onMessageReceived(const QString& phone, const QString& message,
         quint32 messageId)
 {
-    qDebug() << "Received message from " << phone;
-    qDebug() << "Current peer is " << m_peerPhoneNumber;
     if (phone == m_peerPhoneNumber) {
-        ChatItem *item = new ChatItem(0, message, QDateTime::currentMSecsSinceEpoch(), false, false,
-                false, false);
-        qDebug() << "Received message";
-        m_items.push_back(item);
-        QVariantList indexPath;
-        indexPath.push_back(m_items.size());
-        emit itemAdded(indexPath);
+        this->getHistory();
     }
 }
