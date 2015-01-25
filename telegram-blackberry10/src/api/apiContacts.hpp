@@ -18,6 +18,8 @@ public:
     Q_INVOKABLE QVariant contactStatus(const QString &phone) const;
     Q_INVOKABLE QString contactFirstName(const QString &phone) const;
     Q_INVOKABLE QString contactLastName(const QString &phone) const;
+    Q_INVOKABLE QString contactAvatarToken(const QString &phone) const;
+    Q_INVOKABLE QString requestContactAvatar(const QString &phone) const;
 
 public slots:
     void addContact(const QString& phone);
