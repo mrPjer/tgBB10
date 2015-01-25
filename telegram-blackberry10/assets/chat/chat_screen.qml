@@ -133,6 +133,7 @@ Page {
             onTriggered: {
                 // TODO handle sending chat messages
                 dataModel.sendMessage(newMessage.body)
+                newMessage.body = ""
                 /*
                 groupDataModel.insert({
                         "messegeType": "outbound",
