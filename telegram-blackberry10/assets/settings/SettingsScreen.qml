@@ -219,7 +219,7 @@ Page {
                     ]
                 }
                 Label {
-                    text: "Telegram for BlackBerry v0.1"
+                    text: "Telegram for BlackBerry v0.2.0"
                     textStyle.fontSize: FontSize.XXSmall
                     textStyle.color: Color.LightGray
                     horizontalAlignment: HorizontalAlignment.Center
