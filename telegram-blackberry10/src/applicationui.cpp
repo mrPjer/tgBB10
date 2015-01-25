@@ -29,6 +29,7 @@
 
 #include "model/ChatsDataModel.hpp"
 #include "model/ContactsDataModel.hpp"
+#include "model/ChatDataModel.hpp"
 
 #include "config.hpp"
 
@@ -57,6 +58,7 @@ ApplicationUI::ApplicationUI() :
     qmlRegisterType<TelegramNamespace>("TgApi", 1, 0, "ContactStatus");
     qmlRegisterType<ChatsDataModel>("TgApi", 1, 0, "ChatsDataModel");
     qmlRegisterType<ContactsDataModel>("TgApi", 1, 0, "ContactsDataModel");
+    qmlRegisterType<ChatDataModel>("TgApi", 1, 0, "ChatDataModel");
 #ifdef TG_API_MOCK
     // Register out Registration API in QML
     qmlRegisterType<APIRegAuth>("TgApi", 1, 0, "RegistrationApi");

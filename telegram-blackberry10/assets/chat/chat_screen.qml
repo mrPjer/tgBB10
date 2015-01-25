@@ -1,4 +1,5 @@
 import bb.cascades 1.2
+import TgApi 1.0
 import '../shared'
 
 Page {
@@ -26,10 +27,8 @@ Page {
         layout: DockLayout {
         }
         attachedObjects: [
-            GroupDataModel {
-                id: groupDataModel
-                sortingKeys: [ "timestamp" ]
-                grouping: ItemGrouping.None
+            ChatDataModel {
+                id: dataModel
             }
         ]
 
@@ -81,13 +80,7 @@ Page {
                 rightPadding: 10
                 topPadding: 10
 
-                dataModel: groupDataModel
-                onDataModelChanged: {
-                }
-
-                function itemType(data, indexPath) {
-                    return data.messageType === "inbound" ? "inbound" : "outbound"
-                }
+                dataModel: dataModel
 
                 listItemComponents: [
                     ListItemComponent {
@@ -130,14 +123,16 @@ Page {
             imageSource: "asset:///images/chat/bar_attach.png"
             ActionBar.placement: ActionBarPlacement.OnBar
         },
-        //TODO validate text to make send button available
         ActionItem {
             id: sendButton
             title: "Send"
             imageSource: "asset:///images/chat/bar_send.png"
             ActionBar.placement: ActionBarPlacement.OnBar
-            enabled: true
+            enabled: newMessage.body.length > 0
             onTriggered: {
+                // TODO handle sending chat messages
+                dataModel.sendMessage(newMessage.body)
+                /*
                 groupDataModel.insert({
                         "messegeType": "outbound",
                         "messageText": newMessage.body,
@@ -147,6 +142,7 @@ Page {
                         "sentVisible": false,
                         "readVisible": false
                     })
+                    */
                 //TODO refresh list
             }
         },
@@ -168,6 +164,7 @@ Page {
         }
     ]
     onCreationCompleted: {
+        /*
         groupDataModel.insert({
                 "messageType": "inbound",
                 "messageText": "This is some text. I like trains. And Animu. And games. And Pizza. Yes. Pizza very much. And cats.",
@@ -191,5 +188,6 @@ Page {
                 "timestamp": "5:14 PM",
                 "sentVisible": true
             });
+            */
     }
 }
