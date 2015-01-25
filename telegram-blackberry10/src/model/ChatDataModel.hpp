@@ -35,6 +35,7 @@ private slots:
     void onContactTypingStatusChanged(const QString& phone, bool typingStatus);
     void onContactChatTypingStatusChanged(quint32 chatId, const QString& phone, bool typingStatus);
     void onChatHistoryReceived(QVector<ChatItem*> items);
+    void onMessageReceived(const QString& phone, const QString& message, quint32 messageId);
 
 private:
     static bool messageComparator(const ChatItem* lhs, const ChatItem* rhs);

@@ -9,6 +9,8 @@ ChatDataModel::ChatDataModel(QObject* parent) :
             SLOT(onContactChatTypingStatusChanged(quint32, QString, bool)));
     connect(&api, SIGNAL(chatHistoryReceived(QVector<ChatItem*>)),
             SLOT(onChatHistoryReceived(QVector<ChatItem*>)));
+    connect(&api, SIGNAL(messageReceived(QString, QString, quint32)),
+            SLOT(onMessageReceived(QString, QString, quint32)));
 }
 
 const QString ChatDataModel::TYPE_INBOUND = "inbound";
@@ -118,4 +120,20 @@ void ChatDataModel::onChatHistoryReceived(QVector<ChatItem*> items)
     m_items = items;
     qSort(m_items.begin(), m_items.end(), ChatDataModel::messageComparator);
     emit itemsChanged(bb::cascades::DataModelChangeType::Init);
+}
+
+void ChatDataModel::onMessageReceived(const QString& phone, const QString& message,
+        quint32 messageId)
+{
+    qDebug() << "Received message from " << phone;
+    qDebug() << "Current peer is " << m_peerPhoneNumber;
+    if (phone == m_peerPhoneNumber) {
+        ChatItem *item = new ChatItem(0, message, QDateTime::currentMSecsSinceEpoch(), false, false,
+                false, false);
+        qDebug() << "Received message";
+        m_items.push_back(item);
+        QVariantList indexPath;
+        indexPath.push_back(m_items.size());
+        emit itemAdded(indexPath);
+    }
 }
