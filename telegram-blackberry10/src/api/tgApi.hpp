@@ -10,12 +10,16 @@
 
 #include "config.hpp"
 
+#include "TLTypes.hpp"
+
 #ifdef TG_API_TG
 
 #include <bb/cascades/CustomControl>
 #include "CAppInformation.hpp"
 #include "TelegramNamespace.hpp"
 #include "CTelegramCore.hpp"
+
+#include "model/ChatListItem.hpp"
 
 class tgApi: public bb::cascades::CustomControl{
     Q_OBJECT
@@ -32,6 +36,7 @@ public:
     Q_INVOKABLE bool isAuthenticated();
     Q_INVOKABLE QString selfPhone() const;
     Q_INVOKABLE QStringList contactList() const;
+    Q_INVOKABLE QList<ChatListItem*> dialogs() const;
     Q_INVOKABLE QVariant contactStatus(const QString &phone) const;
     Q_INVOKABLE QString contactFirstName(const QString &phone) const;
     Q_INVOKABLE QString contactLastName(const QString &phone) const;
@@ -58,6 +63,8 @@ public slots:
 
     void deleteContact(const QString &phoneNumber);
     void deleteContacts(const QStringList &phoneNumbers);
+
+    void getDialogs(quint32 offset, quint32 maxId, quint32 limit);
 
     void requestContactAvatar(const QString &contact);
 
@@ -89,6 +96,8 @@ signals:
     void contactStatusChanged(const QString &phone, TelegramNamespace::ContactStatus status);
     void contactTypingStatusChanged(const QString &phone, bool typingStatus);
     void contactChatTypingStatusChanged(quint32 chatId, const QString &phone, bool typingStatus);
+
+    void dialogsChanged();
 
     void sentMessageStatusChanged(const QString &phone, quint64 messageId, TelegramNamespace::MessageDeliveryStatus status); // Message id is random number
 

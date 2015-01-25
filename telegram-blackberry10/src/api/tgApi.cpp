@@ -10,8 +10,11 @@
 
 #include "tgApi.hpp"
 #include "app_secrets.hpp"
+#include "TLValues.h"
 
 #include <qdebug.h>
+#include <QDate>
+#include <QDateTime>
 
 CTelegramCore* tgApi::core = NULL;
 
@@ -53,6 +56,7 @@ tgApi::tgApi(){
     connect(core, SIGNAL(chatAdded(quint32)), SIGNAL(chatAdded(quint32)));
     connect(core, SIGNAL(chatChanged(quint32)), SIGNAL(chatChanged(quint32)));
     connect(core, SIGNAL(initializated()), SIGNAL(initializated()));
+    connect(core, SIGNAL(dialogsChanged()), SIGNAL(dialogsChanged()));
     connect(core, SIGNAL(authorizationErrorReceived()), SIGNAL(authorizationErrorReceived()));
 
     if(shouldInit){
@@ -99,6 +103,115 @@ QString tgApi::selfPhone() const{
 
 QStringList tgApi::contactList() const{
     return core->contactList();
+}
+
+QList<ChatListItem*> tgApi::dialogs() const{
+    TLMessagesDialogs dialogs = core->dialogs();
+
+    QList<ChatListItem*> result;
+    QDate today = QDate::currentDate();
+    QMap<int, TLUser> userMap;
+    QMap<int, TLChat> chatMap;
+    QMap<int, TLMessage> messageMap;
+
+    foreach(const TLUser& user, dialogs.users) {
+        userMap.insert(user.id, user);
+    }
+
+    foreach(const TLChat& chat, dialogs.chats) {
+        chatMap.insert(chat.id, chat);
+    }
+
+    foreach(const TLMessage& message, dialogs.messages) {
+        messageMap.insert(message.id, message);
+    }
+
+    foreach(const TLDialog dialog, dialogs.dialogs) {
+        int unreadCount = dialog.unreadCount;
+
+        QString title;
+        ChatListItem::Type type;
+
+        if(dialog.peer.tlType == PeerUser) {
+            int userId = dialog.peer.userId;
+            type = ChatListItem::GROUP;
+            if(userMap.contains(userId)) {
+                TLUser user = userMap[userId];
+                title = QString("%1 %2").arg(user.firstName, user.lastName);
+            } else {
+                title = QString("Unknown user %1").arg(userId);
+            }
+        } else if(dialog.peer.tlType == PeerChat) {
+            int chatId = dialog.peer.chatId;
+            type = ChatListItem::NORMAL;
+            if(chatMap.contains(chatId)) {
+                TLChat chat = chatMap[chatId];
+                title = chat.title;
+            } else {
+                title = QString("Unknown chat %1").arg(chatId);
+            }
+        }
+
+        QString content;
+        QString timestamp;
+        QString seen;
+        QString author;
+
+        if(messageMap.contains(dialog.topMessage)) {
+            TLMessage topMessage = messageMap[dialog.topMessage];
+            content = topMessage.message;
+
+            int time = topMessage.date;
+
+            QDateTime qdt;
+            qdt.setTime_t(time);
+            QDate date = qdt.date();
+            if(date == today) {
+                timestamp = qdt.toString("hh:mm");
+            } else if(date.daysTo(today) < 7) {
+                timestamp = qdt.toString("ddd");
+            } else {
+                timestamp = qdt.toString("dd.MM.yy");
+            }
+
+            bool unread = topMessage.flags & 0x1;
+            bool out = topMessage.flags & 0x2;
+            if(!unread) {
+                seen = "seen";
+            } else if(out) {
+                seen = "delivered";
+            } else {
+                seen = "none";
+            }
+
+            if(out) {
+                author = "You";
+            } else {
+                TLUser messageAuthor = userMap[topMessage.fromId];
+                author = QString("%1").arg(messageAuthor.firstName);
+            }
+        } else {
+            content = "Unknown content";
+        }
+
+        result.append(new ChatListItem(
+                // TODO asign proper parent
+                0,
+                title,
+                content,
+                timestamp,
+                author,
+                // TODO assign proper avatar
+                "asset:///images/chatsList/chatAvatars/SingleChatAvatars/user_placeholder_pink.png",
+                seen,
+                // TODO support for secret chats
+                type,
+                unreadCount
+        ));
+
+    }
+
+    return result;
 }
 
 QVariant tgApi::contactStatus(const QString &phone) const{
@@ -177,6 +290,10 @@ void tgApi::deleteContact(const QString &phoneNumber){
 
 void tgApi::deleteContacts(const QStringList &phoneNumbers){
 	return core->deleteContacts(phoneNumbers);
+}
+
+void tgApi::getDialogs(quint32 offset, quint32 maxId, quint32 limit) {
+    return core->getDialogs(offset, maxId, limit);
 }
 
 void tgApi::requestContactAvatar(const QString &contact){

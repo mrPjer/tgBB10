@@ -30,7 +30,7 @@ Container {
     }
 
     function showUnread(unreadCount) {
-        return unreadCount !== "0"
+        return unreadCount !== 0
     }
 
     Divider {

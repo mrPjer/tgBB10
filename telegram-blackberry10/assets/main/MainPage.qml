@@ -55,8 +55,10 @@ TabbedPane {
         id: chatsTab
         title: "Chats"
         imageSource: "asset:///images/main/bar_chats.png"
+        unreadContentCount: chatsWithPane.unreadCount
 
         ChatsWithPane {
+            id: chatsWithPane
             titleBar: TitleBar {
                 id: chat
                 title: "Chats"

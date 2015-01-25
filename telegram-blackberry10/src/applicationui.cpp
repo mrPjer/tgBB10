@@ -25,12 +25,16 @@
 #include "util/countries.hpp"
 
 #include "api/TgSession.hpp"
+#include "api/model/ChatListItem.hpp"
+
+#include "model/ChatsDataModel.hpp"
 
 #include "config.hpp"
 
 #ifdef TG_API_MOCK
 #include "api/apiRegAuth.hpp"
 #include "api/apiContacts.hpp"
+#include "api/apiMessages.hpp"
 #endif
 
 #ifdef TG_API_TG
@@ -45,23 +49,30 @@ ApplicationUI::ApplicationUI() :
     // Register our Timer class in QML
     qmlRegisterType<Timer>("Timer", 1, 0, "Timer");
 
+    qmlRegisterUncreatableType<ChatListItem>("TgApi", 1, 0, "ChatListItem",
+            "Should only be received as an API response");
+
     qmlRegisterType<TgSession>("TgApi", 1, 0, "Session");
     qmlRegisterType<TelegramNamespace>("TgApi", 1, 0, "ContactStatus");
+    qmlRegisterType<ChatsDataModel>("TgApi", 1, 0, "ChatsDataModel");
 #ifdef TG_API_MOCK
     // Register out Registration API in QML
     qmlRegisterType<APIRegAuth>("TgApi", 1, 0, "RegistrationApi");
     qmlRegisterType<APIContacts>("TgApi", 1, 0, "ContactsApi");
+    qmlRegisterType<APIMessages>("TgApi", 1, 0, "MessagesApi");
 #endif
 #ifdef TG_API_TG
     qmlRegisterType<tgApi>("TgApi", 1, 0, "RegistrationApi");
     qmlRegisterType<tgApi>("TgApi", 1, 0, "ContactsApi");
+    qmlRegisterType<tgApi>("TgApi", 1, 0, "MessagesApi");
 #endif
 
     // prepare the localization
     m_pTranslator = new QTranslator(this);
     m_pLocaleHandler = new LocaleHandler(this);
 
-    bool res = QObject::connect(m_pLocaleHandler, SIGNAL(systemLanguageChanged()), this, SLOT(onSystemLanguageChanged()));
+    bool res = QObject::connect(m_pLocaleHandler, SIGNAL(systemLanguageChanged()), this,
+            SLOT(onSystemLanguageChanged()));
     // This is only available in Debug builds
     Q_ASSERT(res);
     // Since the variable is not used in the app, this is added to avoid a
@@ -76,7 +87,7 @@ ApplicationUI::ApplicationUI() :
 #ifdef TG_API_TG
     TgSession session;
 
-    if(session.isSessionStored()) {
+    if (session.isSessionStored()) {
         QByteArray secret = session.session();
         qDebug() << "Existing session already present - " << secret;
 
@@ -91,7 +102,6 @@ ApplicationUI::ApplicationUI() :
 #ifdef TG_API_MOCK
     pageAsset = "asset:///main.qml";
 #endif
-
 
     // Create scene document from main.qml asset, the parent is set
     // to ensure the document gets destroyed properly at shut down.
