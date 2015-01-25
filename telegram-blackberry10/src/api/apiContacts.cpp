@@ -140,3 +140,14 @@ void APIContacts::contactListChangedEmitter()
     disconnect(&delay, SIGNAL(finished()), this, SLOT(contactListChangedEmitter()));
     emit contactListChanged();
 }
+
+
+QString APIContacts::contactAvatarToken(const QString &phone) const
+{
+    return "";
+}
+
+QString APIContacts::requestContactAvatar(const QString &phone) const
+{
+    // Do nothing for now
+}

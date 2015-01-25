@@ -60,30 +60,10 @@ Container {
         property bool showStatus: false
         property bool showHeader: false
 
-        function itemType(data, indexPath) {
-            if (indexPath.length == 1) {
-                return "header"
-            } else {
-                return "contact"
-            }
+        dataModel: ContactsDataModel {
+            id: dataModel
         }
 
-        dataModel: GroupDataModel {
-            id: dataModel
-            sortingKeys: [ "name" ]
-            grouping: ItemGrouping.ByFirstChar
-        }
-        attachedObjects: ContactsApi {
-            id: api
-            onContactListChanged: {
-                console.log("Contact list changed")
-                updateContacts()
-            }
-            onContactStatusChanged: {
-                console.log("Contact status changed for " + phone + " to " + status)
-                updateContacts()
-            }
-        }
         listItemComponents: [
             ListItemComponent {
                 type: "contact"
