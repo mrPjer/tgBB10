@@ -260,44 +260,44 @@ void tgApi::closeConnection() {
 }
 
 void tgApi::requestPhoneStatus(const QString &phoneNumber){
-    return core->requestPhoneStatus(phoneNumber);
+    core->requestPhoneStatus(phoneNumber);
 }
 
 
 void tgApi::requestPhoneCode(const QString &phoneNumber){
-	return core->requestPhoneCode(phoneNumber);
+	core->requestPhoneCode(phoneNumber);
 }
 
 void tgApi::signIn(const QString &phoneNumber, const QString &authCode){
-	return core->signIn(phoneNumber, authCode);
+	core->signIn(phoneNumber, authCode);
 }
 
 void tgApi::signUp(const QString &phoneNumber, const QString &authCode, const QString &firstName, const QString &lastName){
-	return core->signUp(phoneNumber, authCode, firstName, lastName);
+	core->signUp(phoneNumber, authCode, firstName, lastName);
 }
 
 void tgApi::addContact(const QString &phoneNumber){
-	return core->addContact(phoneNumber);
+	core->addContact(phoneNumber);
 }
 
 void tgApi::addContacts(const QStringList &phoneNumbers){
-	return core->addContacts(phoneNumbers);
+	core->addContacts(phoneNumbers);
 }
 
 void tgApi::deleteContact(const QString &phoneNumber){
-	return core->deleteContact(phoneNumber);
+	core->deleteContact(phoneNumber);
 }
 
 void tgApi::deleteContacts(const QStringList &phoneNumbers){
-	return core->deleteContacts(phoneNumbers);
+	core->deleteContacts(phoneNumbers);
 }
 
 void tgApi::getDialogs(quint32 offset, quint32 maxId, quint32 limit) {
-    return core->getDialogs(offset, maxId, limit);
+    core->getDialogs(offset, maxId, limit);
 }
 
 void tgApi::requestContactAvatar(const QString &contact){
-	return core->requestContactAvatar(contact);
+	core->requestContactAvatar(contact);
 }
 
 quint64 tgApi::sendMessage(const QString &phone, const QString &message){
@@ -309,21 +309,21 @@ quint64 tgApi::sendChatMessage(quint32 chatId, const QString &message){
 } // Message id is random number
 
 void tgApi::setTyping(const QString &phone, bool typingStatus){
-	return core->setTyping(phone, typingStatus);
+	core->setTyping(phone, typingStatus);
 }
 
 void tgApi::setChatTyping(quint32 chatId, bool typingStatus){
-	return core->setChatTyping(chatId, typingStatus);
+	core->setChatTyping(chatId, typingStatus);
 }
 
 void tgApi::setMessageRead(const QString &phone, quint32 messageId){
-	return core->setMessageRead(phone, messageId);
+	core->setMessageRead(phone, messageId);
 }
 
     // Set visible (not actual) online status.
 
 void tgApi::setOnlineStatus(bool onlineStatus){
-	return core->setOnlineStatus(onlineStatus);
+	core->setOnlineStatus(onlineStatus);
 }
 
 quint32 tgApi::createChat(const QStringList &phones, const QString chatName){
