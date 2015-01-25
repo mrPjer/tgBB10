@@ -42,10 +42,7 @@ bool ChatDataModel::hasChildren(const QVariantList& indexPath)
 
 QVariant ChatDataModel::data(const QVariantList& indexPath)
 {
-    qDebug() << "Requesting item at " << indexPath;
     ChatItem* item = m_items[indexPath[0].toInt()];
-    qDebug() << "Got item";
-    qDebug() << item->messageText();
     QMap<QString, QVariant> result;
 
     // TODO there should be a way to return a chat item directly
@@ -62,7 +59,6 @@ QVariant ChatDataModel::data(const QVariantList& indexPath)
 
 QString ChatDataModel::itemType(const QVariantList& indexPath)
 {
-    qDebug() << "Requesting type at " << indexPath;
     ChatItem* item = m_items[indexPath[0].toInt()];
     if (item->sentVisible()) {
         return ChatDataModel::TYPE_OUTBOUND;
