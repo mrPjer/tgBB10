@@ -150,10 +150,10 @@ QList<ChatListItem*> tgApi::dialogs() const{
             }
         } else if(dialog.peer.tlType == PeerChat) {
             int chatId = dialog.peer.chatId;
+            imagePath = AvatarUtil::getGroupPlaceholderAvatarPath(chatId);
             type = ChatListItem::NORMAL;
             if(chatMap.contains(chatId)) {
                 TLChat chat = chatMap[chatId];
-                imagePath = AvatarUtil::getPlaceholderAvatarPath(chat.title);
                 title = chat.title;
             } else {
                 title = QString("Unknown chat %1").arg(chatId);
