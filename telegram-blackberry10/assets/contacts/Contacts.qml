@@ -11,6 +11,7 @@ Page {
                 var page = contactDetailsPage.createObject()
                 page.phoneNumber = "+" + item.phone
                 page.contactName = item.name
+                page.imageSource = item.imagePath
                 navigationPane.push(page)
             }
 
