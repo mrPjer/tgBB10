@@ -11,6 +11,7 @@
 #include "tgApi.hpp"
 #include "app_secrets.hpp"
 #include "TLValues.h"
+#include <util/AvatarUtil.hpp>
 
 #include <qdebug.h>
 #include <QDate>
@@ -130,6 +131,7 @@ QList<ChatListItem*> tgApi::dialogs() const{
         int unreadCount = dialog.unreadCount;
 
         QString title;
+        QString imagePath;
         ChatListItem::Type type;
 
         if(dialog.peer.tlType == PeerUser) {
@@ -137,6 +139,11 @@ QList<ChatListItem*> tgApi::dialogs() const{
             type = ChatListItem::GROUP;
             if(userMap.contains(userId)) {
                 TLUser user = userMap[userId];
+                if(user.photo.photoId == 0) {
+                    imagePath = AvatarUtil::getPlaceholderAvatarPath(user.phone);
+                } else {
+                    imagePath = AvatarUtil::getAvatarPath(user.phone);
+                }
                 title = QString("%1 %2").arg(user.firstName, user.lastName);
             } else {
                 title = QString("Unknown user %1").arg(userId);
@@ -146,6 +153,7 @@ QList<ChatListItem*> tgApi::dialogs() const{
             type = ChatListItem::NORMAL;
             if(chatMap.contains(chatId)) {
                 TLChat chat = chatMap[chatId];
+                imagePath = AvatarUtil::getPlaceholderAvatarPath(chat.title);
                 title = chat.title;
             } else {
                 title = QString("Unknown chat %1").arg(chatId);
@@ -156,7 +164,6 @@ QList<ChatListItem*> tgApi::dialogs() const{
         QString timestamp;
         QString seen;
         QString author;
-
         if(messageMap.contains(dialog.topMessage)) {
             TLMessage topMessage = messageMap[dialog.topMessage];
             content = topMessage.message;
@@ -201,8 +208,7 @@ QList<ChatListItem*> tgApi::dialogs() const{
                 content,
                 timestamp,
                 author,
-                // TODO assign proper avatar
-                "asset:///images/chatsList/chatAvatars/SingleChatAvatars/user_placeholder_pink.png",
+                imagePath,
                 seen,
                 // TODO support for secret chats
                 type,
