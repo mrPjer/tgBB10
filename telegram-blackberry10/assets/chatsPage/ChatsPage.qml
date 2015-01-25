@@ -20,6 +20,10 @@ Page {
 
             onTriggered: {
                 var page = chatPage.createObject()
+
+                var item = dataModel.data(indexPath)
+                page.chatName = item.chatName
+                page.chatImage = item.chatAvatar
                 navigationPane.push(page)
             }
 

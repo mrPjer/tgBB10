@@ -3,6 +3,8 @@ import '../shared'
 
 Page {
     id: chatPage
+    property alias chatName: chatTitleBar.chatName
+    property alias chatImage: chatTitleBar.imagePath
     property alias backgroundImageSource: backgroundImage.imageSource
     property alias enableSend: sendButton.enabled
 
@@ -11,6 +13,7 @@ Page {
         scrollBehavior: TitleBarScrollBehavior.Sticky
         kindProperties: FreeFormTitleBarKindProperties {
             ChatTitleBar {
+                id: chatTitleBar
                 chatName: "Ante Kovach"
                 chatStatus: "typing..."
                 imagePath: "asset:///images/testUsers/luka.jpg"
