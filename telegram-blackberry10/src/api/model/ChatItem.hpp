@@ -24,6 +24,7 @@ public:
 
     QString messageText() const;
     QString timestamp() const;
+    quint32 rawTimestamp() const;
     bool readVisible() const;
     bool unsentVisible() const;
     bool sentVisible() const;

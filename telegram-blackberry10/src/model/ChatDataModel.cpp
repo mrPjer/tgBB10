@@ -73,6 +73,11 @@ void ChatDataModel::sendMessage(const QString& message)
     api.sendMessage(m_peerPhoneNumber, message);
 }
 
+bool ChatDataModel::messageComparator(const ChatItem* lhs, const ChatItem* rhs)
+{
+    return lhs->rawTimestamp() < rhs->rawTimestamp();
+}
+
 void ChatDataModel::setTypingStatus(const QString& typingStatus)
 {
     m_typingStatus = typingStatus;
@@ -111,5 +116,6 @@ void ChatDataModel::onContactChatTypingStatusChanged(quint32 chatId, const QStri
 void ChatDataModel::onChatHistoryReceived(QVector<ChatItem*> items)
 {
     m_items = items;
+    qSort(m_items.begin(), m_items.end(), ChatDataModel::messageComparator);
     emit itemsChanged(bb::cascades::DataModelChangeType::Init);
 }

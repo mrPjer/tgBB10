@@ -30,6 +30,11 @@ QString ChatItem::timestamp() const
     return dt.toString("dd.MM.yy hh:mm");
 }
 
+quint32 ChatItem::rawTimestamp() const
+{
+    return m_timestamp;
+}
+
 bool ChatItem::readVisible() const
 {
     return m_read_visible;

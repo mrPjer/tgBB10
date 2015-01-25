@@ -37,6 +37,7 @@ private slots:
     void onChatHistoryReceived(QVector<ChatItem*> items);
 
 private:
+    static bool messageComparator(const ChatItem* lhs, const ChatItem* rhs);
     void setTypingStatus(const QString& typingStatus);
     void getHistory();
 
