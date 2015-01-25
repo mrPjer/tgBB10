@@ -44,13 +44,13 @@ QString ChatsDataModel::itemType(const QVariantList& indexPath)
 
     switch (item->type()) {
         case ChatListItem::NORMAL:
-            return "normalChat";
+            return ChatsDataModel::TYPE_NORMAL;
         case ChatListItem::GROUP:
-            return "groupChat";
+            return ChatsDataModel::TYPE_GROUP;
         case ChatListItem::SECRET:
-            return "secretChat";
+            return ChatsDataModel::TYPE_SECRET;
         default:
-            return "normalChat";
+            return ChatsDataModel::TYPE_NORMAL;
     }
 }
 
