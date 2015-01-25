@@ -36,6 +36,7 @@ private:
 #else
     tgApi api;
 #endif
+    QList<ChatListItem*> items;
 
 };
 

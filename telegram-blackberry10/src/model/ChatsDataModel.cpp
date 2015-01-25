@@ -5,6 +5,7 @@ ChatsDataModel::ChatsDataModel(QObject* parent) :
         bb::cascades::DataModel(parent)
 {
     connect(&api, SIGNAL(dialogsChanged()), SLOT(onDialogsChanged()));
+    items = api.dialogs();
 }
 
 const QString ChatsDataModel::TYPE_NORMAL = "normalChat";
@@ -13,8 +14,8 @@ const QString ChatsDataModel::TYPE_SECRET = "secretChat";
 
 int ChatsDataModel::childCount(const QVariantList& indexPath)
 {
-    qDebug() << "Total children: " << api.dialogs().size();
-    return api.dialogs().size();
+    Q_UNUSED(indexPath);
+    return items.size();
 }
 
 bool ChatsDataModel::hasChildren(const QVariantList& indexPath)
@@ -25,7 +26,7 @@ bool ChatsDataModel::hasChildren(const QVariantList& indexPath)
 QVariant ChatsDataModel::data(const QVariantList& indexPath)
 {
     QMap<QString, QVariant> map;
-    ChatListItem *item = api.dialogs().at(indexPath[0].toInt());
+    ChatListItem *item = items.at(indexPath[0].toInt());
     map.insert("chatName", item->title());
     map.insert("chatDescription", item->content());
     map.insert("unreadCount", item->unreadCount());
@@ -39,7 +40,7 @@ QVariant ChatsDataModel::data(const QVariantList& indexPath)
 
 QString ChatsDataModel::itemType(const QVariantList& indexPath)
 {
-    ChatListItem *item = api.dialogs().at(indexPath[0].toInt());
+    ChatListItem *item = items.at(indexPath[0].toInt());
 
     switch (item->type()) {
         case ChatListItem::NORMAL:
@@ -56,6 +57,6 @@ QString ChatsDataModel::itemType(const QVariantList& indexPath)
 void ChatsDataModel::onDialogsChanged()
 {
     qDebug() << "Dialogs have changed!";
-    api.dialogs();
+    items = api.dialogs();
     emit itemsChanged(bb::cascades::DataModelChangeType::Init);
 }
