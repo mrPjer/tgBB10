@@ -36,8 +36,8 @@ tgApi::tgApi(){
     connect(core, SIGNAL(phoneStatusReceived(QString, bool, bool)),
             SIGNAL(phoneStatusReceived(QString, bool, bool)));
     connect(core, SIGNAL(phoneNumberInvalid()), SIGNAL(phoneNumberInvalid()));
-    connect(core, SIGNAL(avatarReceived(QString, QByteArray, QString)),
-            SIGNAL(avatarReceived(QString, QByteArray, QString)));
+    connect(core, SIGNAL(avatarReceived(QString, QByteArray, QString, QString)),
+            SIGNAL(avatarReceived(QString, QByteArray, QString, QString)));
     connect(core, SIGNAL(messageReceived(QString, QString, quint32)),
             SIGNAL(messageReceived(QString, QString, quint32)));
     connect(core, SIGNAL(chatMessageReceived(quint32, QString, QString)),
