@@ -34,12 +34,15 @@ public slots:
 private slots:
     void onContactTypingStatusChanged(const QString& phone, bool typingStatus);
     void onContactChatTypingStatusChanged(quint32 chatId, const QString& phone, bool typingStatus);
+    void onChatHistoryReceived(QVector<ChatItem*> items);
 
 private:
     void setTypingStatus(const QString& typingStatus);
+    void getHistory();
 
     QString m_typingStatus;
     QString m_peerPhoneNumber;
+    QVector<ChatItem*> m_items;
     tgApi api;
 };
 

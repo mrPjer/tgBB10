@@ -7,6 +7,8 @@ ChatDataModel::ChatDataModel(QObject* parent) :
             SLOT(onContactTypingStatusChanged(QString, bool)));
     connect(&api, SIGNAL(contactChatTypingStatusChanged(quint32, QString, bool)),
             SLOT(onContactChatTypingStatusChanged(quint32, QString, bool)));
+    connect(&api, SIGNAL(chatHistoryReceived(QVector<ChatItem*>)),
+            SLOT(onChatHistoryReceived(QVector<ChatItem*>)));
 }
 
 const QString ChatDataModel::TYPE_INBOUND = "inbound";
@@ -25,11 +27,12 @@ QString ChatDataModel::peerPhoneNumber()
 void ChatDataModel::setPeerPhoneNumber(const QString& peerPhoneNumber)
 {
     this->m_peerPhoneNumber = peerPhoneNumber;
+    this->getHistory();
 }
 
 int ChatDataModel::childCount(const QVariantList& indexPath)
 {
-    return 10;
+    return m_items.size();
 }
 
 bool ChatDataModel::hasChildren(const QVariantList& indexPath)
@@ -39,22 +42,33 @@ bool ChatDataModel::hasChildren(const QVariantList& indexPath)
 
 QVariant ChatDataModel::data(const QVariantList& indexPath)
 {
-    QMap<QString, QVariant> item;
+    qDebug() << "Requesting item at " << indexPath;
+    ChatItem* item = m_items[indexPath[0].toInt()];
+    qDebug() << "Got item";
+    qDebug() << item->messageText();
+    QMap<QString, QVariant> result;
 
-    item.insert("messageText", "This is a sample text");
-    item.insert("timestamp", "ts:ts");
-    item.insert("readVisible", false);
-    item.insert("sentVisible", false);
-    item.insert("unsentVisible", false);
-    item.insert("sendingVisible", false);
+    // TODO there should be a way to return a chat item directly
 
-    return item;
+    result.insert("messageText", item->messageText());
+    result.insert("timestamp", item->timestamp());
+    result.insert("readVisible", item->readVisible());
+    result.insert("sentVisible", item->sentVisible());
+    result.insert("unsentVisible", item->unsentVisible());
+    result.insert("sendingVisible", item->sendingVisible());
+
+    return result;
 }
 
 QString ChatDataModel::itemType(const QVariantList& indexPath)
 {
-    // TODO differentiate between inbound and outbound
-    return ChatDataModel::TYPE_OUTBOUND;
+    qDebug() << "Requesting type at " << indexPath;
+    ChatItem* item = m_items[indexPath[0].toInt()];
+    if (item->sentVisible()) {
+        return ChatDataModel::TYPE_OUTBOUND;
+    } else {
+        return ChatDataModel::TYPE_INBOUND;
+    }
 }
 
 void ChatDataModel::sendMessage(const QString& message)
@@ -69,9 +83,14 @@ void ChatDataModel::setTypingStatus(const QString& typingStatus)
     emit typingStatusChanged();
 }
 
+void ChatDataModel::getHistory()
+{
+    api.getHistory(m_peerPhoneNumber, 0, 0, 100);
+}
+
 void ChatDataModel::onContactTypingStatusChanged(const QString& phone, bool typingStatus)
 {
-    if(phone != m_peerPhoneNumber) {
+    if (phone != m_peerPhoneNumber) {
         return;
     }
     if (typingStatus) {
@@ -91,4 +110,10 @@ void ChatDataModel::onContactChatTypingStatusChanged(quint32 chatId, const QStri
     } else {
         this->setTypingStatus("");
     }
+}
+
+void ChatDataModel::onChatHistoryReceived(QVector<ChatItem*> items)
+{
+    m_items = items;
+    emit itemsChanged(bb::cascades::DataModelChangeType::Init);
 }
