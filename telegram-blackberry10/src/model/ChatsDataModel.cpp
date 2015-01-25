@@ -44,6 +44,7 @@ QVariant ChatsDataModel::data(const QVariantList& indexPath)
     map.insert("timeStamp", item->timestamp());
     map.insert("outgoingStatus", item->outgoingStatus());
     map.insert("author", item->author());
+    map.insert("peerId", item->peerId());
     map.insert("chatAvatar", item->chatAvatar());
 
     return map;

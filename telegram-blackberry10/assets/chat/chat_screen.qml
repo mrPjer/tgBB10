@@ -6,6 +6,7 @@ Page {
     id: chatPage
     property alias chatName: chatTitleBar.chatName
     property alias chatImage: chatTitleBar.imagePath
+    property alias peerId: dataModel.peerPhoneNumber
     property alias backgroundImageSource: backgroundImage.imageSource
     property alias enableSend: sendButton.enabled
 

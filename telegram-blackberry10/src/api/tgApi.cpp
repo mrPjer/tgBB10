@@ -132,6 +132,7 @@ QList<ChatListItem*> tgApi::dialogs() const{
 
         QString title;
         QString imagePath;
+        QString peerId;
         ChatListItem::Type type;
 
         if(dialog.peer.tlType == PeerUser) {
@@ -139,6 +140,7 @@ QList<ChatListItem*> tgApi::dialogs() const{
             type = ChatListItem::GROUP;
             if(userMap.contains(userId)) {
                 TLUser user = userMap[userId];
+                peerId = user.phone;
                 if(user.photo.photoId == 0) {
                     imagePath = AvatarUtil::getPlaceholderAvatarPath(user.phone);
                 } else {
@@ -208,6 +210,7 @@ QList<ChatListItem*> tgApi::dialogs() const{
                 content,
                 timestamp,
                 author,
+                peerId,
                 imagePath,
                 seen,
                 // TODO support for secret chats

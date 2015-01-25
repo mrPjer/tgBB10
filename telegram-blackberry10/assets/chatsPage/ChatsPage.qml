@@ -24,6 +24,7 @@ Page {
                 var item = dataModel.data(indexPath)
                 page.chatName = item.chatName
                 page.chatImage = item.chatAvatar
+                page.peerId = item.peerId
                 navigationPane.push(page)
             }
 
