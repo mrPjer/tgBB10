@@ -8,6 +8,7 @@ ChatListItem::ChatListItem(
         const QString& author,
         const QString& chatAvatar,
         const QString& outgoingStatus,
+        const Type& type,
         const int unreadCount
         ) :
         QObject(parent),
@@ -17,6 +18,7 @@ ChatListItem::ChatListItem(
         m_author(author),
         m_chat_avatar(chatAvatar),
         m_outgoing_status(outgoingStatus),
+        m_type(type),
         m_unread_count(unreadCount)
 {
 }
@@ -49,6 +51,10 @@ QString ChatListItem::chatAvatar() const
 QString ChatListItem::outgoingStatus() const
 {
     return m_outgoing_status;
+}
+
+ChatListItem::Type ChatListItem::type() const {
+    return m_type;
 }
 
 int ChatListItem::unreadCount() const

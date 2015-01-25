@@ -130,9 +130,11 @@ QList<ChatListItem*> tgApi::dialogs() const{
         int unreadCount = dialog.unreadCount;
 
         QString title;
+        ChatListItem::Type type;
 
         if(dialog.peer.tlType == PeerUser) {
             int userId = dialog.peer.userId;
+            type = ChatListItem::GROUP;
             if(userMap.contains(userId)) {
                 TLUser user = userMap[userId];
                 title = QString("%1 %2").arg(user.firstName, user.lastName);
@@ -141,6 +143,7 @@ QList<ChatListItem*> tgApi::dialogs() const{
             }
         } else if(dialog.peer.tlType == PeerChat) {
             int chatId = dialog.peer.chatId;
+            type = ChatListItem::NORMAL;
             if(chatMap.contains(chatId)) {
                 TLChat chat = chatMap[chatId];
                 title = chat.title;
@@ -201,6 +204,8 @@ QList<ChatListItem*> tgApi::dialogs() const{
                 // TODO assign proper avatar
                 "asset:///images/chatsList/chatAvatars/SingleChatAvatars/user_placeholder_pink.png",
                 seen,
+                // TODO support for secret chats
+                type,
                 unreadCount
         ));
 
