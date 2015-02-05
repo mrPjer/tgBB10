@@ -18,6 +18,7 @@
 #include "CAppInformation.hpp"
 #include "TelegramNamespace.hpp"
 #include "CTelegramCore.hpp"
+#include "model/ChatItem.hpp"
 
 #include "model/ChatListItem.hpp"
 
@@ -65,6 +66,7 @@ public slots:
     void deleteContacts(const QStringList &phoneNumbers);
 
     void getDialogs(quint32 offset, quint32 maxId, quint32 limit);
+    void getHistory(const QString& phoneNumber, quint32 offset, quint32 maxId, quint32 limit);
 
     void requestContactAvatar(const QString &contact);
 
@@ -98,6 +100,7 @@ signals:
     void contactChatTypingStatusChanged(quint32 chatId, const QString &phone, bool typingStatus);
 
     void dialogsChanged();
+    void chatHistoryReceived(QVector<ChatItem*> messages);
 
     void sentMessageStatusChanged(const QString &phone, quint64 messageId, TelegramNamespace::MessageDeliveryStatus status); // Message id is random number
 
@@ -108,6 +111,9 @@ signals:
 
 private slots:
     void connectionEstablished();
+    void messagesHistoryReceived(const QVector<TLMessage> &messages, const QVector<TLChat> &chats, const QVector<TLUser> &users);
+    void messagesHistorySliceReceived(quint32 count, const QVector<TLMessage> &messages, const QVector<TLChat> &chats, const QVector<TLUser> &users);
+
 
 private:
     static CTelegramCore* core;

@@ -10,6 +10,7 @@ class ChatListItem: QObject
     Q_PROPERTY(QString content READ content)
     Q_PROPERTY(QString timestamp READ timestamp)
     Q_PROPERTY(QString author READ author)
+    Q_PROPERTY(QString peerId READ peerId)
     Q_PROPERTY(QString chatAvatar READ chatAvatar)
     Q_PROPERTY(int unreadCount READ unreadCount)
 public:
@@ -26,6 +27,7 @@ public:
             const QString& content = 0,
             const QString& timestamp = 0,
             const QString& author = 0,
+            const QString& peerId = 0,
             const QString& chatAvatar = 0,
             const QString& outgoingStatus = 0,
             const Type& type = NORMAL,
@@ -36,6 +38,7 @@ public:
     QString content() const;
     QString timestamp() const;
     QString author() const;
+    QString peerId() const;
     QString chatAvatar() const;
     QString outgoingStatus() const;
     Type type() const;
@@ -46,6 +49,7 @@ private:
     QString m_content;
     QString m_timestamp;
     QString m_author;
+    QString m_peerId;
     QString m_chat_avatar;
     QString m_outgoing_status;
     Type m_type;

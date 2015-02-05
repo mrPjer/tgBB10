@@ -19,11 +19,12 @@
 
 CTelegramCore* tgApi::core = NULL;
 
-tgApi::tgApi(){
+tgApi::tgApi()
+{
 
     bool shouldInit = false;
 
-    if(core == NULL){
+    if (core == NULL) {
         core = new CTelegramCore();
         shouldInit = true;
     }
@@ -58,9 +59,17 @@ tgApi::tgApi(){
     connect(core, SIGNAL(chatChanged(quint32)), SIGNAL(chatChanged(quint32)));
     connect(core, SIGNAL(initializated()), SIGNAL(initializated()));
     connect(core, SIGNAL(dialogsChanged()), SIGNAL(dialogsChanged()));
+    connect(core,
+            SIGNAL(messagesHistoryReceived(QVector<TLMessage>, QVector<TLChat>, QVector<TLUser>)),
+            SLOT(messagesHistoryReceived(QVector<TLMessage>, QVector<TLChat>, QVector<TLUser>)));
+    connect(core,
+            SIGNAL(
+                    messagesHistorySliceReceived(quint32, QVector<TLMessage>, QVector<TLChat>, QVector<TLUser>)),
+            SLOT(
+                    messagesHistorySliceReceived(quint32, QVector<TLMessage>, QVector<TLChat>, QVector<TLUser>)));
     connect(core, SIGNAL(authorizationErrorReceived()), SIGNAL(authorizationErrorReceived()));
 
-    if(shouldInit){
+    if (shouldInit) {
         CAppInformation info;
         info.setAppId(TG_APP_ID);
         info.setAppHash(QLatin1String(TG_API_HASH));
@@ -74,39 +83,47 @@ tgApi::tgApi(){
 
 }
 
-void tgApi::connectionEstablished() {
+void tgApi::connectionEstablished()
+{
     qDebug() << "Connection established";
 }
 
-void tgApi::onConnectRetryTimeout() {
+void tgApi::onConnectRetryTimeout()
+{
     qDebug() << "Retrying connection";
     const QByteArray secret = core->connectionSecretInfo();
-    if(!secret.isEmpty()) {
+    if (!secret.isEmpty()) {
         core->restoreConnection(secret);
     }
 }
 
-void tgApi::setAppInformation(const CAppInformation *newAppInfo){
+void tgApi::setAppInformation(const CAppInformation *newAppInfo)
+{
     core->setAppInformation(newAppInfo);
 }
 
-QByteArray tgApi::connectionSecretInfo() const{
+QByteArray tgApi::connectionSecretInfo() const
+{
     return core->connectionSecretInfo();
 }
 
-bool tgApi::isAuthenticated(){
+bool tgApi::isAuthenticated()
+{
     return core->isAuthenticated();
 }
 
-QString tgApi::selfPhone() const{
+QString tgApi::selfPhone() const
+{
     return core->selfPhone();
 }
 
-QStringList tgApi::contactList() const{
+QStringList tgApi::contactList() const
+{
     return core->contactList();
 }
 
-QList<ChatListItem*> tgApi::dialogs() const{
+QList<ChatListItem*> tgApi::dialogs() const
+{
     TLMessagesDialogs dialogs = core->dialogs();
 
     QList<ChatListItem*> result;
@@ -115,225 +132,291 @@ QList<ChatListItem*> tgApi::dialogs() const{
     QMap<int, TLChat> chatMap;
     QMap<int, TLMessage> messageMap;
 
-    foreach(const TLUser& user, dialogs.users) {
-        userMap.insert(user.id, user);
-    }
+    foreach(const TLUser& user, dialogs.users){
+    userMap.insert(user.id, user);
+}
 
-    foreach(const TLChat& chat, dialogs.chats) {
-        chatMap.insert(chat.id, chat);
-    }
+    foreach(const TLChat& chat, dialogs.chats){
+    chatMap.insert(chat.id, chat);
+}
 
-    foreach(const TLMessage& message, dialogs.messages) {
-        messageMap.insert(message.id, message);
-    }
+    foreach(const TLMessage& message, dialogs.messages){
+    messageMap.insert(message.id, message);
+}
 
-    foreach(const TLDialog dialog, dialogs.dialogs) {
-        int unreadCount = dialog.unreadCount;
+    foreach(const TLDialog dialog, dialogs.dialogs){
+    int unreadCount = dialog.unreadCount;
 
-        QString title;
-        QString imagePath;
-        ChatListItem::Type type;
+    QString title;
+    QString imagePath;
+    QString peerId;
+    ChatListItem::Type type;
 
-        if(dialog.peer.tlType == PeerUser) {
-            int userId = dialog.peer.userId;
-            type = ChatListItem::GROUP;
-            if(userMap.contains(userId)) {
-                TLUser user = userMap[userId];
-                if(user.photo.photoId == 0) {
-                    imagePath = AvatarUtil::getPlaceholderAvatarPath(user.phone);
-                } else {
-                    imagePath = AvatarUtil::getAvatarPath(user.phone);
-                }
-                title = QString("%1 %2").arg(user.firstName, user.lastName);
+    if(dialog.peer.tlType == PeerUser) {
+        int userId = dialog.peer.userId;
+        type = ChatListItem::GROUP;
+        if(userMap.contains(userId)) {
+            TLUser user = userMap[userId];
+            peerId = user.phone;
+            if(user.photo.photoId == 0) {
+                imagePath = AvatarUtil::getPlaceholderAvatarPath(user.phone);
             } else {
-                title = QString("Unknown user %1").arg(userId);
+                imagePath = AvatarUtil::getAvatarPath(user.phone);
             }
-        } else if(dialog.peer.tlType == PeerChat) {
-            int chatId = dialog.peer.chatId;
-            imagePath = AvatarUtil::getGroupPlaceholderAvatarPath(chatId);
-            type = ChatListItem::NORMAL;
-            if(chatMap.contains(chatId)) {
-                TLChat chat = chatMap[chatId];
-                title = chat.title;
-            } else {
-                title = QString("Unknown chat %1").arg(chatId);
-            }
-        }
-
-        QString content;
-        QString timestamp;
-        QString seen;
-        QString author;
-        if(messageMap.contains(dialog.topMessage)) {
-            TLMessage topMessage = messageMap[dialog.topMessage];
-            content = topMessage.message;
-
-            int time = topMessage.date;
-
-            QDateTime qdt;
-            qdt.setTime_t(time);
-            QDate date = qdt.date();
-            if(date == today) {
-                timestamp = qdt.toString("hh:mm");
-            } else if(date.daysTo(today) < 7) {
-                timestamp = qdt.toString("ddd");
-            } else {
-                timestamp = qdt.toString("dd.MM.yy");
-            }
-
-            bool unread = topMessage.flags & 0x1;
-            bool out = topMessage.flags & 0x2;
-            if(!unread) {
-                seen = "seen";
-            } else if(out) {
-                seen = "delivered";
-            } else {
-                seen = "none";
-            }
-
-            if(out) {
-                author = "You";
-            } else {
-                TLUser messageAuthor = userMap[topMessage.fromId];
-                author = QString("%1").arg(messageAuthor.firstName);
-            }
+            title = QString("%1 %2").arg(user.firstName, user.lastName);
         } else {
-            content = "Unknown content";
+            title = QString("Unknown user %1").arg(userId);
+        }
+    } else if(dialog.peer.tlType == PeerChat) {
+        int chatId = dialog.peer.chatId;
+        imagePath = AvatarUtil::getGroupPlaceholderAvatarPath(chatId);
+        type = ChatListItem::NORMAL;
+        if(chatMap.contains(chatId)) {
+            TLChat chat = chatMap[chatId];
+            title = chat.title;
+        } else {
+            title = QString("Unknown chat %1").arg(chatId);
+        }
+    }
+
+    QString content;
+    QString timestamp;
+    QString seen;
+    QString author;
+    if(messageMap.contains(dialog.topMessage)) {
+        TLMessage topMessage = messageMap[dialog.topMessage];
+        content = topMessage.message;
+
+        int time = topMessage.date;
+
+        QDateTime qdt;
+        qdt.setTime_t(time);
+        QDate date = qdt.date();
+        if(date == today) {
+            timestamp = qdt.toString("hh:mm");
+        } else if(date.daysTo(today) < 7) {
+            timestamp = qdt.toString("ddd");
+        } else {
+            timestamp = qdt.toString("dd.MM.yy");
         }
 
-        result.append(new ChatListItem(
-                // TODO asign proper parent
-                0,
-                title,
-                content,
-                timestamp,
-                author,
-                imagePath,
-                seen,
-                // TODO support for secret chats
-                type,
-                unreadCount
-        ));
+        bool unread = topMessage.flags & 0x1;
+        bool out = topMessage.flags & 0x2;
+        if(!unread) {
+            seen = "seen";
+        } else if(out) {
+            seen = "delivered";
+        } else {
+            seen = "none";
+        }
 
+        if(out) {
+            author = "You";
+        } else {
+            TLUser messageAuthor = userMap[topMessage.fromId];
+            author = QString("%1").arg(messageAuthor.firstName);
+        }
+    } else {
+        content = "Unknown content";
     }
+
+    result.append(new ChatListItem(
+                    // TODO asign proper parent
+                    0,
+                    title,
+                    content,
+                    timestamp,
+                    author,
+                    peerId,
+                    imagePath,
+                    seen,
+                    // TODO support for secret chats
+                    type,
+                    unreadCount
+            ));
+
+}
 
     return result;
 }
 
-QVariant tgApi::contactStatus(const QString &phone) const{
+QVariant tgApi::contactStatus(const QString &phone) const
+{
     TelegramNamespace::ContactStatus result = core->contactStatus(phone);
     return result;
 }
 
-QString tgApi::contactFirstName(const QString &phone) const{
+QString tgApi::contactFirstName(const QString &phone) const
+{
     return core->contactFirstName(phone);
 }
 
-QString tgApi::contactLastName(const QString &phone) const{
+QString tgApi::contactLastName(const QString &phone) const
+{
     return core->contactLastName(phone);
 }
 
-QString tgApi::contactAvatarToken(const QString &phone) const {
+QString tgApi::contactAvatarToken(const QString &phone) const
+{
     return core->contactAvatarToken(phone);
 }
 
-QString tgApi::chatTitle(quint32 chatId) const {
+QString tgApi::chatTitle(quint32 chatId) const
+{
     return core->chatTitle(chatId);
 }
 
-bool tgApi::getChatInfo(TelegramNamespace::GroupChat *chatInfo, quint32 chatId) const {
+bool tgApi::getChatInfo(TelegramNamespace::GroupChat *chatInfo, quint32 chatId) const
+{
     return core->getChatInfo(chatInfo, chatId);
 }
 
-bool tgApi::getChatParticipants(QStringList *participants, quint32 chatId) {
+bool tgApi::getChatParticipants(QStringList *participants, quint32 chatId)
+{
     return core->getChatParticipants(participants, chatId);
 }
 
-QStringList tgApi::chatParticipants(quint32 publicChatId) const{
+QStringList tgApi::chatParticipants(quint32 publicChatId) const
+{
     return core->chatParticipants(publicChatId);
 }
 
-bool tgApi::initConnection(const QString &address, quint32 port){
+bool tgApi::initConnection(const QString &address, quint32 port)
+{
     return core->initConnection(address, port);
 }
 
-bool tgApi::restoreConnection(const QByteArray &secret){
+bool tgApi::restoreConnection(const QByteArray &secret)
+{
     return core->restoreConnection(secret);
 }
 
-void tgApi::closeConnection() {
+void tgApi::closeConnection()
+{
     core->closeConnection();
 }
 
-void tgApi::requestPhoneStatus(const QString &phoneNumber){
+void tgApi::requestPhoneStatus(const QString &phoneNumber)
+{
     core->requestPhoneStatus(phoneNumber);
 }
 
-
-void tgApi::requestPhoneCode(const QString &phoneNumber){
-	core->requestPhoneCode(phoneNumber);
+void tgApi::requestPhoneCode(const QString &phoneNumber)
+{
+    core->requestPhoneCode(phoneNumber);
 }
 
-void tgApi::signIn(const QString &phoneNumber, const QString &authCode){
-	core->signIn(phoneNumber, authCode);
+void tgApi::signIn(const QString &phoneNumber, const QString &authCode)
+{
+    core->signIn(phoneNumber, authCode);
 }
 
-void tgApi::signUp(const QString &phoneNumber, const QString &authCode, const QString &firstName, const QString &lastName){
-	core->signUp(phoneNumber, authCode, firstName, lastName);
+void tgApi::signUp(const QString &phoneNumber, const QString &authCode, const QString &firstName,
+        const QString &lastName)
+{
+    core->signUp(phoneNumber, authCode, firstName, lastName);
 }
 
-void tgApi::addContact(const QString &phoneNumber){
-	core->addContact(phoneNumber);
+void tgApi::addContact(const QString &phoneNumber)
+{
+    core->addContact(phoneNumber);
 }
 
-void tgApi::addContacts(const QStringList &phoneNumbers){
-	core->addContacts(phoneNumbers);
+void tgApi::addContacts(const QStringList &phoneNumbers)
+{
+    core->addContacts(phoneNumbers);
 }
 
-void tgApi::deleteContact(const QString &phoneNumber){
-	core->deleteContact(phoneNumber);
+void tgApi::deleteContact(const QString &phoneNumber)
+{
+    core->deleteContact(phoneNumber);
 }
 
-void tgApi::deleteContacts(const QStringList &phoneNumbers){
-	core->deleteContacts(phoneNumbers);
+void tgApi::deleteContacts(const QStringList &phoneNumbers)
+{
+    core->deleteContacts(phoneNumbers);
 }
 
-void tgApi::getDialogs(quint32 offset, quint32 maxId, quint32 limit) {
+void tgApi::getDialogs(quint32 offset, quint32 maxId, quint32 limit)
+{
     core->getDialogs(offset, maxId, limit);
 }
 
-void tgApi::requestContactAvatar(const QString &contact){
-	core->requestContactAvatar(contact);
+void tgApi::getHistory(const QString& phoneNumber, quint32 offset, quint32 maxId, quint32 limit)
+{
+    core->getHistory(phoneNumber, offset, maxId, limit);
 }
 
-quint64 tgApi::sendMessage(const QString &phone, const QString &message){
-	return core->sendMessage(phone,message);
+void tgApi::requestContactAvatar(const QString &contact)
+{
+    core->requestContactAvatar(contact);
+}
+
+quint64 tgApi::sendMessage(const QString &phone, const QString &message)
+{
+    return core->sendMessage(phone, message);
 } // Message id is random number
 
-quint64 tgApi::sendChatMessage(quint32 chatId, const QString &message){
-	return core->sendChatMessage(chatId, message);
+quint64 tgApi::sendChatMessage(quint32 chatId, const QString &message)
+{
+    return core->sendChatMessage(chatId, message);
 } // Message id is random number
 
-void tgApi::setTyping(const QString &phone, bool typingStatus){
-	core->setTyping(phone, typingStatus);
+void tgApi::setTyping(const QString &phone, bool typingStatus)
+{
+    core->setTyping(phone, typingStatus);
 }
 
-void tgApi::setChatTyping(quint32 chatId, bool typingStatus){
-	core->setChatTyping(chatId, typingStatus);
+void tgApi::setChatTyping(quint32 chatId, bool typingStatus)
+{
+    core->setChatTyping(chatId, typingStatus);
 }
 
-void tgApi::setMessageRead(const QString &phone, quint32 messageId){
-	core->setMessageRead(phone, messageId);
+void tgApi::setMessageRead(const QString &phone, quint32 messageId)
+{
+    core->setMessageRead(phone, messageId);
 }
 
-    // Set visible (not actual) online status.
+// Set visible (not actual) online status.
 
-void tgApi::setOnlineStatus(bool onlineStatus){
-	core->setOnlineStatus(onlineStatus);
+void tgApi::setOnlineStatus(bool onlineStatus)
+{
+    core->setOnlineStatus(onlineStatus);
 }
 
-quint32 tgApi::createChat(const QStringList &phones, const QString chatName){
-	return core->createChat(phones, chatName);
+quint32 tgApi::createChat(const QStringList &phones, const QString chatName)
+{
+    return core->createChat(phones, chatName);
 }
+
+void tgApi::messagesHistoryReceived(const QVector<TLMessage> &messages,
+        const QVector<TLChat> &chats, const QVector<TLUser> &users)
+{
+    QVector<ChatItem*> result;
+
+    foreach(const TLMessage m, messages) {
+        bool unread = m.flags & 0x1;
+        bool outgoing = m.flags & 0x2;
+        ChatItem* item = new ChatItem(0,
+                m.message,
+                m.date,
+                !unread,
+                outgoing,
+                false,
+                false
+        );
+        result.push_back(item);
+    }
+
+    emit chatHistoryReceived(result);
+}
+
+void tgApi::messagesHistorySliceReceived(quint32 count, const QVector<TLMessage> &messages, const QVector<TLChat> &chats, const QVector<TLUser> &users)
+{
+    // For now let's just delegate to messagesHistoryReceived
+    // TODO implement proper handling of slices
+    this->messagesHistoryReceived(messages, chats, users);
+}
+
 
 #endif

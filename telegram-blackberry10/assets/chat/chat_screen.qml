@@ -1,8 +1,12 @@
 import bb.cascades 1.2
+import TgApi 1.0
 import '../shared'
 
 Page {
     id: chatPage
+    property alias chatName: chatTitleBar.chatName
+    property alias chatImage: chatTitleBar.imagePath
+    property alias peerId: dataModel.peerPhoneNumber
     property alias backgroundImageSource: backgroundImage.imageSource
     property alias enableSend: sendButton.enabled
 
@@ -11,8 +15,9 @@ Page {
         scrollBehavior: TitleBarScrollBehavior.Sticky
         kindProperties: FreeFormTitleBarKindProperties {
             ChatTitleBar {
+                id: chatTitleBar
                 chatName: "Ante Kovach"
-                chatStatus: "typing..."
+                chatStatus: dataModel.typingStatus
                 imagePath: "asset:///images/testUsers/luka.jpg"
             }
         }
@@ -23,16 +28,14 @@ Page {
         layout: DockLayout {
         }
         attachedObjects: [
-            GroupDataModel {
-                id: groupDataModel
-                sortingKeys: [ "timestamp" ]
-                grouping: ItemGrouping.None
+            ChatDataModel {
+                id: dataModel
             }
         ]
 
         ImageView {
             id: backgroundImage
-            imageSource: "asset:///images/testUsers/pjer.jpg"
+            imageSource: "asset:///images/chat/background.jpg"
             scalingMethod: ScalingMethod.AspectFill
             preferredHeight: maxHeight
             preferredWidth: maxWidth
@@ -78,13 +81,7 @@ Page {
                 rightPadding: 10
                 topPadding: 10
 
-                dataModel: groupDataModel
-                onDataModelChanged: {
-                }
-
-                function itemType(data, indexPath) {
-                    return data.messageType === "inbound" ? "inbound" : "outbound"
-                }
+                dataModel: dataModel
 
                 listItemComponents: [
                     ListItemComponent {
@@ -127,24 +124,15 @@ Page {
             imageSource: "asset:///images/chat/bar_attach.png"
             ActionBar.placement: ActionBarPlacement.OnBar
         },
-        //TODO validate text to make send button available
         ActionItem {
             id: sendButton
             title: "Send"
             imageSource: "asset:///images/chat/bar_send.png"
             ActionBar.placement: ActionBarPlacement.OnBar
-            enabled: true
+            enabled: newMessage.body.length > 0
             onTriggered: {
-                groupDataModel.insert({
-                        "messegeType": "outbound",
-                        "messageText": newMessage.body,
-                        "timestamp": "19:19 PM",
-                        "sendingVisible": true,
-                        "unsentVisible": false,
-                        "sentVisible": false,
-                        "readVisible": false
-                    })
-                //TODO refresh list
+                dataModel.sendMessage(newMessage.body)
+                newMessage.body = ""
             }
         },
         ActionItem {
@@ -165,6 +153,7 @@ Page {
         }
     ]
     onCreationCompleted: {
+        /*
         groupDataModel.insert({
                 "messageType": "inbound",
                 "messageText": "This is some text. I like trains. And Animu. And games. And Pizza. Yes. Pizza very much. And cats.",
@@ -188,5 +177,6 @@ Page {
                 "timestamp": "5:14 PM",
                 "sentVisible": true
             });
+            */
     }
 }

@@ -6,6 +6,7 @@ ChatListItem::ChatListItem(
         const QString& content,
         const QString& timestamp,
         const QString& author,
+        const QString& peerId,
         const QString& chatAvatar,
         const QString& outgoingStatus,
         const Type& type,
@@ -16,6 +17,7 @@ ChatListItem::ChatListItem(
         m_content(content),
         m_timestamp(timestamp),
         m_author(author),
+        m_peerId(peerId),
         m_chat_avatar(chatAvatar),
         m_outgoing_status(outgoingStatus),
         m_type(type),
@@ -41,6 +43,11 @@ QString ChatListItem::timestamp() const
 QString ChatListItem::author() const
 {
     return m_author;
+}
+
+QString ChatListItem::peerId() const
+{
+    return m_peerId;
 }
 
 QString ChatListItem::chatAvatar() const
