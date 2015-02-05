@@ -69,6 +69,7 @@ ApplicationUI::ApplicationUI() :
     qmlRegisterType<tgApi>("TgApi", 1, 0, "RegistrationApi");
     qmlRegisterType<tgApi>("TgApi", 1, 0, "ContactsApi");
     qmlRegisterType<tgApi>("TgApi", 1, 0, "MessagesApi");
+    qmlRegisterType<tgApi>("TgApi", 1, 0, "UserInfoApi");
 #endif
 
     // prepare the localization
