@@ -4,11 +4,28 @@ import TgApi 1.0
 import '../shared'
 
 Page {
+    property string userFullName: ""
+    property string userPhoneNumber: ""
+    property string userUsername: ""
+    property string userAvatar: ""
+
     titleBar: TitleBar {
         title: 'Settings'
         scrollBehavior: TitleBarScrollBehavior.Sticky
     }
     attachedObjects: [
+        UserInfoApi {
+            id: userInfoApi
+            onSelfUserKnown: {
+                userFullName = userInfoApi.selfFirstName() + " " + userInfoApi.selfLastName()
+                userPhoneNumber = userInfoApi.selfPhone()
+                userUsername = userInfoApi.selfUsername()
+                userAvatar = avatarUtil.getAvatarPath(userPhoneNumber)
+            }
+        },
+        AvatarUtil {
+            id: avatarUtil
+        },
         ComponentDefinition {
             id: editPageDefinition
             source: "asset:///settings/edit_screen.qml"
@@ -45,14 +62,39 @@ Page {
                     orientation: LayoutOrientation.LeftToRight
                 }
 
-                ImageView {
-                    id: avatar
-                    accessibility.name: "Avatar"
+                Container {
+                    layout: AbsoluteLayout {
+                    }
                     preferredHeight: 180
                     preferredWidth: 180
-                    scalingMethod: ScalingMethod.AspectFill
-                    imageSource: "asset:///images/settings/bar_profile.png"
+
+                    ImageView {
+                        id: avatarPlaceholder
+                        accessibility.name: "Avatar placeholder"
+                        preferredHeight: 160
+                        preferredWidth: 160
+                        layoutProperties: AbsoluteLayoutProperties {
+                            positionX: 10
+                            positionY: 10
+                        }
+                        scalingMethod: ScalingMethod.AspectFill
+                        imageSource: "asset:///images/settings/bar_profile.png"
+                    }
+
+                    ImageView {
+                        id: avatar
+                        accessibility.name: "Avatar"
+                        preferredHeight: 160
+                        preferredWidth: 160
+                        layoutProperties: AbsoluteLayoutProperties {
+                            positionX: 10
+                            positionY: 10
+                        }
+                        scalingMethod: ScalingMethod.AspectFill
+                        imageSource: userAvatar
+                    }
                 }
+
                 Container {
                     layout: StackLayout {
 
@@ -65,7 +107,7 @@ Page {
 
                     Label {
                         id: userName
-                        text: "Daniel Ash"
+                        text: userFullName + (userUsername ? " (@" + userUsername + ")" : "")
                         textStyle.fontSize: FontSize.Medium
                         bottomMargin: 8
                     }
@@ -79,7 +121,7 @@ Page {
                     }
                     Label {
                         id: phoneNumber
-                        text: "+44 7400 890000"
+                        text: "+" + userPhoneNumber
                         textStyle.fontSize: FontSize.Small
                         topMargin: 0
                     }
@@ -248,7 +290,7 @@ Page {
             onTriggered: {
                 tgFAQInvocation.trigger("bb.action.OPEN")
             }
-            
+
             attachedObjects: [
                 Invocation {
                     id: tgFAQInvocation

@@ -23,6 +23,7 @@
 
 #include "util/timer.hpp"
 #include "util/countries.hpp"
+#include "util/AvatarUtil.hpp"
 
 #include "api/TgSession.hpp"
 #include "api/model/ChatListItem.hpp"
@@ -59,6 +60,7 @@ ApplicationUI::ApplicationUI() :
     qmlRegisterType<ChatsDataModel>("TgApi", 1, 0, "ChatsDataModel");
     qmlRegisterType<ContactsDataModel>("TgApi", 1, 0, "ContactsDataModel");
     qmlRegisterType<ChatDataModel>("TgApi", 1, 0, "ChatDataModel");
+    qmlRegisterType<AvatarUtil>("TgApi", 1, 0, "AvatarUtil");
 #ifdef TG_API_MOCK
     // Register out Registration API in QML
     qmlRegisterType<APIRegAuth>("TgApi", 1, 0, "RegistrationApi");
@@ -69,6 +71,7 @@ ApplicationUI::ApplicationUI() :
     qmlRegisterType<tgApi>("TgApi", 1, 0, "RegistrationApi");
     qmlRegisterType<tgApi>("TgApi", 1, 0, "ContactsApi");
     qmlRegisterType<tgApi>("TgApi", 1, 0, "MessagesApi");
+    qmlRegisterType<tgApi>("TgApi", 1, 0, "UserInfoApi");
 #endif
 
     // prepare the localization

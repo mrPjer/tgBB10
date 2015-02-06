@@ -31,6 +31,7 @@ tgApi::tgApi()
 
     connect(core, SIGNAL(connected()), SIGNAL(connected()));
     connect(core, SIGNAL(connected()), SLOT(connectionEstablished()));
+    connect(core, SIGNAL(selfUserKnown()), SIGNAL(selfUserKnown()));
     connect(core, SIGNAL(phoneCodeRequired()), SIGNAL(phoneCodeRequired()));
     connect(core, SIGNAL(phoneCodeIsInvalid()), SIGNAL(phoneCodeIsInvalid()));
     connect(core, SIGNAL(authenticated()), SIGNAL(authenticated()));
@@ -115,6 +116,21 @@ bool tgApi::isAuthenticated()
 QString tgApi::selfPhone() const
 {
     return core->selfPhone();
+}
+
+QString tgApi::selfFirstName() const
+{
+    return core->selfFirstName();
+}
+
+QString tgApi::selfLastName() const
+{
+    return core->selfLastName();
+}
+
+QString tgApi::selfUsername() const
+{
+    return core->selfUsername();
 }
 
 QStringList tgApi::contactList() const

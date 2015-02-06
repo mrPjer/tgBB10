@@ -35,8 +35,11 @@ public:
     Q_INVOKABLE QByteArray connectionSecretInfo() const;
 
     Q_INVOKABLE bool isAuthenticated();
-    Q_INVOKABLE QString selfPhone() const;
     Q_INVOKABLE QStringList contactList() const;
+    Q_INVOKABLE QString selfPhone() const;
+    Q_INVOKABLE QString selfFirstName() const;
+    Q_INVOKABLE QString selfLastName() const;
+    Q_INVOKABLE QString selfUsername() const;
     Q_INVOKABLE QList<ChatListItem*> dialogs() const;
     Q_INVOKABLE QVariant contactStatus(const QString &phone) const;
     Q_INVOKABLE QString contactFirstName(const QString &phone) const;
@@ -86,6 +89,7 @@ signals:
     void connected();
     void authenticated();
     void initializated();
+    void selfUserKnown();
     void phoneCodeRequired();
     void phoneCodeIsInvalid();
     void contactListChanged();
