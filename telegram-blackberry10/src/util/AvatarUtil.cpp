@@ -23,6 +23,10 @@ QStringList AvatarUtil::GROUP_PLACEHOLDER_AVATARS = QStringList()
         << "images/chatsList/chatAvatars/groupChatAvatars/group_placeholder_red.png"
         << "images/chatsList/chatAvatars/groupChatAvatars/group_placeholder_yellow.png";
 
+AvatarUtil::AvatarUtil(QObject* parent) : QObject(parent)
+{
+}
+
 QString AvatarUtil::getAvatarPath(const QString& contactNumber)
 {
     return "file:///" + QDir::currentPath() + "/" + AvatarUtil::AVATAR_DIR + "/" + contactNumber + ".png";

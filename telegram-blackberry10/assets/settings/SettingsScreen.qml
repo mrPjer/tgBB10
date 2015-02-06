@@ -7,6 +7,7 @@ Page {
     property string userFullName: ""
     property string userPhoneNumber: ""
     property string userUsername: ""
+    property string userAvatar: ""
 
     titleBar: TitleBar {
         title: 'Settings'
@@ -19,7 +20,11 @@ Page {
                 userFullName = userInfoApi.selfFirstName() + " " + userInfoApi.selfLastName()
                 userPhoneNumber = userInfoApi.selfPhone()
                 userUsername = userInfoApi.selfUsername()
+                userAvatar = avatarUtil.getAvatarPath(userPhoneNumber)
             }
+        },
+        AvatarUtil {
+            id: avatarUtil
         },
         ComponentDefinition {
             id: editPageDefinition
@@ -57,14 +62,39 @@ Page {
                     orientation: LayoutOrientation.LeftToRight
                 }
 
-                ImageView {
-                    id: avatar
-                    accessibility.name: "Avatar"
+                Container {
+                    layout: AbsoluteLayout {
+                    }
                     preferredHeight: 180
                     preferredWidth: 180
-                    scalingMethod: ScalingMethod.AspectFill
-                    imageSource: "asset:///images/settings/bar_profile.png"
+
+                    ImageView {
+                        id: avatarPlaceholder
+                        accessibility.name: "Avatar placeholder"
+                        preferredHeight: 160
+                        preferredWidth: 160
+                        layoutProperties: AbsoluteLayoutProperties {
+                            positionX: 10
+                            positionY: 10
+                        }
+                        scalingMethod: ScalingMethod.AspectFill
+                        imageSource: "asset:///images/settings/bar_profile.png"
+                    }
+
+                    ImageView {
+                        id: avatar
+                        accessibility.name: "Avatar"
+                        preferredHeight: 160
+                        preferredWidth: 160
+                        layoutProperties: AbsoluteLayoutProperties {
+                            positionX: 10
+                            positionY: 10
+                        }
+                        scalingMethod: ScalingMethod.AspectFill
+                        imageSource: userAvatar
+                    }
                 }
+
                 Container {
                     layout: StackLayout {
 
@@ -260,7 +290,7 @@ Page {
             onTriggered: {
                 tgFAQInvocation.trigger("bb.action.OPEN")
             }
-            
+
             attachedObjects: [
                 Invocation {
                     id: tgFAQInvocation
