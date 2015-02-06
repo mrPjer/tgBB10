@@ -15,6 +15,7 @@ Container {
         rightPadding: 15
         topPadding: 15
         bottomMargin: 15
+        visible: false
         TextArea {
             id: searchArea
             hintText: "Search"
