@@ -21,12 +21,17 @@ CTelegramCore* tgApi::core = NULL;
 
 tgApi::tgApi()
 {
-
-    bool shouldInit = false;
-
     if (core == NULL) {
         core = new CTelegramCore();
-        shouldInit = true;
+
+        CAppInformation info;
+        info.setAppId(TG_APP_ID);
+        info.setAppHash(QLatin1String(TG_API_HASH));
+        info.setAppVersion(QLatin1String("0.0.1"));
+        info.setDeviceInfo(QLatin1String("BlackBerry 10"));
+        info.setLanguageCode(QLatin1String("en"));
+        info.setOsInfo(QLatin1String("BlackBerry 10"));
+        core->setAppInformation(&info);
     }
 
     connect(core, SIGNAL(connected()), SIGNAL(connected()));
@@ -69,19 +74,6 @@ tgApi::tgApi()
             SLOT(
                     messagesHistorySliceReceived(quint32, QVector<TLMessage>, QVector<TLChat>, QVector<TLUser>)));
     connect(core, SIGNAL(authorizationErrorReceived()), SIGNAL(authorizationErrorReceived()));
-
-    if (shouldInit) {
-        CAppInformation info;
-        info.setAppId(TG_APP_ID);
-        info.setAppHash(QLatin1String(TG_API_HASH));
-        info.setAppVersion(QLatin1String("0.0.1"));
-        info.setDeviceInfo(QLatin1String("BlackBerry 10"));
-        info.setLanguageCode(QLatin1String("en"));
-        info.setOsInfo(QLatin1String("BlackBerry 10"));
-        core->setAppInformation(&info);
-        core->initConnection(QLatin1String(TG_API_IP), TG_API_PORT);
-    }
-
 }
 
 void tgApi::connectionEstablished()

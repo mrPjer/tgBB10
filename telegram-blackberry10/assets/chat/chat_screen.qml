@@ -109,10 +109,6 @@ Page {
                 verticalAlignment: VerticalAlignment.Bottom
                 NewMessage {
                     id: newMessage
-                    onEnableSendButton: {
-                    }
-                    onDisableSendButton: {
-                    }
                 }
             }
         }
@@ -129,7 +125,7 @@ Page {
             title: "Send"
             imageSource: "asset:///images/chat/bar_send.png"
             ActionBar.placement: ActionBarPlacement.OnBar
-            enabled: newMessage.body.length > 0
+            enabled: newMessage.haveText
             onTriggered: {
                 dataModel.sendMessage(newMessage.body)
                 newMessage.body = ""

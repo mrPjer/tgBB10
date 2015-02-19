@@ -103,6 +103,9 @@ ApplicationUI::ApplicationUI() :
         pageAsset = "asset:///main/MainPage.qml";
     } else {
         qDebug() << "No existing session";
+
+        tgApi api;
+        api.initConnection(QLatin1String(TG_API_IP), TG_API_PORT);
         pageAsset = "asset:///intro/IntroWithPane.qml";
     }
 #endif
